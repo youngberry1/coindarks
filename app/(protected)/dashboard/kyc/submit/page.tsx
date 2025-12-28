@@ -79,7 +79,7 @@ export default async function KYCSubmitPage() {
 
             {kycStatus === 'REJECTED' && (
                 <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 flex gap-4 items-start mb-8 animate-in shake">
-                    <AlertTriangle className="w-6 h-6 text-red-500 flex-shrink-0 mt-1" />
+                    <AlertTriangle className="w-6 h-6 text-red-500 shrink-0 mt-1" />
                     <div>
                         <h3 className="font-bold text-red-500 mb-1">Previous Application Rejected</h3>
                         <p className="text-sm text-red-400/80 mb-4">

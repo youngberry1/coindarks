@@ -161,7 +161,7 @@ export default async function KYCStatusPage() {
                                         {status === 'REJECTED' ? 'Application Rejected' : 'Application Approved'}
                                     </p>
                                     <p className="text-xs text-foreground/40">
-                                        {new Date(kyc.reviewedAt).toLocaleString()}
+                                        {kyc.reviewedAt ? new Date(kyc.reviewedAt).toLocaleString() : 'N/A'}
                                     </p>
                                 </div>
                             )}

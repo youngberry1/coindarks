@@ -282,8 +282,8 @@ export function KYCSubmissionForm() {
                                             <option value="">Select ID Type</option>
                                             <option value="NATIONAL_ID" className="bg-background">National ID</option>
                                             <option value="PASSPORT" className="bg-background">Passport</option>
-                                            <option value="DRIVERS_LICENSE" className="bg-background">Driver's License</option>
-                                            <option value="VOTERS_ID" className="bg-background">Voter's ID</option>
+                                            <option value="DRIVERS_LICENSE" className="bg-background">Driver&apos;s License</option>
+                                            <option value="VOTERS_ID" className="bg-background">Voter&apos;s ID</option>
                                         </select>
                                         {errors.idType && (
                                             <p className="text-xs text-red-400 flex items-center gap-1">
@@ -345,7 +345,7 @@ export function KYCSubmissionForm() {
 
                                 {submitError && (
                                     <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-center gap-2">
-                                        <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                                        <AlertCircle className="w-5 h-5 shrink-0" />
                                         {submitError}
                                     </div>
                                 )}
