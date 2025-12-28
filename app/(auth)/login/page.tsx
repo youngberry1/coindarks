@@ -11,6 +11,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { resendVerification } from "@/actions/resend-verification";
 import { login } from "@/actions/login";
+import { Logo } from "@/components/ui/Logo";
 
 function LoginContent() {
     const [email, setEmail] = useState("");
@@ -90,14 +91,7 @@ function LoginContent() {
                 className="w-full max-w-md space-y-8 glass-morphism p-10 rounded-3xl shadow-2xl relative z-10"
             >
                 <div className="text-center">
-                    <Link href="/" className="inline-flex items-center gap-2 mb-8">
-                        <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center font-bold text-white text-xl">
-                            CD
-                        </div>
-                        <span className="text-2xl font-bold tracking-tight">
-                            Coin<span className="text-primary">Darks</span>
-                        </span>
-                    </Link>
+                    <Logo className="inline-flex mb-8" />
                     <h2 className="text-3xl font-extrabold text-foreground">Welcome back</h2>
                     <p className="mt-2 text-sm text-foreground/60">
                         Securely log in to manage your digital assets

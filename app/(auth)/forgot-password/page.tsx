@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Mail, Loader2, ArrowRight, CheckCircle2, AlertCircle } from "lucide-react";
 import { reset } from "@/actions/reset";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { Logo } from "@/components/ui/Logo";
 
 export default function ForgotPasswordPage() {
     const [email, setEmail] = useState("");
@@ -50,14 +51,7 @@ export default function ForgotPasswordPage() {
                 className="w-full max-w-md space-y-8 glass-morphism p-10 rounded-3xl shadow-2xl relative z-10"
             >
                 <div className="text-center">
-                    <Link href="/" className="inline-flex items-center gap-2 mb-8">
-                        <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center font-bold text-white text-xl">
-                            CD
-                        </div>
-                        <span className="text-2xl font-bold tracking-tight">
-                            Coin<span className="text-primary">Darks</span>
-                        </span>
-                    </Link>
+                    <Logo className="inline-flex mb-8" />
                     <h2 className="text-3xl font-extrabold text-foreground">Forgot Password?</h2>
                     <p className="mt-2 text-sm text-foreground/60">
                         Enter your email address to receive a reset link

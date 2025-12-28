@@ -69,11 +69,17 @@ create table if not exists "KYC" (
   "selfieUrl" text not null,
   "status" "KYCStatus" default 'UNVERIFIED',
   "rejectionReason" text,
+  "reviewedBy" uuid references "User"("id"),
+  "documentMetadata" jsonb default '{}'::jsonb,
   "submittedAt" timestamptz default now(),
   "reviewedAt" timestamptz,
   "createdAt" timestamptz default now(),
   "updatedAt" timestamptz default now()
 );
+
+-- KYC Indexes for performance
+create index if not exists "idx_kyc_status" on "KYC"("status");
+create index if not exists "idx_kyc_user" on "KYC"("userId");
 
 create table if not exists "Order" (
   "id" uuid primary key default uuid_generate_v4(),

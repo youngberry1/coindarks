@@ -7,6 +7,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ChevronRight, LayoutDashboard, User, LogOut, Shield, Zap, Globe, ArrowRight } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
+import { Logo } from "@/components/ui/Logo";
+
 export default function Navbar() {
     const { data: session } = useSession();
     const [isOpen, setIsOpen] = useState(false);
@@ -35,15 +37,7 @@ export default function Navbar() {
                 }`}>
                 <div className="flex items-center justify-between">
                     {/* Logo */}
-                    <Link href="/" className="group flex items-center gap-2">
-                        <div className="relative h-10 w-10 overflow-hidden rounded-xl bg-primary flex items-center justify-center font-bold text-white text-xl transition-transform group-hover:scale-110 group-active:scale-95 shadow-lg shadow-primary/20">
-                            CD
-                            <div className="absolute inset-0 bg-linear-to-tr from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </div>
-                        <span className="text-2xl font-bold tracking-tight hidden sm:block">
-                            Coin<span className="text-primary group-hover:text-primary-dark transition-colors">Darks</span>
-                        </span>
-                    </Link>
+                    <Logo />
 
                     {/* Desktop Nav Links */}
                     <div className="hidden md:flex items-center gap-1 bg-white/5 rounded-2xl p-1 border border-white/5">
