@@ -1,7 +1,5 @@
 import { auth } from '@/auth';
 import { getUserById } from '@/lib/user';
-import { getKYCStatus } from '@/actions/kyc/get-kyc-status';
-import { History, Wallet, LayoutDashboard } from 'lucide-react';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { RecentActivity } from '@/components/dashboard/RecentActivity';
 import { KYCCard } from '@/components/dashboard/KYCCard';
@@ -13,8 +11,7 @@ export default async function DashboardPage() {
     // Fetch user data from database
     const dbUser = session?.user?.id ? await getUserById(session.user.id) : null;
 
-    // Fetch KYC status
-    const kycResult = await getKYCStatus();
+    // Get KYC status from user data
     const kycStatus = dbUser?.kycStatus || 'UNVERIFIED';
 
     // TODO: Replace with real data from database
@@ -23,7 +20,7 @@ export default async function DashboardPage() {
             label: 'Active Orders',
             value: '0',
             subValue: 'No active orders',
-            icon: History,
+            iconName: 'history' as const,
             color: 'text-blue-500',
             bg: 'bg-blue-500/10',
         },
@@ -31,7 +28,7 @@ export default async function DashboardPage() {
             label: 'Total Volume',
             value: '$0.00',
             subValue: '0 transactions',
-            icon: Wallet,
+            iconName: 'wallet' as const,
             color: 'text-green-500',
             bg: 'bg-green-500/10',
         },
@@ -39,7 +36,7 @@ export default async function DashboardPage() {
             label: 'KYC Status',
             value: kycStatus,
             subValue: kycStatus === 'APPROVED' ? 'Fully Verified' : 'Verification Required',
-            icon: LayoutDashboard,
+            iconName: 'dashboard' as const,
             color: kycStatus === 'APPROVED' ? 'text-green-500' : 'text-yellow-500',
             bg: kycStatus === 'APPROVED' ? 'bg-green-500/10' : 'bg-yellow-500/10',
         },

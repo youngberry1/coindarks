@@ -1,18 +1,27 @@
 'use client';
 
-import { LucideIcon } from 'lucide-react';
+import { History, Wallet, LayoutDashboard, LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface StatCardProps {
     label: string;
     value: string;
     subValue: string;
-    icon: LucideIcon;
+    iconName: 'history' | 'wallet' | 'dashboard';
     color: string;
     bg: string;
 }
 
-export function StatCard({ label, value, subValue, icon: Icon, color, bg }: StatCardProps) {
+// Map icon names to components
+const iconMap: Record<string, LucideIcon> = {
+    history: History,
+    wallet: Wallet,
+    dashboard: LayoutDashboard,
+};
+
+export function StatCard({ label, value, subValue, iconName, color, bg }: StatCardProps) {
+    const Icon = iconMap[iconName];
+
     return (
         <div className="glass-morphism p-6 rounded-3xl border border-white/5 group hover:border-primary/20 transition-all duration-300">
             <div className="flex items-center justify-between mb-4">
