@@ -101,7 +101,7 @@ export async function rejectKYC(kycId: string, rejectionReason: string): Promise
 
         // 8. Send rejection email with reason
         try {
-            const user = kyc.User as any;
+            const user = kyc.User as { email: string; firstName: string; lastName: string };
             await sendKYCRejectionEmail(
                 user.email,
                 `${user.firstName} ${user.lastName}`,

@@ -33,7 +33,7 @@ export async function validateFile(file: File): Promise<{ valid: boolean; error?
     }
 
     // Check MIME type
-    if (!KYC_FILE_CONSTRAINTS.ALLOWED_TYPES.includes(file.type)) {
+    if (!KYC_FILE_CONSTRAINTS.ALLOWED_TYPES.includes(file.type as typeof KYC_FILE_CONSTRAINTS.ALLOWED_TYPES[number])) {
         return {
             valid: false,
             error: `Invalid file type. Only JPG, PNG, and WebP images are allowed.`,
@@ -42,7 +42,7 @@ export async function validateFile(file: File): Promise<{ valid: boolean; error?
 
     // Check file extension
     const extension = `.${file.name.split('.').pop()?.toLowerCase()}`;
-    if (!KYC_FILE_CONSTRAINTS.ALLOWED_EXTENSIONS.includes(extension)) {
+    if (!KYC_FILE_CONSTRAINTS.ALLOWED_EXTENSIONS.includes(extension as typeof KYC_FILE_CONSTRAINTS.ALLOWED_EXTENSIONS[number])) {
         return {
             valid: false,
             error: `Invalid file extension. Only .jpg, .jpeg, .png, and .webp are allowed.`,
@@ -115,16 +115,6 @@ async function validateMagicBytes(file: File): Promise<{ valid: boolean; error?:
 function generateFileName(userId: string, fileType: 'id_front' | 'selfie', extension: string): string {
     const timestamp = Date.now();
     return `${userId}/${fileType}_${timestamp}${extension}`;
-}
-
-/**
- * Sanitize filename to prevent path traversal attacks
- */
-function sanitizeFileName(filename: string): string {
-    return filename
-        .replace(/[^a-zA-Z0-9._-]/g, '_')
-        .replace(/\.+/g, '.')
-        .substring(0, 255);
 }
 
 /**

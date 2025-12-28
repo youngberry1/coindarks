@@ -91,7 +91,7 @@ export async function approveKYC(kycId: string): Promise<ApproveKYCResult> {
 
         // 7. Send approval email
         try {
-            const user = kyc.User as any;
+            const user = kyc.User as { email: string; firstName: string; lastName: string };
             await sendKYCApprovalEmail(
                 user.email,
                 `${user.firstName} ${user.lastName}`

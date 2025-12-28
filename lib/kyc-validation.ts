@@ -35,7 +35,7 @@ export const KYCFormSchema = z.object({
 
     country: z
         .string()
-        .refine((code) => supportedCountryCodes.includes(code as any), 'Invalid country selected'),
+        .refine((code) => (supportedCountryCodes as readonly string[]).includes(code), 'Invalid country selected'),
 
     idType: z.enum(['NATIONAL_ID', 'PASSPORT', 'DRIVERS_LICENSE', 'VOTERS_ID'] as const),
 

@@ -82,7 +82,7 @@ export async function getPendingKYC(filters: KYCFilters = {}): Promise<GetPendin
 
         return {
             success: true,
-            kycs: data as any,
+            kycs: data as KYCSubmission[],
             total: count || 0,
         };
     } catch (error) {
