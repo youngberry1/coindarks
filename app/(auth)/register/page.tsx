@@ -8,6 +8,7 @@ import { Mail, Lock, User, Loader2, ArrowRight, ShieldCheck, Eye, EyeOff } from 
 import { register } from "@/actions/register";
 import { PasswordStrength } from "@/components/auth/PasswordStrength";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { Logo } from "@/components/ui/Logo";
 
 export default function RegisterPage() {
     const [formData, setFormData] = useState({
@@ -73,14 +74,7 @@ export default function RegisterPage() {
                 className="w-full max-w-md space-y-8 glass-morphism p-10 rounded-3xl shadow-2xl relative z-10"
             >
                 <div className="text-center">
-                    <Link href="/" className="inline-flex items-center gap-2 mb-8">
-                        <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center font-bold text-white text-xl">
-                            CD
-                        </div>
-                        <span className="text-2xl font-bold tracking-tight">
-                            Coin<span className="text-primary">Darks</span>
-                        </span>
-                    </Link>
+                    <Logo className="inline-flex mb-8" />
                     <h2 className="text-3xl font-extrabold text-foreground">Create Account</h2>
                     <p className="mt-2 text-sm text-foreground/60">
                         Join the most trusted exchange for Ghana & Nigeria

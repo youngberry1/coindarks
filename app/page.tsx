@@ -7,6 +7,7 @@ import Features from "@/components/sections/Features";
 import TrustSection from "@/components/sections/TrustSection";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { Logo } from "@/components/ui/Logo";
 
 export default function Home() {
   return (
@@ -55,10 +56,7 @@ export default function Home() {
 
       <footer className="py-12 border-t border-white/5 bg-background">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-2">
-            <div className="h-6 w-6 rounded bg-primary flex items-center justify-center text-[10px] font-bold text-white">CD</div>
-            <span className="font-bold opacity-80 uppercase tracking-widest text-sm">CoinDarks Exchange</span>
-          </div>
+          <Logo variant="footer" />
           <p className="text-xs text-foreground/40 font-mono">
             © {new Date().getFullYear()} COINDARKS. SECURE CRYPTO BRIDGE.
           </p>
