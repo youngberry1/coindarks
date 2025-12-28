@@ -163,3 +163,62 @@ begin
         end if;
     end loop;
 end $$;
+
+-- ============================================
+-- 8. SUPABASE STORAGE SETUP (KYC DOCUMENTS)
+-- ============================================
+-- IMPORTANT: This section documents the Supabase Storage configuration.
+-- Storage buckets MUST be created manually in the Supabase Dashboard.
+-- After creating the bucket, apply the RLS policies from migration_002_kyc_storage_policies.sql
+
+-- STEP 1: Create Storage Bucket (Manual - Supabase Dashboard)
+-- --------------------------------------------------------
+-- 1. Go to Supabase Dashboard → Storage → New bucket
+-- 2. Name: kyc-documents
+-- 3. Public: NO (must be private!)
+-- 4. File size limit: 5242880 (5MB)
+-- 5. Click "Create bucket"
+
+-- STEP 2: Apply Storage RLS Policies
+-- --------------------------------------------------------
+-- Run the SQL script: docs/migration_002_kyc_storage_policies.sql
+-- This creates 5 policies:
+--   1. Users can upload own KYC documents
+--   2. Users can update own pending KYC documents
+--   3. Users can delete own pending KYC documents
+--   4. Admins can view all KYC documents
+--   5. Users can view own KYC documents
+
+-- STEP 3: Verify Storage Setup
+-- --------------------------------------------------------
+-- Run these verification queries:
+
+-- Check bucket exists (should return 1 row with public = false)
+-- SELECT * FROM storage.buckets WHERE name = 'kyc-documents';
+
+-- Check policies exist (should return 5)
+-- SELECT COUNT(*) FROM pg_policies 
+-- WHERE tablename = 'objects' AND policyname LIKE '%KYC%';
+
+-- ============================================
+-- STORAGE STRUCTURE
+-- ============================================
+-- kyc-documents/                    ← Private bucket
+-- ├── {user-uuid-1}/               ← User 1's folder
+-- │   ├── id_front_timestamp.jpg
+-- │   └── selfie_timestamp.jpg
+-- ├── {user-uuid-2}/               ← User 2's folder
+-- │   ├── id_front_timestamp.png
+-- │   └── selfie_timestamp.png
+-- └── ...
+
+-- ============================================
+-- SECURITY FEATURES
+-- ============================================
+-- ✓ Private bucket (no public URLs)
+-- ✓ Folder isolation (users can only access their own folder)
+-- ✓ Admin-only viewing (ADMIN/SUPPORT/FINANCE roles)
+-- ✓ Signed URLs with 5-minute expiry
+-- ✓ Status-based permissions (can't modify after approval)
+-- ✓ Audit trail via documentMetadata column
+
