@@ -50,7 +50,7 @@ export function SupportForm({ orders = [], isWidgetOpen, onClose }: SupportFormP
             const result = await createTicket({
                 subject,
                 message,
-                order_id: orderId === "general" ? undefined : orderId
+                linked_order_id: orderId === "general" ? undefined : orderId
             });
 
             if (result.success) {

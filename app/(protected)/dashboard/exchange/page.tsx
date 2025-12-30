@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import {
     Coins,
-    ArrowRightLeft,
     ShieldCheck,
     AlertCircle,
     Info
@@ -58,15 +57,7 @@ export default async function ExchangePage() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <div className="px-5 py-3 rounded-2xl bg-card-bg border border-border flex items-center gap-4 shadow-sm dark:shadow-none">
-                        <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                            <ArrowRightLeft className="h-5 w-5 text-primary" />
-                        </div>
-                        <div>
-                            <p className="text-[10px] font-black text-foreground/40 uppercase tracking-widest leading-none mb-1">Execution</p>
-                            <p className="text-sm font-bold">Manual Review</p>
-                        </div>
-                    </div>
+                    {/* Badge removed as per request */}
                 </div>
             </div>
 

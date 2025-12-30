@@ -15,6 +15,7 @@ import { createOrder } from "@/actions/exchange";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Cryptocurrency } from "@/actions/crypto";
+import { AssetSelector } from "@/components/dashboard/AssetSelector";
 
 interface AssetMetadata {
     id: string;
@@ -24,8 +25,8 @@ interface AssetMetadata {
 }
 
 const FIAT = [
-    { id: "GHS", name: "Ghana Cedi", symbol: "GH₵", rate: 16.5 }, // Simulated rate vs USD
-    { id: "NGN", name: "Nigerian Naira", symbol: "₦", rate: 1650 }, // Simulated rate vs USD
+    { id: "GHS", name: "Ghana Cedi", symbol: "GH₵", rate: 16.5, icon: "https://flagcdn.com/w40/gh.png" }, // Simulated rate vs USD
+    { id: "NGN", name: "Nigerian Naira", symbol: "₦", rate: 1650, icon: "https://flagcdn.com/w40/ng.png" }, // Simulated rate vs USD
 ];
 
 interface TradingFormProps {
@@ -179,13 +180,13 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                             <div className="flex items-center justify-between mb-4">
                                 <p className="text-[10px] font-black text-foreground/40 uppercase tracking-widest">{type === 'BUY' ? 'You Pay' : 'You Send'}</p>
                                 <div className="flex items-center gap-2 group cursor-pointer">
-                                    <select
+                                    <AssetSelector
                                         value={fiat.id}
-                                        onChange={(e) => setFiat(FIAT.find(f => f.id === e.target.value)!)}
-                                        className="bg-transparent font-black text-xs uppercase tracking-widest outline-none cursor-pointer"
-                                    >
-                                        {FIAT.map(f => <option key={f.id} value={f.id} className="bg-background text-foreground">{f.id} - {f.name}</option>)}
-                                    </select>
+                                        onChange={(val) => setFiat(FIAT.find(f => f.id === val)!)}
+                                        options={FIAT}
+                                        type="FIAT"
+                                        className="text-foreground"
+                                    />
                                 </div>
                             </div>
                             <div className="flex items-end justify-between gap-4">
@@ -210,13 +211,13 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                             <div className="flex items-center justify-between mb-4">
                                 <p className="text-[10px] font-black text-foreground/40 uppercase tracking-widest">{type === 'BUY' ? 'You Receive' : 'You Get Paid'}</p>
                                 <div className="flex items-center gap-2">
-                                    <select
+                                    <AssetSelector
                                         value={asset.id}
-                                        onChange={(e) => setAsset(supportedAssets.find(a => a.id === e.target.value)!)}
-                                        className="bg-transparent font-black text-xs uppercase tracking-widest outline-none cursor-pointer"
-                                    >
-                                        {supportedAssets.map(a => <option key={a.id} value={a.id} className="bg-background text-foreground">{a.id} - {a.name}</option>)}
-                                    </select>
+                                        onChange={(val) => setAsset(supportedAssets.find(a => a.id === val)!)}
+                                        options={supportedAssets}
+                                        type="CRYPTO"
+                                        className="text-foreground"
+                                    />
                                 </div>
                             </div>
                             <div className="flex items-end justify-between gap-4">
