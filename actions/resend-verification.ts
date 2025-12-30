@@ -1,14 +1,14 @@
 "use server";
 
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 import { generateVerificationToken } from "@/lib/tokens";
 import { sendVerificationEmail } from "@/lib/mail";
 
 export const resendVerification = async (email: string) => {
     try {
-        const { data: user } = await supabase
-            .from('User')
-            .select('email, emailVerified')
+        const { data: user } = await supabaseAdmin
+            .from('users')
+            .select('email, email_verified')
             .eq('email', email)
             .maybeSingle();
 
@@ -16,7 +16,7 @@ export const resendVerification = async (email: string) => {
             return { error: "Email not found!" };
         }
 
-        if (user.emailVerified) {
+        if (user.email_verified) {
             return { error: "Email already verified!" };
         }
 

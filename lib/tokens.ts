@@ -1,26 +1,26 @@
 import { v4 as uuidv4 } from "uuid";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 
 export const generateVerificationToken = async (email: string) => {
     const token = uuidv4();
     const expires = new Date(new Date().getTime() + 3600 * 1000); // 1 hour
 
     // Check for existing token
-    const { data: existingToken } = await supabase
-        .from('VerificationToken')
+    const { data: existingToken } = await supabaseAdmin
+        .from('verification_tokens')
         .select('*')
         .eq('email', email)
         .maybeSingle();
 
     if (existingToken) {
-        await supabase
-            .from('VerificationToken')
+        await supabaseAdmin
+            .from('verification_tokens')
             .delete()
             .eq('id', existingToken.id);
     }
 
-    const { data: verificationToken, error } = await supabase
-        .from('VerificationToken')
+    const { data: verificationToken, error } = await supabaseAdmin
+        .from('verification_tokens')
         .insert({
             email,
             token,
@@ -41,21 +41,21 @@ export const generatePasswordResetToken = async (email: string) => {
     const token = uuidv4();
     const expires = new Date(new Date().getTime() + 3600 * 1000); // 1 hour
 
-    const { data: existingToken } = await supabase
-        .from('PasswordResetToken')
+    const { data: existingToken } = await supabaseAdmin
+        .from('password_reset_tokens')
         .select('*')
         .eq('email', email)
         .maybeSingle();
 
     if (existingToken) {
-        await supabase
-            .from('PasswordResetToken')
+        await supabaseAdmin
+            .from('password_reset_tokens')
             .delete()
             .eq('id', existingToken.id);
     }
 
-    const { data: passwordResetToken, error } = await supabase
-        .from('PasswordResetToken')
+    const { data: passwordResetToken, error } = await supabaseAdmin
+        .from('password_reset_tokens')
         .insert({
             email,
             token,

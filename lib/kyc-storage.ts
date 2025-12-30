@@ -1,5 +1,17 @@
-import { supabase } from './supabase';
+import { createClient } from '@supabase/supabase-js';
 import { KYC_FILE_CONSTRAINTS, SIGNED_URL_EXPIRY } from '@/types/kyc';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!supabaseServiceKey) {
+    console.warn('SUPABASE_SERVICE_ROLE_KEY is missing. RLS policies may block file uploads.');
+}
+
+// Use Service Role Key to bypass RLS for server-side operations
+// Security is handled by the calling Server Actions (session/role checks)
+export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
+
 
 /**
  * KYC Storage Service
@@ -28,7 +40,7 @@ export async function validateFile(file: File): Promise<{ valid: boolean; error?
     if (file.size > KYC_FILE_CONSTRAINTS.MAX_FILE_SIZE) {
         return {
             valid: false,
-            error: `File size exceeds 5MB limit. Your file is ${(file.size / 1024 / 1024).toFixed(2)}MB`,
+            error: `File size exceeds 5MB limit. Your file is ${(file.size / 1024 / 1024).toFixed(2)} MB`,
         };
     }
 
@@ -65,54 +77,50 @@ export async function validateFile(file: File): Promise<{ valid: boolean; error?
  * Validate file magic bytes to prevent fake extensions
  */
 async function validateMagicBytes(file: File): Promise<{ valid: boolean; error?: string }> {
-    return new Promise((resolve) => {
-        const reader = new FileReader();
+    try {
+        // Read first 4 bytes using arrayBuffer() which is available in Node.js File/Blob
+        const buffer = await file.slice(0, 4).arrayBuffer();
+        const arr = new Uint8Array(buffer);
 
-        reader.onload = (e) => {
-            const arr = new Uint8Array(e.target?.result as ArrayBuffer).subarray(0, 4);
-            let header = '';
-            for (let i = 0; i < arr.length; i++) {
-                header += arr[i].toString(16).padStart(2, '0');
-            }
+        let header = '';
+        for (let i = 0; i < arr.length; i++) {
+            header += arr[i].toString(16).padStart(2, '0');
+        }
 
-            // Check magic bytes for common image formats
-            const validHeaders = [
-                'ffd8ffe0', // JPEG
-                'ffd8ffe1', // JPEG
-                'ffd8ffe2', // JPEG
-                'ffd8ffe3', // JPEG
-                'ffd8ffe8', // JPEG
-                '89504e47', // PNG
-                '52494646', // WebP (RIFF)
-            ];
+        // Check magic bytes for common image formats
+        const validHeaders = [
+            'ffd8ffe0', // JPEG
+            'ffd8ffe1', // JPEG
+            'ffd8ffe2', // JPEG
+            'ffd8ffe3', // JPEG
+            'ffd8ffe8', // JPEG
+            '89504e47', // PNG
+            '52494646', // WebP (RIFF)
+        ];
 
-            const isValid = validHeaders.some(validHeader => header.startsWith(validHeader));
+        const isValid = validHeaders.some(validHeader => header.startsWith(validHeader));
 
-            if (!isValid) {
-                resolve({
-                    valid: false,
-                    error: 'File appears to be corrupted or has a fake extension',
-                });
-            } else {
-                resolve({ valid: true });
-            }
-        };
-
-        reader.onerror = () => {
-            resolve({
+        if (!isValid) {
+            return {
                 valid: false,
-                error: 'Failed to read file',
-            });
+                error: 'File appears to be corrupted or has a fake extension',
+            };
+        } else {
+            return { valid: true };
+        }
+    } catch (error) {
+        console.error('Magic bytes check error:', error);
+        return {
+            valid: false,
+            error: 'Failed to validate file format',
         };
-
-        reader.readAsArrayBuffer(file.slice(0, 4));
-    });
+    }
 }
 
 /**
  * Generate unique filename with timestamp
  */
-function generateFileName(userId: string, fileType: 'id_front' | 'selfie', extension: string): string {
+function generateFileName(userId: string, fileType: 'id_front' | 'id_back' | 'selfie', extension: string): string {
     const timestamp = Date.now();
     return `${userId}/${fileType}_${timestamp}${extension}`;
 }
@@ -123,9 +131,10 @@ function generateFileName(userId: string, fileType: 'id_front' | 'selfie', exten
 export async function uploadKYCDocument(
     file: File,
     userId: string,
-    documentType: 'id_front' | 'selfie'
+    documentType: 'id_front' | 'id_back' | 'selfie'
 ): Promise<UploadResult> {
     try {
+        console.log('[KYC Upload] Starting upload. Service Key Present:', !!supabaseServiceKey);
         // Validate file
         const validation = await validateFile(file);
         if (!validation.valid) {
@@ -139,8 +148,8 @@ export async function uploadKYCDocument(
         const extension = `.${file.name.split('.').pop()?.toLowerCase()}`;
         const fileName = generateFileName(userId, documentType, extension);
 
-        // Upload to Supabase Storage
-        const { data, error } = await supabase.storage
+        // Upload to Supabase Storage using Admin client to bypass RLS
+        const { data, error } = await supabaseAdmin.storage
             .from('kyc-documents')
             .upload(fileName, file, {
                 cacheControl: '3600',
@@ -174,7 +183,7 @@ export async function uploadKYCDocument(
  */
 export async function generateSignedUrl(filePath: string): Promise<SignedUrlResult> {
     try {
-        const { data, error } = await supabase.storage
+        const { data, error } = await supabaseAdmin.storage
             .from('kyc-documents')
             .createSignedUrl(filePath, SIGNED_URL_EXPIRY);
 
@@ -206,7 +215,7 @@ export async function generateSignedUrl(filePath: string): Promise<SignedUrlResu
  */
 export async function deleteKYCDocument(filePath: string): Promise<{ success: boolean; error?: string }> {
     try {
-        const { error } = await supabase.storage
+        const { error } = await supabaseAdmin.storage
             .from('kyc-documents')
             .remove([filePath]);
 

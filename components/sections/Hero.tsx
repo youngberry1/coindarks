@@ -44,7 +44,7 @@ export default function Hero() {
                                     Start Trading Now <ArrowRight className="h-5 w-5" />
                                 </button>
                             </Link>
-                            <Link href="#rates" className="w-full sm:w-auto">
+                            <Link href="#market" className="w-full sm:w-auto">
                                 <button className="w-full sm:w-auto rounded-full glass-morphism px-8 py-4 font-bold text-foreground transition-all hover:bg-foreground/5 active:scale-95 border border-foreground/5">
                                     View Live Rates
                                 </button>

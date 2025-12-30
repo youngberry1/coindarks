@@ -3,7 +3,7 @@ import { supabase } from "@/lib/supabase";
 export const getUserByEmail = async (email: string) => {
     try {
         const { data: user } = await supabase
-            .from("User")
+            .from("users")
             .select("*")
             .eq("email", email)
             .maybeSingle();
@@ -18,7 +18,7 @@ export const getUserByEmail = async (email: string) => {
 export const getUserById = async (id: string) => {
     try {
         const { data: user } = await supabase
-            .from("User")
+            .from("users")
             .select("*")
             .eq("id", id)
             .maybeSingle();

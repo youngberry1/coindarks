@@ -26,7 +26,7 @@ export const sendVerificationEmail = async (email: string, token: string) => {
         const emailHtml = await render(VerificationEmail({ validationLink: confirmLink }));
 
         await resend.emails.send({
-            from: `CoinDarks <${process.env.EMAIL_FROM}>`, // Change this to your domain later e.g. support@coindarks.com
+            from: `CoinDarks <${process.env.EMAIL_FROM}>`,
             to: email,
             subject: "Verify your email - CoinDarks",
             html: emailHtml,
@@ -120,10 +120,10 @@ export const sendKYCSubmissionEmail = async (email: string, fullName: string) =>
             <ul>
                 <li>Our team will verify your identity documents</li>
                 <li>You'll receive an email once the review is complete</li>
-                <li>If approved, you'll unlock higher trading limits</li>
+                <li>Unlock premium features and enhanced security</li>
             </ul>
             <p>You can check your KYC status anytime in your dashboard.</p>
-            <a href="${domain}/dashboard/kyc/status" class="button">Check KYC Status</a>
+            <a href="${domain}/dashboard/settings?tab=verification" class="button">Check KYC Status</a>
             <p>If you have any questions, our support team is available 24/7.</p>
             <p>Best regards,<br><strong>The CoinDarks Team</strong></p>
         </div>
@@ -151,7 +151,10 @@ export const sendKYCApprovalEmail = async (email: string, fullName: string) => {
     console.log(`KYC APPROVAL EMAIL SENT TO: ${email}`);
     console.log("-----------------------------------------");
 
-    if (!process.env.RESEND_API_KEY) return;
+    if (!process.env.RESEND_API_KEY) {
+        console.warn("RESEND_API_KEY is missing. KYC Approval email was NOT sent to:", email);
+        return;
+    }
 
     try {
         const emailHtml = `
@@ -179,10 +182,10 @@ export const sendKYCApprovalEmail = async (email: string, fullName: string) => {
             <p style="text-align: center;"><span class="badge">✓ VERIFIED</span></p>
             <h3>What you can do now:</h3>
             <ul>
-                <li><strong>Higher Trading Limits:</strong> Trade up to $10,000+ daily</li>
                 <li><strong>Instant Withdrawals:</strong> Faster bank transfers</li>
                 <li><strong>Priority Support:</strong> Dedicated account manager</li>
                 <li><strong>Better Rates:</strong> Access to premium GHS/NGN rates</li>
+                <li><strong>Secure Trading:</strong> Your account is fully protected</li>
             </ul>
             <p>Your account is now fully verified and ready for trading!</p>
             <a href="${domain}/dashboard" class="button">Start Trading Now</a>
@@ -214,7 +217,10 @@ export const sendKYCRejectionEmail = async (email: string, fullName: string, rea
     console.log(`REASON: ${reason}`);
     console.log("-----------------------------------------");
 
-    if (!process.env.RESEND_API_KEY) return;
+    if (!process.env.RESEND_API_KEY) {
+        console.warn("RESEND_API_KEY is missing. KYC Approval email was NOT sent to:", email);
+        return;
+    }
 
     try {
         const emailHtml = `

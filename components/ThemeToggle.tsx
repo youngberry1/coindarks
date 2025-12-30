@@ -21,7 +21,7 @@ export function ThemeToggle() {
     const isDark = resolvedTheme === "dark";
 
     return (
-        <label className="relative inline-flex items-center cursor-pointer scale-75 sm:scale-90 md:scale-100 transition-transform origin-right">
+        <label className="relative inline-flex items-center cursor-pointer scale-75 sm:scale-90 md:scale-100 transition-transform origin-right" aria-label="Toggle Theme">
             <input
                 className="sr-only peer"
                 type="checkbox"

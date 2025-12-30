@@ -10,6 +10,7 @@ import { useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { resendVerification } from "@/actions/resend-verification";
+import { checkVerification } from "@/actions/check-verification";
 import { login } from "@/actions/login";
 import { Logo } from "@/components/ui/Logo";
 
@@ -21,6 +22,7 @@ function LoginContent() {
     const [showPassword, setShowPassword] = useState(false);
     const [isUnverified, setIsUnverified] = useState(false);
     const [resendLoading, setResendLoading] = useState(false);
+    const [checkLoading, setCheckLoading] = useState(false);
     const [resendMessage, setResendMessage] = useState({ type: "", text: "" });
 
     const router = useRouter();
@@ -74,10 +76,32 @@ function LoginContent() {
         }
     };
 
+    const handleCheckStatus = async () => {
+        if (!email) return;
+        setCheckLoading(true);
+        setResendMessage({ type: "", text: "" });
+
+        try {
+            const result = await checkVerification(email);
+            if (result.error) {
+                setResendMessage({ type: "error", text: result.error });
+            } else if (result.verified) {
+                setResendMessage({ type: "success", text: "Email verified! You can now sign in." });
+                setIsUnverified(false);
+            } else {
+                setResendMessage({ type: "error", text: "Email is still not verified. Please check your inbox." });
+            }
+        } catch {
+            setResendMessage({ type: "error", text: "Failed to check status. Please try again." });
+        } finally {
+            setCheckLoading(false);
+        }
+    };
+
     return (
         <div className="flex min-h-screen items-center justify-center px-4 py-12 sm:px-6 lg:px-8 bg-background relative overflow-hidden">
             {/* Theme Toggle Positioned Top Right */}
-            <div className="absolute top-8 right-8 z-50">
+            <div className="absolute top-4 right-4 sm:top-8 sm:right-8 z-50">
                 <ThemeToggle />
             </div>
 
@@ -88,7 +112,7 @@ function LoginContent() {
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="w-full max-w-md space-y-8 glass-morphism p-10 rounded-3xl shadow-2xl relative z-10"
+                className="w-full max-w-md space-y-6 md:space-y-8 glass-morphism p-6 md:p-10 rounded-[32px] md:rounded-3xl shadow-2xl relative z-10"
             >
                 <div className="text-center">
                     <Logo className="inline-flex mb-8" />
@@ -98,54 +122,67 @@ function LoginContent() {
                     </p>
                 </div>
 
-                <AnimatePresence>
+                <AnimatePresence mode="wait">
                     {(isRegistered || isUnverified) && (
                         <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: "auto" }}
-                            exit={{ opacity: 0, height: 0 }}
-                            className={`rounded-xl p-4 text-sm border flex flex-col gap-3 transition-colors ${isUnverified
+                            key={isUnverified ? "unverified" : "registered"}
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            className={`rounded-xl p-4 text-sm border flex flex-col gap-4 transition-colors ${isUnverified
                                 ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
                                 : "bg-green-500/10 text-green-500 border-green-500/20"
                                 }`}
                         >
                             <div className="flex items-start gap-3">
                                 {isUnverified ? (
-                                    <ShieldAlert className="h-5 w-5 shrink-0" />
+                                    <ShieldAlert className="h-5 w-5 shrink-0 mt-0.5" />
                                 ) : (
-                                    <CheckCircle2 className="h-5 w-5 shrink-0" />
+                                    <CheckCircle2 className="h-5 w-5 shrink-0 mt-0.5" />
                                 )}
-                                <p>
+                                <p className="leading-relaxed">
                                     {isUnverified
-                                        ? "Your email is not verified yet. Please check your inbox or resend the link below."
+                                        ? "Your email is not verified yet. Please check your inbox or use the options below."
                                         : "Registration successful! Please check your email for verification before logging in."
                                     }
                                 </p>
                             </div>
 
-                            {isUnverified && (
-                                <div className="mt-1">
+                            <div className="flex flex-wrap gap-2">
+                                <button
+                                    type="button"
+                                    onClick={handleResend}
+                                    disabled={resendLoading || checkLoading}
+                                    className="text-[10px] font-bold uppercase tracking-widest bg-amber-500 text-white px-3 py-2 rounded-lg shadow hover:bg-amber-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                >
+                                    {resendLoading ? (
+                                        <Loader2 className="h-3 w-3 animate-spin" />
+                                    ) : null}
+                                    Resend Email
+                                </button>
+
+                                {isUnverified && (
                                     <button
                                         type="button"
-                                        onClick={handleResend}
-                                        disabled={resendLoading}
-                                        className="text-xs font-bold uppercase tracking-wider bg-amber-500 text-white px-4 py-2 rounded-lg shadow-lg shadow-amber-500/20 hover:bg-amber-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                        onClick={handleCheckStatus}
+                                        disabled={resendLoading || checkLoading}
+                                        className="text-[10px] font-bold uppercase tracking-widest bg-primary text-white px-3 py-2 rounded-lg shadow hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                                     >
-                                        {resendLoading ? (
+                                        {checkLoading ? (
                                             <Loader2 className="h-3 w-3 animate-spin" />
                                         ) : null}
-                                        Resend Verification Email
+                                        Check Status
                                     </button>
-                                </div>
-                            )}
+                                )}
+                            </div>
 
                             {resendMessage.text && (
                                 <motion.div
                                     initial={{ opacity: 0, scale: 0.95 }}
                                     animate={{ opacity: 1, scale: 1 }}
-                                    className={`text-[11px] font-medium p-2 rounded-md ${resendMessage.type === "success"
-                                        ? "bg-green-500/20 text-green-400"
-                                        : "bg-red-500/20 text-red-400"
+                                    className={`text-[11px] font-bold p-2.5 rounded-lg border-2 ${resendMessage.type === "success"
+                                        ? "bg-green-500/10 text-green-500 border-green-500/20"
+                                        : "bg-red-500/10 text-red-500 border-red-500/20"
                                         }`}
                                 >
                                     {resendMessage.text}
@@ -166,6 +203,7 @@ function LoginContent() {
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="w-full rounded-2xl border border-white/10 bg-white/5 py-4 pl-12 pr-4 text-foreground placeholder:text-foreground/30 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all duration-300"
                                 placeholder="Email address"
+                                aria-label="Email address"
                             />
                         </div>
                         <div className="relative">
@@ -177,6 +215,7 @@ function LoginContent() {
                                 onChange={(e) => setPassword(e.target.value)}
                                 className="w-full rounded-2xl border border-white/10 bg-white/5 py-4 pl-12 pr-12 text-foreground placeholder:text-foreground/30 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all duration-300"
                                 placeholder="Password"
+                                aria-label="Password"
                             />
                             <button
                                 type="button"

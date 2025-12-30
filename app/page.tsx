@@ -3,7 +3,9 @@
 import Navbar from "@/components/layout/Navbar";
 import Hero from "@/components/sections/Hero";
 import Marquee from "@/components/sections/Marquee";
+import LiveMarket from "@/components/sections/LiveMarket";
 import Features from "@/components/sections/Features";
+import Security from "@/components/sections/Security";
 import TrustSection from "@/components/sections/TrustSection";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -15,12 +17,12 @@ export default function Home() {
       <Navbar />
       <Hero />
       <Marquee />
+      <LiveMarket />
       <Features />
+      <Security />
       <TrustSection />
 
-      {/* Rate Ticker or Exchange Preview could go here */}
-
-      <section id="security" className="py-24 relative overflow-hidden bg-background">
+      <section id="cta" className="py-24 relative overflow-hidden bg-background">
         {/* Background Decor */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-96 bg-primary/10 blur-[100px] rounded-full pointer-events-none -z-10 will-change-[filter]" />
 

@@ -60,7 +60,7 @@ export default function RegisterPage() {
     return (
         <div className="flex min-h-screen items-center justify-center px-4 py-12 sm:px-6 lg:px-8 bg-background relative overflow-hidden">
             {/* Theme Toggle Positioned Top Right */}
-            <div className="absolute top-8 right-8 z-50">
+            <div className="absolute top-4 right-4 sm:top-8 sm:right-8 z-50">
                 <ThemeToggle />
             </div>
 
@@ -71,7 +71,7 @@ export default function RegisterPage() {
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="w-full max-w-md space-y-8 glass-morphism p-10 rounded-3xl shadow-2xl relative z-10"
+                className="w-full max-w-md space-y-6 md:space-y-8 glass-morphism p-6 md:p-10 rounded-[32px] md:rounded-3xl shadow-2xl relative z-10"
             >
                 <div className="text-center">
                     <Logo className="inline-flex mb-8" />
@@ -95,6 +95,7 @@ export default function RegisterPage() {
                                     onChange={handleChange}
                                     className="w-full rounded-2xl border border-white/10 bg-white/5 py-4 pl-12 pr-4 text-foreground placeholder:text-foreground/30 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all duration-300"
                                     placeholder="First Name"
+                                    aria-label="First Name"
                                 />
                                 {errors?.firstName && <p className="mt-1 text-xs text-red-500 ml-2">{errors.firstName[0]}</p>}
                             </div>
@@ -107,6 +108,7 @@ export default function RegisterPage() {
                                     onChange={handleChange}
                                     className="w-full rounded-2xl border border-white/10 bg-white/5 py-4 pl-4 pr-4 text-foreground placeholder:text-foreground/30 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all duration-300"
                                     placeholder="Last Name"
+                                    aria-label="Last Name"
                                 />
                                 {errors?.lastName && <p className="mt-1 text-xs text-red-500 ml-2">{errors.lastName[0]}</p>}
                             </div>
@@ -120,6 +122,7 @@ export default function RegisterPage() {
                                 onChange={handleChange}
                                 className="w-full rounded-2xl border border-white/10 bg-white/5 py-4 pl-4 pr-4 text-foreground placeholder:text-foreground/30 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all duration-300"
                                 placeholder="Middle Name (Optional)"
+                                aria-label="Middle Name"
                             />
                         </div>
 
@@ -133,6 +136,7 @@ export default function RegisterPage() {
                                 onChange={handleChange}
                                 className="w-full rounded-2xl border border-white/10 bg-white/5 py-4 pl-12 pr-4 text-foreground placeholder:text-foreground/30 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all duration-300"
                                 placeholder="Email address"
+                                aria-label="Email address"
                             />
                             {errors?.email && <p className="mt-1 text-xs text-red-500 ml-2">{errors.email[0]}</p>}
                         </div>
@@ -147,6 +151,7 @@ export default function RegisterPage() {
                                 onChange={handleChange}
                                 className="w-full rounded-2xl border border-white/10 bg-white/5 py-4 pl-12 pr-12 text-foreground placeholder:text-foreground/30 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all duration-300"
                                 placeholder="Password"
+                                aria-label="Password"
                             />
                             <button
                                 type="button"
@@ -168,6 +173,7 @@ export default function RegisterPage() {
                                 onChange={handleChange}
                                 className="w-full rounded-2xl border border-white/10 bg-white/5 py-4 pl-12 pr-12 text-foreground placeholder:text-foreground/30 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all duration-300"
                                 placeholder="Confirm Password"
+                                aria-label="Confirm Password"
                             />
                             <button
                                 type="button"
@@ -186,6 +192,18 @@ export default function RegisterPage() {
                                 confirmPassword={formData.confirmPassword}
                                 showMatch={true}
                             />
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-3 p-4 rounded-2xl bg-amber-500/5 border border-amber-500/10">
+                        <div className="flex items-start gap-3">
+                            <ShieldCheck className="h-5 w-5 text-amber-500 shrink-0" />
+                            <div>
+                                <p className="text-[12px] font-bold text-amber-500 uppercase tracking-wider mb-1">Important: Official Identity</p>
+                                <p className="text-[12px] text-foreground/60 leading-tight">
+                                    Please use your **real name** as it appears on your official ID. You will not be able to change your name or email after registration.
+                                </p>
+                            </div>
                         </div>
                     </div>
 

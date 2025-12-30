@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { CheckCircle2, XCircle, Loader2, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { verifyEmail } from "@/actions/verify";
+import { newVerification } from "@/actions/new-verification";
 
 function VerifyContent() {
     const [error, setError] = useState<string | undefined>();
@@ -18,7 +18,7 @@ function VerifyContent() {
             if (!token || success || error) return;
 
             try {
-                const data = await verifyEmail(token);
+                const data = await newVerification(token);
                 if (data.success) {
                     setSuccess(data.success);
                 } else {

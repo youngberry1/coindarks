@@ -14,24 +14,14 @@ const partners = [
     { name: "Solana", icon: "sol", type: "crypto" },
     { name: "MTN MoMo", icon: "mtn", type: "payment", customIcon: "/assets/mtn.jpeg" },
     { name: "Telecel Cash", icon: "telecel", type: "payment", customIcon: "/assets/telecel.jpeg" },
-    { name: "AirtelTigo", icon: "airtel", type: "payment", svgComponent: AirtelIcon },
-    { name: "Mastercard", icon: "mastercard", type: "payment", svgComponent: MastercardIcon },
-    { name: "Visa", icon: "visa", type: "payment", svgComponent: VisaIcon },
+    { name: "AirtelTigo", icon: "airtel", type: "payment", customIcon: AirtelIcon },
+    { name: "Mastercard", icon: "mastercard", type: "payment", customIcon: MastercardIcon },
+    { name: "Visa", icon: "visa", type: "payment", customIcon: VisaIcon },
     { name: "Binance Pay", icon: "bnb", type: "crypto" },
 ];
 
-const PaymentIcon = ({ partner }: { partner: typeof partners[0] }) => {
-    // If it's a custom SVG component
-    if (partner.svgComponent) {
-        const SvgComponent = partner.svgComponent;
-        return (
-            <div className="h-8 w-auto opacity-60 dark:opacity-70 group-hover:opacity-100 transition-opacity">
-                <SvgComponent className="h-8 w-auto" />
-            </div>
-        );
-    }
-
-    // If it's a custom image (JPEG/PNG)
+const PaymentIcon = ({ partner }: { partner: typeof partners[number] }) => {
+    // If it's a custom image (JPEG/PNG/SVG)
     if (partner.customIcon) {
         return (
             <div className="relative h-8 w-12 opacity-60 dark:opacity-70 group-hover:opacity-100 transition-opacity">
