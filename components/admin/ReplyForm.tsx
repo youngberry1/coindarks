@@ -21,6 +21,7 @@ const FROM_EMAILS = [
     { value: 'support@coindarks.com', label: 'Support Team (support@coindarks.com)' },
     { value: 'admin@coindarks.com', label: 'Administrator (admin@coindarks.com)' },
     { value: 'finance@coindarks.com', label: 'Finance Dept (finance@coindarks.com)' },
+    { value: 'noreply@coindarks.com', label: 'No Reply (noreply@coindarks.com)' },
 ];
 
 export function ReplyForm({ ticketId }: ReplyFormProps) {
@@ -41,7 +42,7 @@ export function ReplyForm({ ticketId }: ReplyFormProps) {
                 ticketId,
                 message,
                 status,
-                fromEmail: fromEmail as 'admin@coindarks.com' | 'support@coindarks.com' | 'finance@coindarks.com'
+                fromEmail: fromEmail as 'admin@coindarks.com' | 'support@coindarks.com' | 'finance@coindarks.com' | 'noreply@coindarks.com',
             });
 
             if (result && result.success) {
@@ -89,7 +90,6 @@ export function ReplyForm({ ticketId }: ReplyFormProps) {
                             <SelectItem value="no_change">Don&apos;t change status</SelectItem>
                             <SelectItem value="OPEN" className="text-priority">Open</SelectItem>
                             <SelectItem value="IN_PROGRESS" className="text-amber-500">In Progress</SelectItem>
-                            <SelectItem value="RESOLVED" className="text-emerald-500">Resolved</SelectItem>
                             <SelectItem value="CLOSED" className="text-foreground/40">Closed</SelectItem>
                         </SelectContent>
                     </Select>

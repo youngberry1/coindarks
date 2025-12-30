@@ -15,6 +15,7 @@ import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import TradeableAssets from '@/components/dashboard/TradeableAssets';
 import { getCryptos } from '@/actions/crypto';
+import { getUserTickets } from "@/actions/support";
 
 export default async function DashboardPage() {
     const session = await auth();
@@ -27,8 +28,9 @@ export default async function DashboardPage() {
         .eq('id', user?.id)
         .single();
 
-    // Fetch inventory
-    // const { data: inventory } = await supabaseAdmin... (removed)
+    // Fetch recent support tickets
+    const tickets = await getUserTickets();
+    const recentTickets = tickets.slice(0, 3);
 
     // Fetch recent orders for support linking
     const { data: orders } = await supabaseAdmin
@@ -181,6 +183,44 @@ export default async function DashboardPage() {
 
                 {/* Support / Management Sidebar */}
                 <div className="xl:col-span-4 space-y-6">
+                    {!isAdmin && (
+                        <div className="p-8 rounded-[40px] border border-border bg-card-bg/50 backdrop-blur-md shadow-sm dark:shadow-none">
+                            <div className="flex items-center justify-between mb-6">
+                                <h3 className="text-lg font-black uppercase tracking-widest">Recent Support</h3>
+                                <Link href="/dashboard/support" className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline">View All</Link>
+                            </div>
+
+                            {recentTickets && recentTickets.length > 0 ? (
+                                <div className="space-y-4">
+                                    {recentTickets.map((ticket: { id: string; ticket_id: string; status: string; subject: string }) => (
+                                        <Link
+                                            key={ticket.id}
+                                            href={`/dashboard/support/${ticket.ticket_id}`}
+                                            className="block p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-primary/20 transition-all group"
+                                        >
+                                            <div className="flex items-center justify-between mb-2">
+                                                <span className="text-[10px] font-mono font-bold text-foreground/40">#{ticket.ticket_id}</span>
+                                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${ticket.status === 'OPEN' ? 'bg-primary/10 text-primary' :
+                                                    ticket.status === 'IN_PROGRESS' ? 'bg-amber-500/10 text-amber-500' :
+                                                        'bg-emerald-500/10 text-emerald-500'
+                                                    }`}>
+                                                    {ticket.status}
+                                                </span>
+                                            </div>
+                                            <p className="text-sm font-bold truncate group-hover:text-primary transition-colors">
+                                                {ticket.subject}
+                                            </p>
+                                        </Link>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="py-8 text-center border border-dashed border-white/10 rounded-3xl">
+                                    <p className="text-xs text-foreground/40 font-bold uppercase tracking-widest">No active tickets</p>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
                     <div className="p-8 rounded-[40px] border border-border bg-card-bg/50 backdrop-blur-md shadow-sm dark:shadow-none">
                         <h3 className="text-lg font-black mb-6 uppercase tracking-widest">{isAdmin ? "Admin Controls" : "Quick Links"}</h3>
                         <div className="space-y-6">
@@ -196,6 +236,11 @@ export default async function DashboardPage() {
                                         <li>
                                             <Link href="/dashboard/settings?tab=verification" className="flex items-center justify-between text-sm font-bold hover:text-primary transition-colors">
                                                 Verification <ArrowRight className="h-3.5 w-3.5" />
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link href="/dashboard/support" className="flex items-center justify-between text-sm font-bold hover:text-primary transition-colors">
+                                                Support Tickets <ArrowRight className="h-3.5 w-3.5" />
                                             </Link>
                                         </li>
                                     </ul>

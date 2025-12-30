@@ -326,7 +326,7 @@ export const sendSupportReplyEmail = async (
                 ${message.replace(/\n/g, '<br/>')}
             </blockquote>
             <p>You can view the full conversation and reply by logging into your dashboard.</p>
-            <a href="${domain}/dashboard" class="button">View Ticket</a>
+            <a href="${domain}/dashboard/support/${ticketId}" class="button">View Ticket</a>
             <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;"/>
             <p>Best regards,<br><strong>CoinDarks Support Team</strong></p>
         </div>
@@ -423,5 +423,68 @@ export const sendTicketCreatedEmail = async (
         console.log("Ticket created email sent via Resend!");
     } catch (error) {
         console.error("Failed to send ticket created email via Resend:", error);
+    }
+}
+
+export const sendTicketClosedEmail = async (
+    email: string,
+    fullName: string,
+    ticketId: string
+) => {
+    console.log("-----------------------------------------");
+    console.log(`TICKET CLOSED EMAIL SENT TO: ${email}`);
+    console.log(`TICKET ID: ${ticketId}`);
+    console.log("-----------------------------------------");
+
+    const resend = getResend();
+    if (!resend) return;
+
+    try {
+        const emailHtml = `
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+        .content { background: #f9fafb; padding: 30px; border-radius: 0 0 10px 10px; }
+        .button { display: inline-block; padding: 12px 30px; background: #3b82f6; color: white; text-decoration: none; border-radius: 6px; margin: 20px 0; }
+        .footer { text-align: center; margin-top: 20px; color: #666; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Ticket Closed</h1>
+        </div>
+        <div class="content">
+            <p>Hello ${fullName},</p>
+            <p>Your support ticket <strong>#${ticketId}</strong> has been marked as <strong>Resolved/Closed</strong>.</p>
+            <p>This ticket has been removed from your active dashboard list.</p>
+            <p>If you need further assistance, please create a new ticket.</p>
+            
+            <a href="${domain}/dashboard/support" class="button">Go to Dashboard</a>
+            
+            <p>Thank you for using CoinDarks.</p>
+            <p>Best regards,<br><strong>CoinDarks Support Team</strong></p>
+        </div>
+        <div class="footer">
+            <p>© 2025 CoinDarks. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
+        `;
+
+        await resend.emails.send({
+            from: `CoinDarks Support <${process.env.EMAIL_FROM}>`,
+            to: email,
+            subject: `[Closed] Ticket #${ticketId}`,
+            html: emailHtml,
+        });
+        console.log("Ticket closed email sent via Resend!");
+    } catch (error) {
+        console.error("Failed to send ticket closed email via Resend:", error);
     }
 }

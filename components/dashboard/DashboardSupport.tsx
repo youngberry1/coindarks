@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { MessageCircle, Send } from "lucide-react";
-import { SupportForm } from "./SupportForm";
+import { SupportModal } from "./SupportModal";
 
 interface DashboardSupportProps {
     orders: {
@@ -36,10 +36,10 @@ export function DashboardSupport({ orders }: DashboardSupportProps) {
                 </div>
             </button>
 
-            <SupportForm
-                orders={orders}
-                isWidgetOpen={isOpen}
+            <SupportModal
+                isOpen={isOpen}
                 onClose={() => setIsOpen(false)}
+                orders={orders}
             />
         </>
     );

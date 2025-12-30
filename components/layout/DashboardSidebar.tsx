@@ -48,6 +48,7 @@ export function DashboardSidebar({ user }: SidebarProps) {
         { name: "My Orders", href: "/dashboard/orders", icon: History },
         { name: "Wallets", href: "/dashboard/wallets", icon: Wallet },
         { name: "Settings", href: "/dashboard/settings", icon: Settings },
+        { name: "Support", href: "/dashboard/support", icon: Mail },
     ];
 
     const adminLinks = [

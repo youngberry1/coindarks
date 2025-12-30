@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { Menu, LayoutDashboard, LogOut, Shield, Zap, Globe, ArrowRight } from "lucide-react";
+import { Menu, LayoutDashboard, LogOut, Shield, Zap, Globe, ArrowRight, Star } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Logo } from "@/components/ui/Logo";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetHeader, SheetDescription } from "@/components/ui/sheet";
@@ -15,6 +15,7 @@ export default function Navbar() {
     const navLinks = [
         { name: "Exchange", href: "/#", icon: Zap },
         { name: "Live Market", href: "/#market", icon: Globe },
+        { name: "Testimonials", href: "/#testimonials", icon: Star },
         { name: "Security", href: "/#security", icon: Shield },
     ];
 
@@ -110,7 +111,17 @@ export default function Navbar() {
                                                 <Link
                                                     key={link.name}
                                                     href={link.href}
-                                                    onClick={() => setIsOpen(false)}
+                                                    onClick={(e) => {
+                                                        const id = link.href.split("#")[1];
+                                                        if (id) {
+                                                            const element = document.getElementById(id);
+                                                            if (element) {
+                                                                e.preventDefault();
+                                                                element.scrollIntoView({ behavior: "smooth" });
+                                                            }
+                                                        }
+                                                        setIsOpen(false);
+                                                    }}
                                                     className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-primary/10 hover:border-primary/20 transition-all group"
                                                 >
                                                     <div className="h-10 w-10 rounded-xl bg-background flex items-center justify-center">

@@ -7,6 +7,7 @@ import LiveMarket from "@/components/sections/LiveMarket";
 import Features from "@/components/sections/Features";
 import Security from "@/components/sections/Security";
 import TrustSection from "@/components/sections/TrustSection";
+import Testimonials from "@/components/sections/Testimonials";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Logo } from "@/components/ui/Logo";
@@ -20,6 +21,7 @@ export default function Home() {
       <LiveMarket />
       <Features />
       <Security />
+      <Testimonials />
       <TrustSection />
 
       <section id="cta" className="py-24 relative overflow-hidden bg-background">
