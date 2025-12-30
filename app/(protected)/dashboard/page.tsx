@@ -13,7 +13,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase-admin";
-import { SupportForm } from "@/components/dashboard/SupportForm";
+import TradeableAssets from '@/components/dashboard/TradeableAssets';
+import { getCryptos } from '@/actions/crypto';
 
 export default async function DashboardPage() {
     const session = await auth();
@@ -27,9 +28,7 @@ export default async function DashboardPage() {
         .single();
 
     // Fetch inventory
-    const { data: inventory } = await supabaseAdmin
-        .from('inventory')
-        .select('*');
+    // const { data: inventory } = await supabaseAdmin... (removed)
 
     // Fetch recent orders for support linking
     const { data: orders } = await supabaseAdmin
@@ -43,8 +42,11 @@ export default async function DashboardPage() {
     const isAdmin = user?.role === "ADMIN";
     const firstName = user?.name?.split(" ")[0] || "Trader";
 
+    // Fetch active cryptos
+    const cryptos = await getCryptos(true);
+
     return (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="space-y-10 md:space-y-14 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Header / Greeting */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
@@ -115,7 +117,7 @@ export default async function DashboardPage() {
             )}
 
             {/* Quick Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
                 <div className="p-8 rounded-[32px] border border-border bg-card-bg/50 backdrop-blur-md shadow-sm dark:shadow-none">
                     <div className="flex justify-between items-start mb-6">
                         <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center">
@@ -171,46 +173,33 @@ export default async function DashboardPage() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-10 md:gap-14">
                 {/* Tradeable Assets - Dynamic */}
                 <div className="xl:col-span-8">
-                    <div className="flex items-center justify-between mb-8">
-                        <h2 className="text-xl font-black uppercase tracking-widest">Tradeable Assets</h2>
-                        <div className="flex items-center gap-2 text-xs font-bold text-foreground/40 bg-card-bg/5 shadow-sm dark:shadow-none px-4 py-2 rounded-full border border-border">
-                            <AlertCircle className="h-3.5 w-3.5" />
-                            <span>Live availability</span>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                        {(inventory || []).map((asset) => {
-                            const isAvailable = asset.buy_enabled && asset.sell_enabled;
-                            const symbol = asset.asset;
-
-                            return (
-                                <div key={symbol} className="p-6 rounded-[32px] border border-border bg-card-bg/30 hover:bg-card-bg/50 shadow-sm dark:shadow-none transition-all text-center group">
-                                    <div className="h-14 w-14 rounded-2xl bg-card-bg mx-auto mb-4 flex items-center justify-center border border-border shadow-sm dark:shadow-none transition-all group-hover:scale-110 group-hover:border-primary/20 group-hover:bg-primary/5">
-                                        <span className="font-black text-xl text-primary">{symbol[0]}</span>
-                                    </div>
-                                    <h3 className="font-black text-lg mb-3 tracking-tighter">{symbol}</h3>
-                                    <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border ${isAvailable ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" : "bg-red-500/10 text-red-500 border-red-500/20"
-                                        }`}>
-                                        <div className={`h-1.5 w-1.5 rounded-full animate-pulse ${isAvailable ? "bg-emerald-500" : "bg-red-500"}`} />
-                                        {isAvailable ? "In Stock" : "Limited"}
-                                    </div>
-                                </div>
-                            )
-                        })}
-                    </div>
+                    <TradeableAssets initialData={cryptos} />
                 </div>
 
                 {/* Support / Management Sidebar */}
                 <div className="xl:col-span-4 space-y-6">
                     <div className="p-8 rounded-[40px] border border-border bg-card-bg/50 backdrop-blur-md shadow-sm dark:shadow-none">
-                        <h3 className="text-lg font-black mb-6 uppercase tracking-widest">{isAdmin ? "Admin Controls" : "Help & Support"}</h3>
+                        <h3 className="text-lg font-black mb-6 uppercase tracking-widest">{isAdmin ? "Admin Controls" : "Quick Links"}</h3>
                         <div className="space-y-6">
                             {!isAdmin ? (
-                                <SupportForm orders={orders || []} />
+                                <div className="p-6 rounded-3xl bg-card-bg border border-border shadow-sm dark:shadow-none">
+                                    <h4 className="text-xs font-black uppercase tracking-widest text-foreground/40 mb-3">Navigation</h4>
+                                    <ul className="space-y-3">
+                                        <li>
+                                            <Link href="/dashboard/orders" className="flex items-center justify-between text-sm font-bold hover:text-primary transition-colors">
+                                                Order History <ArrowRight className="h-3.5 w-3.5" />
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link href="/dashboard/settings?tab=verification" className="flex items-center justify-between text-sm font-bold hover:text-primary transition-colors">
+                                                Verification <ArrowRight className="h-3.5 w-3.5" />
+                                            </Link>
+                                        </li>
+                                    </ul>
+                                </div>
                             ) : (
                                 <div className="space-y-4">
                                     <p className="text-sm text-foreground/50 font-medium">Quickly navigate to management centers.</p>
@@ -222,24 +211,6 @@ export default async function DashboardPage() {
                                     </Link>
                                 </div>
                             )}
-
-                            <div className="p-6 rounded-3xl bg-card-bg border border-border shadow-sm dark:shadow-none">
-                                <h4 className="text-xs font-black uppercase tracking-widest text-foreground/40 mb-3">Quick Links</h4>
-                                <ul className="space-y-3">
-                                    <li>
-                                        <Link href="/dashboard/orders" className="flex items-center justify-between text-sm font-bold hover:text-primary transition-colors">
-                                            Order History <ArrowRight className="h-3.5 w-3.5" />
-                                        </Link>
-                                    </li>
-                                    {!isAdmin && (
-                                        <li>
-                                            <Link href="/dashboard/settings?tab=verification" className="flex items-center justify-between text-sm font-bold hover:text-primary transition-colors">
-                                                Verification <ArrowRight className="h-3.5 w-3.5" />
-                                            </Link>
-                                        </li>
-                                    )}
-                                </ul>
-                            </div>
                         </div>
                     </div>
                 </div>

@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { DashboardSidebar } from "@/components/layout/DashboardSidebar";
+import { SupportWidget } from "@/components/dashboard/SupportWidget";
 
 import { supabaseAdmin } from "@/lib/supabase-admin";
 
@@ -22,6 +23,16 @@ export default async function ProtectedLayout({
         .eq('id', session.user.id)
         .single();
 
+    const isAdmin = session.user.role === "ADMIN";
+
+    // Fetch recent orders for support context
+    const { data: recentOrders } = await supabaseAdmin
+        .from('orders')
+        .select('id, order_number, asset, amount_crypto')
+        .eq('user_id', session.user.id)
+        .order('created_at', { ascending: false })
+        .limit(5);
+
     const sidebarUser = {
         ...session.user,
         kyc_status: user?.kyc_status || 'UNSUBMITTED',
@@ -39,6 +50,9 @@ export default async function ProtectedLayout({
                     {children}
                 </div>
             </main>
+
+            {/* Global Support Widget */}
+            {!isAdmin && <SupportWidget orders={recentOrders || []} />}
         </div>
     );
 }

@@ -62,15 +62,15 @@ export function DashboardSidebar({ user }: SidebarProps) {
 
     const renderContent = (onClose?: () => void) => (
         <div className="flex flex-col h-full">
-            <div className="mb-10 flex items-center justify-between px-2">
-                <Logo className="scale-90 origin-left" />
+            <div className="mb-14 md:mb-16 flex items-center justify-between px-2">
+                <Logo className="scale-90 md:scale-100 origin-left" />
                 {onClose && (
                     <VisuallyHidden>Close</VisuallyHidden>
                 )}
             </div>
 
             {/* User Profile Summary */}
-            <div className="mb-8 p-4 rounded-3xl bg-linear-to-br from-primary/10 to-transparent border border-white/5">
+            <div className="mb-12 p-5 rounded-[28px] bg-linear-to-br from-primary/10 to-transparent border border-border">
                 <div className="flex items-center gap-4">
                     <div className="h-10 w-10 rounded-2xl bg-primary flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-primary/20 overflow-hidden relative">
                         {user?.profile_image ? (
@@ -93,7 +93,7 @@ export function DashboardSidebar({ user }: SidebarProps) {
             </div>
 
             <nav className="flex-1 space-y-2 overflow-y-auto custom-scrollbar">
-                <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em] px-4 mb-4">
+                <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.3em] px-4 mb-6">
                     {isAdmin ? "Management" : "Main Navigation"}
                 </p>
                 {links.map((link) => {
@@ -183,7 +183,7 @@ export function DashboardSidebar({ user }: SidebarProps) {
 
                 <button
                     onClick={() => signOut()}
-                    className="flex items-center gap-4 w-full px-4 py-4 rounded-2xl text-red-500 hover:bg-red-500/10 transition-all font-bold group"
+                    className="flex items-center gap-4 w-full px-5 py-5 rounded-2xl text-red-500 hover:bg-red-500/10 transition-all font-black uppercase tracking-widest text-[11px] group"
                 >
                     <LogOut className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
                     <span>Sign Out</span>

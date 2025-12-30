@@ -10,6 +10,8 @@ import {
     AlertTriangle
 } from "lucide-react";
 import Link from "next/link";
+import { getCryptos } from "@/actions/crypto";
+import { CryptoIcon } from "@/components/CryptoIcon";
 
 export default async function AdminDashboardPage() {
     const session = await auth();
@@ -24,13 +26,13 @@ export default async function AdminDashboardPage() {
         { count: pendingKYC },
         { count: totalOrders },
         { data: recentUsers },
-        { data: inventoryStats }
+        inventoryStats
     ] = await Promise.all([
         supabaseAdmin.from('users').select('*', { count: 'exact', head: true }),
         supabaseAdmin.from('kyc_submissions').select('*', { count: 'exact', head: true }).eq('status', 'PENDING'),
         supabaseAdmin.from('orders').select('*', { count: 'exact', head: true }),
         supabaseAdmin.from('users').select('id, first_name, last_name, email, created_at, kyc_status').order('created_at', { ascending: false }).limit(5),
-        supabaseAdmin.from('inventory').select('*')
+        getCryptos(false)
     ]);
 
     const stats = [
@@ -104,17 +106,22 @@ export default async function AdminDashboardPage() {
                     <h2 className="text-xl font-black uppercase tracking-widest">Asset Status</h2>
                     <div className="p-8 rounded-[40px] border border-white/5 bg-card-bg/50 backdrop-blur-md space-y-8">
                         {(inventoryStats || []).map((asset) => (
-                            <div key={asset.asset} className="flex items-center justify-between">
+                            <div key={asset.id} className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
-                                    <div className="h-8 w-8 rounded-lg bg-white/5 flex items-center justify-center font-black text-xs text-primary">
-                                        {asset.asset[0]}
+                                    <div className="h-8 w-8 rounded-full overflow-hidden bg-white/5 flex items-center justify-center font-black text-xs text-primary relative">
+                                        <CryptoIcon
+                                            symbol={asset.symbol}
+                                            iconUrl={asset.icon_url}
+                                            className="object-cover"
+                                        />
+                                        <span className="absolute inset-0 flex items-center justify-center -z-10">{asset.symbol[0]}</span>
                                     </div>
-                                    <span className="font-bold">{asset.asset}</span>
+                                    <span className="font-bold">{asset.symbol}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <div className={`h-2 w-2 rounded-full ${asset.buy_enabled ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-red-500"}`} />
-                                    <span className={`text-[10px] font-black uppercase tracking-widest ${asset.buy_enabled ? "text-emerald-500" : "text-red-500"}`}>
-                                        {asset.buy_enabled ? "Active" : "Disabled"}
+                                    <div className={`h-2 w-2 rounded-full ${asset.is_active ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-red-500"}`} />
+                                    <span className={`text-[10px] font-black uppercase tracking-widest ${asset.is_active ? "text-emerald-500" : "text-red-500"}`}>
+                                        {asset.is_active ? "Active" : "Disabled"}
                                     </span>
                                 </div>
                             </div>

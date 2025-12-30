@@ -4,16 +4,27 @@ import { useState } from "react";
 import {
     ShieldCheck,
     ShieldAlert,
-    MoreVertical,
     Ban,
     User as UserIcon,
     Mail,
     Search,
-    Shield
+    Shield,
+    Copy,
+    MoreHorizontal,
+    Eye
 } from "lucide-react";
 import { toggleUserStatus } from "@/actions/admin";
+import Link from "next/link";
 import { toast } from "sonner";
 import { ConfirmationModal } from "@/components/ui/modal";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface User {
     id: string;
@@ -135,9 +146,49 @@ export function UserManagementList({ users }: UserManagementListProps) {
                                         >
                                             <Ban className="h-4 w-4" />
                                         </button>
-                                        <button className="p-2.5 rounded-xl bg-white/5 text-foreground/40 hover:bg-white/10 transition-all">
-                                            <MoreVertical className="h-4 w-4" />
-                                        </button>
+
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <button className="p-2.5 rounded-xl bg-white/5 text-foreground/40 hover:bg-white/10 transition-all focus:outline-none">
+                                                    <MoreHorizontal className="h-4 w-4" />
+                                                </button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end" className="w-[160px]">
+                                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                <DropdownMenuItem asChild>
+                                                    <Link href={`/admin/users/${user.id}`} className="cursor-pointer">
+                                                        <Eye className="mr-2 h-4 w-4" />
+                                                        View Profile
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem
+                                                    onClick={() => {
+                                                        navigator.clipboard.writeText(user.id);
+                                                        toast.success("User ID copied to clipboard");
+                                                    }}
+                                                >
+                                                    <Copy className="mr-2 h-4 w-4" />
+                                                    Copy ID
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem
+                                                    onClick={() => window.location.href = `mailto:${user.email}`}
+                                                >
+                                                    <Mail className="mr-2 h-4 w-4" />
+                                                    Email User
+                                                </DropdownMenuItem>
+                                                <DropdownMenuSeparator />
+                                                <DropdownMenuItem
+                                                    className={user.status === 'BANNED' ? "text-emerald-500" : "text-red-500"}
+                                                    onClick={() => {
+                                                        setSelectedUser(user);
+                                                        setIsBanModalOpen(true);
+                                                    }}
+                                                >
+                                                    <Ban className="mr-2 h-4 w-4" />
+                                                    {user.status === 'BANNED' ? "Activate" : "Ban User"}
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
                                     </div>
                                 </td>
                             </tr>
