@@ -38,7 +38,7 @@ export default async function WalletsPage() {
                 </div>
             </div>
 
-            <div className="max-w-4xl">
+            <div className="max-w-6xl">
                 <div className="p-8 md:p-12 rounded-[40px] border border-white/5 bg-card-bg/50 backdrop-blur-xl relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-12 text-primary/5 -rotate-12 group-hover:rotate-0 transition-transform duration-700">
                         <WalletIcon className="h-64 w-64" />

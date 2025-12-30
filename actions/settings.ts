@@ -1,24 +1,25 @@
 "use server";
 
 import { auth } from "@/auth";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
+import { sendPasswordChangeConfirmationEmail } from "@/lib/mail";
 
 export async function updatePassword(currentPassword: string, newPassword: string) {
     const session = await auth();
     if (!session?.user?.id) return { error: "Unauthorized" };
 
     try {
-        // 1. Fetch user password hash
-        const { data: user } = await supabase
+        // 1. Fetch user password hash and email using admin client to bypass RLS
+        const { data: user, error: fetchError } = await supabaseAdmin
             .from('users')
-            .select('password_hash')
+            .select('password_hash, email')
             .eq('id', session.user.id)
             .single();
 
-        if (!user || !user.password_hash) {
-            return { error: "User not found" };
+        if (fetchError || !user || !user.password_hash || !user.email) {
+            return { error: "User data not found" };
         }
 
         // 2. Verify current password
@@ -31,16 +32,27 @@ export async function updatePassword(currentPassword: string, newPassword: strin
         const hashedPassword = await bcrypt.hash(newPassword, 10);
 
         // 4. Update in database
-        const { error } = await supabase
+        const { error: updateError } = await supabaseAdmin
             .from('users')
-            .update({ password_hash: hashedPassword, updated_at: new Date().toISOString() })
+            .update({
+                password_hash: hashedPassword,
+                updated_at: new Date().toISOString()
+            })
             .eq('id', session.user.id);
 
-        if (error) throw error;
+        if (updateError) throw updateError;
+
+        // 5. Send confirmation email (optional: don't block success on email)
+        try {
+            await sendPasswordChangeConfirmationEmail(user.email);
+        } catch (emailErr) {
+            console.error("Password update email failed:", emailErr);
+        }
 
         revalidatePath("/dashboard/settings");
         return { success: "Password updated successfully!" };
-    } catch {
-        return { error: "Failed to update password" };
+    } catch (error) {
+        console.error("Password update error:", error);
+        return { error: "Failed to update password. Please try again." };
     }
 }

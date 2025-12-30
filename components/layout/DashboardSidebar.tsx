@@ -23,6 +23,7 @@ import { signOut } from "next-auth/react";
 import { Logo } from "@/components/ui/Logo";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface SidebarProps {
     user: {
@@ -174,6 +175,11 @@ export function DashboardSidebar({ user }: SidebarProps) {
                             }`} />
                     </div>
                 )}
+
+                <div className="flex items-center justify-between px-4 py-2 bg-white/5 rounded-2xl border border-white/10">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Appearance</span>
+                    <ThemeToggle />
+                </div>
 
                 <button
                     onClick={() => signOut()}

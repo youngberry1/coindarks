@@ -116,7 +116,7 @@ export default async function DashboardPage() {
 
             {/* Quick Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="p-8 rounded-[32px] border border-white/5 bg-card-bg/50 backdrop-blur-md">
+                <div className="p-8 rounded-[32px] border border-border bg-card-bg/50 backdrop-blur-md shadow-sm dark:shadow-none">
                     <div className="flex justify-between items-start mb-6">
                         <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center">
                             <RefreshCcw className="h-6 w-6 text-primary" />
@@ -127,7 +127,7 @@ export default async function DashboardPage() {
                     <p className="text-sm text-foreground/40 font-medium">{isAdmin ? "Platform wide" : "In the last 30 days"}</p>
                 </div>
 
-                <div className="p-8 rounded-[32px] border border-white/5 bg-card-bg/50 backdrop-blur-md">
+                <div className="p-8 rounded-[32px] border border-border bg-card-bg/50 backdrop-blur-md shadow-sm dark:shadow-none">
                     <div className="flex justify-between items-start mb-6">
                         <div className={`h-12 w-12 rounded-2xl flex items-center justify-center ${isAdmin ? "bg-emerald-500/10" : (kycStatus === 'APPROVED' ? 'bg-emerald-500/10' :
                             kycStatus === 'PENDING' ? 'bg-amber-500/10' :
@@ -157,7 +157,7 @@ export default async function DashboardPage() {
                     </p>
                 </div>
 
-                <div className="p-8 rounded-[32px] border border-white/5 bg-card-bg/50 backdrop-blur-md">
+                <div className="p-8 rounded-[32px] border border-border bg-card-bg/50 backdrop-blur-md shadow-sm dark:shadow-none">
                     <div className="flex justify-between items-start mb-6">
                         <div className="h-12 w-12 rounded-2xl bg-secondary/10 flex items-center justify-center">
                             <Globe className="h-6 w-6 text-secondary" />
@@ -176,7 +176,7 @@ export default async function DashboardPage() {
                 <div className="xl:col-span-8">
                     <div className="flex items-center justify-between mb-8">
                         <h2 className="text-xl font-black uppercase tracking-widest">Tradeable Assets</h2>
-                        <div className="flex items-center gap-2 text-xs font-bold text-foreground/40 bg-white/5 px-4 py-2 rounded-full border border-white/5">
+                        <div className="flex items-center gap-2 text-xs font-bold text-foreground/40 bg-card-bg/5 shadow-sm dark:shadow-none px-4 py-2 rounded-full border border-border">
                             <AlertCircle className="h-3.5 w-3.5" />
                             <span>Live availability</span>
                         </div>
@@ -188,8 +188,8 @@ export default async function DashboardPage() {
                             const symbol = asset.asset;
 
                             return (
-                                <div key={symbol} className="p-6 rounded-[32px] border border-white/5 bg-card-bg/30 hover:bg-white/5 transition-all text-center group">
-                                    <div className="h-14 w-14 rounded-2xl bg-white/5 mx-auto mb-4 flex items-center justify-center border border-white/5 transition-all group-hover:scale-110 group-hover:border-primary/20 group-hover:bg-primary/5">
+                                <div key={symbol} className="p-6 rounded-[32px] border border-border bg-card-bg/30 hover:bg-card-bg/50 shadow-sm dark:shadow-none transition-all text-center group">
+                                    <div className="h-14 w-14 rounded-2xl bg-card-bg mx-auto mb-4 flex items-center justify-center border border-border shadow-sm dark:shadow-none transition-all group-hover:scale-110 group-hover:border-primary/20 group-hover:bg-primary/5">
                                         <span className="font-black text-xl text-primary">{symbol[0]}</span>
                                     </div>
                                     <h3 className="font-black text-lg mb-3 tracking-tighter">{symbol}</h3>
@@ -206,7 +206,7 @@ export default async function DashboardPage() {
 
                 {/* Support / Management Sidebar */}
                 <div className="xl:col-span-4 space-y-6">
-                    <div className="p-8 rounded-[40px] border border-white/5 bg-card-bg/50 backdrop-blur-md">
+                    <div className="p-8 rounded-[40px] border border-border bg-card-bg/50 backdrop-blur-md shadow-sm dark:shadow-none">
                         <h3 className="text-lg font-black mb-6 uppercase tracking-widest">{isAdmin ? "Admin Controls" : "Help & Support"}</h3>
                         <div className="space-y-6">
                             {!isAdmin ? (
@@ -214,16 +214,16 @@ export default async function DashboardPage() {
                             ) : (
                                 <div className="space-y-4">
                                     <p className="text-sm text-foreground/50 font-medium">Quickly navigate to management centers.</p>
-                                    <Link href="/admin/kyc" className="flex items-center justify-between p-5 rounded-2xl bg-white/5 border border-white/5 font-bold hover:bg-white/10 transition-all">
+                                    <Link href="/admin/kyc" className="flex items-center justify-between p-5 rounded-2xl bg-card-bg border border-border shadow-sm dark:shadow-none font-bold hover:bg-card-bg/80 transition-all">
                                         KYC Review Center <ArrowRight className="h-4 w-4 text-primary" />
                                     </Link>
-                                    <Link href="/admin/orders" className="flex items-center justify-between p-5 rounded-2xl bg-white/5 border border-white/5 font-bold hover:bg-white/10 transition-all">
+                                    <Link href="/admin/orders" className="flex items-center justify-between p-5 rounded-2xl bg-card-bg border border-border shadow-sm dark:shadow-none font-bold hover:bg-card-bg/80 transition-all">
                                         Order Management <ArrowRight className="h-4 w-4 text-primary" />
                                     </Link>
                                 </div>
                             )}
 
-                            <div className="p-6 rounded-3xl bg-white/5 border border-white/5">
+                            <div className="p-6 rounded-3xl bg-card-bg border border-border shadow-sm dark:shadow-none">
                                 <h4 className="text-xs font-black uppercase tracking-widest text-foreground/40 mb-3">Quick Links</h4>
                                 <ul className="space-y-3">
                                     <li>
