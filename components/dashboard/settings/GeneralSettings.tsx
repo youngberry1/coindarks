@@ -1,11 +1,13 @@
 "use client";
 
-import { User as UserIcon, Camera, AlertCircle, Loader2 } from "lucide-react";
+import { User as UserIcon, Camera, AlertCircle } from "lucide-react";
 import Image from "next/image";
 import { useState, useRef } from "react";
 import { updateProfileImage } from "@/actions/profile";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { Loading } from "@/components/ui/Loading";
+import { AnimatePresence } from "framer-motion";
 
 interface User {
     id: string;
@@ -65,6 +67,11 @@ export function GeneralSettings({ user }: GeneralSettingsProps) {
     };
     return (
         <div className="max-w-2xl space-y-8">
+            <AnimatePresence>
+                {isUploading && (
+                    <Loading message="Processing biometric data upload..." />
+                )}
+            </AnimatePresence>
             <div className="p-5 md:p-8 rounded-3xl md:rounded-[32px] border border-white/5 bg-card-bg/50 backdrop-blur-md">
                 <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
                     <UserIcon className="h-5 w-5 text-primary" />
@@ -85,11 +92,7 @@ export function GeneralSettings({ user }: GeneralSettingsProps) {
                             ) : (
                                 <UserIcon className="h-10 w-10 text-primary/40" />
                             )}
-                            {isUploading && (
-                                <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center z-10">
-                                    <Loader2 className="h-8 w-8 text-white animate-spin" />
-                                </div>
-                            )}
+
                         </div>
                         <input
                             type="file"

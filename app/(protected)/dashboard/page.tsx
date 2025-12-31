@@ -175,14 +175,14 @@ export default async function DashboardPage() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 xl:grid-cols-12 gap-10 md:gap-14">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-14">
                 {/* Tradeable Assets - Dynamic */}
-                <div className="xl:col-span-8">
+                <div className="lg:col-span-8">
                     <TradeableAssets initialData={cryptos} />
                 </div>
 
                 {/* Support / Management Sidebar */}
-                <div className="xl:col-span-4 space-y-6">
+                <div className="lg:col-span-4 space-y-6">
                     {!isAdmin && (
                         <div className="p-8 rounded-[40px] border border-border bg-card-bg/50 backdrop-blur-md shadow-sm dark:shadow-none">
                             <div className="flex items-center justify-between mb-6">

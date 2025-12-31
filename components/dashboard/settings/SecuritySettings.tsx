@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Lock, Loader2, CheckCircle2, AlertCircle, ShieldCheck } from "lucide-react";
+import { Lock, CheckCircle2, AlertCircle, ShieldCheck } from "lucide-react";
 import { PasswordStrength } from "@/components/auth/PasswordStrength";
 import { updatePassword } from "@/actions/settings";
-import { toast } from "sonner";
+import { Loading } from "@/components/ui/Loading";
+import { AnimatePresence } from "framer-motion";
 
 export function SecuritySettings() {
     const [currentPassword, setCurrentPassword] = useState("");
@@ -20,7 +21,7 @@ export function SecuritySettings() {
             setStatus("idle");
             setMessage("");
         }
-    }, [currentPassword, password, confirmPassword]);
+    }, [currentPassword, password, confirmPassword, status]);
 
     const handleUpdate = async () => {
         if (!currentPassword || !password || !confirmPassword) {
@@ -66,6 +67,11 @@ export function SecuritySettings() {
 
     return (
         <div className="max-w-2xl space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <AnimatePresence>
+                {isLoading && (
+                    <Loading message="Updating primary security keys..." />
+                )}
+            </AnimatePresence>
             <div className="p-8 rounded-[32px] border border-border bg-card-bg/50 backdrop-blur-md shadow-sm dark:shadow-none transition-all">
                 <h3 className="text-lg font-bold mb-2 flex items-center gap-2">
                     <Lock className="h-5 w-5 text-primary" />
@@ -77,8 +83,8 @@ export function SecuritySettings() {
                     {/* Status Message Area */}
                     {status !== "idle" && (
                         <div className={`p-4 rounded-2xl border flex items-center gap-3 animate-in zoom-in-95 duration-300 ${status === "success"
-                                ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
-                                : "bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400"
+                            ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+                            : "bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400"
                             }`}>
                             {status === "success" ? <ShieldCheck className="h-5 w-5" /> : <AlertCircle className="h-5 w-5" />}
                             <p className="text-sm font-bold">{message}</p>
@@ -126,16 +132,11 @@ export function SecuritySettings() {
                 onClick={handleUpdate}
                 disabled={isLoading}
                 className={`px-10 py-4 rounded-2xl font-bold shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2 w-full sm:w-auto ${status === "success"
-                        ? "bg-emerald-500 text-white shadow-emerald-500/20 scale-[1.05]"
-                        : "bg-primary text-white shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]"
+                    ? "bg-emerald-500 text-white shadow-emerald-500/20 scale-[1.05]"
+                    : "bg-primary text-white shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]"
                     }`}
             >
-                {isLoading ? (
-                    <>
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        <span>Updating...</span>
-                    </>
-                ) : status === "success" ? (
+                {status === "success" ? (
                     <>
                         <CheckCircle2 className="h-4 w-4" />
                         <span>Password Updated!</span>

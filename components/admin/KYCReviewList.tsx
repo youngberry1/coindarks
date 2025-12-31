@@ -8,7 +8,6 @@ import {
     Mail,
     FileText,
     Calendar,
-    Loader2,
     X,
     Maximize2
 } from "lucide-react";
@@ -16,13 +15,30 @@ import { Modal } from "@/components/ui/modal";
 import { processKYC } from "@/actions/admin";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
+import { Loading } from "@/components/ui/Loading";
+import Image from "next/image";
+
+interface KYCSubmission {
+    id: string;
+    submitted_at: string;
+    document_type: string;
+    document_number: string;
+    frontUrl: string;
+    backUrl?: string;
+    selfieUrl: string;
+    users: {
+        first_name: string;
+        last_name: string;
+        email: string;
+    };
+}
 
 interface KYCReviewListProps {
-    submissions: any[];
+    submissions: KYCSubmission[];
 }
 
 export function KYCReviewList({ submissions }: KYCReviewListProps) {
-    const [selectedSubmission, setSelectedSubmission] = useState<any>(null);
+    const [selectedSubmission, setSelectedSubmission] = useState<KYCSubmission | null>(null);
     const [isRejectionModalOpen, setIsRejectionModalOpen] = useState(false);
     const [rejectionReason, setRejectionReason] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -48,6 +64,11 @@ export function KYCReviewList({ submissions }: KYCReviewListProps) {
 
     return (
         <div className="space-y-6">
+            <AnimatePresence>
+                {isLoading && (
+                    <Loading message="Committing administrative credentials..." />
+                )}
+            </AnimatePresence>
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                 {submissions.map((sub) => (
                     <div key={sub.id} className="p-8 rounded-[32px] border border-white/5 bg-card-bg/50 backdrop-blur-md hover:border-white/10 transition-all group">
@@ -76,10 +97,10 @@ export function KYCReviewList({ submissions }: KYCReviewListProps) {
                             <div className="space-y-2">
                                 <p className="text-[10px] font-black text-foreground/30 uppercase tracking-widest ml-1">Front of ID</p>
                                 <div className="relative aspect-square rounded-2xl overflow-hidden border border-white/5 group/img">
-                                    <img src={sub.frontUrl} className="w-full h-full object-cover" alt="Front" />
+                                    <Image src={sub.frontUrl} fill className="object-cover" alt="Front" unoptimized />
                                     <button
                                         onClick={() => setZoomImage(sub.frontUrl)}
-                                        className="absolute inset-0 bg-black/60 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center"
+                                        className="absolute inset-0 bg-black/60 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center z-10"
                                     >
                                         <Maximize2 className="h-6 w-6 text-white" />
                                     </button>
@@ -89,10 +110,10 @@ export function KYCReviewList({ submissions }: KYCReviewListProps) {
                                 <div className="space-y-2">
                                     <p className="text-[10px] font-black text-foreground/30 uppercase tracking-widest ml-1">Back of ID</p>
                                     <div className="relative aspect-square rounded-2xl overflow-hidden border border-white/5 group/img">
-                                        <img src={sub.backUrl} className="w-full h-full object-cover" alt="Back" />
+                                        <Image src={sub.backUrl!} fill className="object-cover" alt="Back" unoptimized />
                                         <button
-                                            onClick={() => setZoomImage(sub.backUrl)}
-                                            className="absolute inset-0 bg-black/60 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center"
+                                            onClick={() => setZoomImage(sub.backUrl!)}
+                                            className="absolute inset-0 bg-black/60 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center z-10"
                                         >
                                             <Maximize2 className="h-6 w-6 text-white" />
                                         </button>
@@ -102,10 +123,10 @@ export function KYCReviewList({ submissions }: KYCReviewListProps) {
                             <div className="space-y-2">
                                 <p className="text-[10px] font-black text-foreground/30 uppercase tracking-widest ml-1">Selfie</p>
                                 <div className="relative aspect-square rounded-2xl overflow-hidden border border-white/5 group/img">
-                                    <img src={sub.selfieUrl} className="w-full h-full object-cover" alt="Selfie" />
+                                    <Image src={sub.selfieUrl} fill className="object-cover" alt="Selfie" unoptimized />
                                     <button
                                         onClick={() => setZoomImage(sub.selfieUrl)}
-                                        className="absolute inset-0 bg-black/60 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center"
+                                        className="absolute inset-0 bg-black/60 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center z-10"
                                     >
                                         <Maximize2 className="h-6 w-6 text-white" />
                                     </button>
@@ -131,7 +152,7 @@ export function KYCReviewList({ submissions }: KYCReviewListProps) {
                                 onClick={() => handleAction(sub.id, 'APPROVE')}
                                 className="flex-1 py-4 rounded-2xl bg-emerald-500 text-white font-bold shadow-lg shadow-emerald-500/20 hover:scale-[1.02] flex items-center justify-center gap-2 transition-all disabled:opacity-50"
                             >
-                                {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <CheckCircle2 className="h-5 w-5" />}
+                                <CheckCircle2 className="h-5 w-5" />
                                 <span>Approve Access</span>
                             </button>
                             <button
@@ -172,10 +193,10 @@ export function KYCReviewList({ submissions }: KYCReviewListProps) {
                         </button>
                         <button
                             disabled={isLoading || !rejectionReason}
-                            onClick={() => handleAction(selectedSubmission?.id, 'REJECT', rejectionReason)}
+                            onClick={() => selectedSubmission && handleAction(selectedSubmission.id, 'REJECT', rejectionReason)}
                             className="flex-1 py-3.5 rounded-xl bg-red-500 text-white font-bold shadow-lg shadow-red-500/20 hover:scale-[1.02] transition-all disabled:opacity-50"
                         >
-                            {isLoading ? <Loader2 className="h-5 w-5 animate-spin mx-auto" /> : "Confirm Rejection"}
+                            Confirm Rejection
                         </button>
                     </div>
                 </div>
@@ -198,10 +219,10 @@ export function KYCReviewList({ submissions }: KYCReviewListProps) {
                             className="relative max-w-5xl w-full aspect-auto rounded-3xl overflow-hidden shadow-2xl"
                             onClick={(e) => e.stopPropagation()}
                         >
-                            <img src={zoomImage} className="w-full h-full object-contain" alt="Zoomed" />
+                            <Image src={zoomImage!} fill className="object-contain" alt="Zoomed" unoptimized />
                             <button
                                 onClick={() => setZoomImage(null)}
-                                className="absolute top-6 right-6 p-3 rounded-full bg-white/10 text-white hover:bg-white/20 hover:scale-110 transition-all border border-white/20"
+                                className="absolute top-6 right-6 p-3 rounded-full bg-white/10 text-white hover:bg-white/20 hover:scale-110 transition-all border border-white/20 z-20"
                             >
                                 <X className="h-6 w-6" />
                             </button>

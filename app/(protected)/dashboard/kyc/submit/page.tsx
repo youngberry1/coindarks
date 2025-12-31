@@ -11,7 +11,6 @@ import {
     CheckCircle2,
     X,
     ChevronRight,
-    Loader2,
     Check
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -20,6 +19,7 @@ import { submitKYC } from "@/actions/kyc";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { Loading } from "@/components/ui/Loading";
 
 const STEPS = ["ID Type", "Details", "Upload Photos", "Complete"];
 
@@ -135,15 +135,17 @@ export default function KYCSubmitPage() {
 
     if (isCheckingStatus) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
-                <Loader2 className="h-12 w-12 text-primary animate-spin" />
-                <p className="text-foreground/50 font-medium animate-pulse">Verifying status...</p>
-            </div>
+            <Loading message="Verifying security Clearance..." />
         );
     }
 
     return (
         <div className="max-w-4xl mx-auto space-y-10 animate-in fade-in duration-700">
+            <AnimatePresence>
+                {isLoading && (
+                    <Loading message="Transmitting encrypted identification documents..." />
+                )}
+            </AnimatePresence>
             {/* Steps Progress */}
             <div className="flex items-center justify-between max-w-2xl mx-auto relative px-4">
                 <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-white/5 -z-10 -translate-y-1/2" />
@@ -294,7 +296,7 @@ export default function KYCSubmitPage() {
                                     onClick={handleSubmit}
                                     className="w-full sm:flex-1 py-5 rounded-2xl bg-primary text-white font-bold shadow-xl shadow-primary/20 hover:scale-[1.02] disabled:opacity-50 disabled:grayscale transition-all flex items-center justify-center gap-3"
                                 >
-                                    {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <><ShieldCheck className="h-5 w-5" /> Submit for Verification</>}
+                                    <ShieldCheck className="h-5 w-5" /> Submit for Verification
                                 </button>
                             </div>
                         </motion.div>
@@ -311,7 +313,7 @@ export default function KYCSubmitPage() {
                                 <CheckCircle2 className="h-12 w-12 text-emerald-500" />
                             </div>
                             <div>
-                                <h1 className="text-3xl font-black mb-3 text-emerald-500Small">Submission Received!</h1>
+                                <h1 className="text-3xl font-black mb-3 text-emerald-500">Submission Received!</h1>
                                 <p className="text-foreground/50 font-medium max-w-sm mx-auto">Your verification is being processed. You will be notified via email once our team reviews your documents.</p>
                             </div>
                             <Link href="/dashboard" className="inline-flex px-10 py-4 rounded-2xl bg-white/5 border border-white/10 font-bold hover:bg-white/10 transition-all">

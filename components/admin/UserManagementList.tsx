@@ -84,7 +84,8 @@ export function UserManagementList({ users }: UserManagementListProps) {
                 />
             </div>
 
-            <div className="overflow-x-auto rounded-[24px] md:rounded-[32px] border border-white/5 bg-card-bg/50 backdrop-blur-md">
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-hidden rounded-[32px] border border-white/5 bg-card-bg/50 backdrop-blur-md">
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="border-b border-white/5 bg-white/5">
@@ -195,6 +196,80 @@ export function UserManagementList({ users }: UserManagementListProps) {
                         ))}
                     </tbody>
                 </table>
+            </div>
+
+            {/* Mobile Card Layout */}
+            <div className="md:hidden space-y-4">
+                {filteredUsers.map((user) => (
+                    <div key={user.id} className="p-6 rounded-[28px] border border-white/5 bg-card-bg/50 backdrop-blur-md space-y-4">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                                    <UserIcon className="h-5 w-5" />
+                                </div>
+                                <div className="min-w-0">
+                                    <p className="text-sm font-bold truncate">{user.first_name} {user.last_name}</p>
+                                    <p className="text-[10px] text-foreground/40 font-medium truncate">{user.email}</p>
+                                </div>
+                            </div>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <button className="p-2.5 rounded-xl bg-white/5 text-foreground/40 hover:bg-white/10 transition-all focus:outline-none">
+                                        <MoreHorizontal className="h-4 w-4" />
+                                    </button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-[160px]">
+                                    <DropdownMenuItem asChild>
+                                        <Link href={`/admin/users/${user.id}`}>
+                                            <Eye className="mr-2 h-4 w-4" /> View Profile
+                                        </Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => {
+                                        navigator.clipboard.writeText(user.id);
+                                        toast.success("User ID copied");
+                                    }}>
+                                        <Copy className="mr-2 h-4 w-4" /> Copy ID
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4 py-4 border-y border-white/5">
+                            <div>
+                                <p className="text-[10px] text-foreground/40 font-black uppercase tracking-widest mb-1.5">KYC Status</p>
+                                <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest ${user.kyc_status === 'APPROVED' ? "bg-emerald-500/10 text-emerald-500" :
+                                    user.kyc_status === 'PENDING' ? "bg-amber-500/10 text-amber-500" :
+                                        "bg-white/5 text-foreground/30"
+                                    }`}>
+                                    {user.kyc_status}
+                                </div>
+                            </div>
+                            <div>
+                                <p className="text-[10px] text-foreground/40 font-black uppercase tracking-widest mb-1.5">Role</p>
+                                <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest ${user.role === 'ADMIN' ? "bg-primary/20 text-primary border border-primary/20" : "bg-white/5 text-foreground/40"
+                                    }`}>
+                                    {user.role}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                            <p className="text-[10px] text-foreground/40 font-medium">Joined {new Date(user.created_at).toLocaleDateString()}</p>
+                            <button
+                                onClick={() => {
+                                    setSelectedUser(user);
+                                    setIsBanModalOpen(true);
+                                }}
+                                className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${user.status === 'BANNED'
+                                    ? "bg-emerald-500/10 text-emerald-500"
+                                    : "bg-red-500/10 text-red-500"
+                                    }`}
+                            >
+                                {user.status === 'BANNED' ? "Activate" : "Ban User"}
+                            </button>
+                        </div>
+                    </div>
+                ))}
             </div>
 
             <ConfirmationModal

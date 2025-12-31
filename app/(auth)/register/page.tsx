@@ -4,11 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Mail, Lock, User, Loader2, ArrowRight, ShieldCheck, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, User, ArrowRight, ShieldCheck, Eye, EyeOff } from "lucide-react";
 import { register } from "@/actions/register";
 import { PasswordStrength } from "@/components/auth/PasswordStrength";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { Loading } from "@/components/ui/Loading";
 import { Logo } from "@/components/ui/Logo";
+import { AnimatePresence } from "framer-motion";
 
 export default function RegisterPage() {
     const [formData, setFormData] = useState({
@@ -59,6 +61,12 @@ export default function RegisterPage() {
 
     return (
         <div className="flex min-h-screen items-center justify-center px-4 py-12 sm:px-6 lg:px-8 bg-background relative overflow-hidden">
+            <AnimatePresence>
+                {isLoading && (
+                    <Loading message="Initializing your account..." />
+                )}
+            </AnimatePresence>
+
             {/* Theme Toggle Positioned Top Right */}
             <div className="absolute top-4 right-4 sm:top-8 sm:right-8 z-50">
                 <ThemeToggle />
@@ -226,14 +234,8 @@ export default function RegisterPage() {
                             disabled={isLoading}
                             className="relative flex w-full justify-center rounded-2xl bg-primary py-4 text-sm font-bold text-white shadow-xl shadow-primary/20 hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
                         >
-                            {isLoading ? (
-                                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                            ) : (
-                                <>
-                                    Create Account
-                                    <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                                </>
-                            )}
+                            Create Account
+                            <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                         </button>
                     </div>
                 </form>

@@ -1,9 +1,10 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Loader2, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { X, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { ReactNode, useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import { Loading } from '@/components/ui/Loading';
 
 interface ModalProps {
     isOpen: boolean;
@@ -138,7 +139,11 @@ export function ConfirmationModal({
                             getVariantStyles()
                         )}
                     >
-                        {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : confirmText}
+                        {isLoading ? (
+                            <div className="scale-50 h-4 w-4 flex items-center justify-center">
+                                <Loading fullScreen={false} message="" />
+                            </div>
+                        ) : confirmText}
                     </button>
                 </div>
             </div>

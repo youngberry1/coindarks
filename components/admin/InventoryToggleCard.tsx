@@ -3,11 +3,12 @@
 import { useState } from "react";
 import {
     TrendingUp,
-    TrendingDown,
-    Loader2
+    TrendingDown
 } from "lucide-react";
 import { toggleInventoryStatus } from "@/actions/admin";
 import { toast } from "sonner";
+import { Loading } from "@/components/ui/Loading";
+import { AnimatePresence } from "framer-motion";
 
 interface InventoryToggleCardProps {
     item: {
@@ -48,6 +49,11 @@ export function InventoryToggleCard({ item }: InventoryToggleCardProps) {
 
     return (
         <div className="p-8 rounded-[32px] border border-white/5 bg-card-bg/50 backdrop-blur-md hover:border-white/10 transition-all group">
+            <AnimatePresence>
+                {(isUpdatingBuy || isUpdatingSell) && (
+                    <Loading message="Recalibrating supply routes..." />
+                )}
+            </AnimatePresence>
             <div className="flex items-center gap-4 mb-8">
                 <div className="h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center shrink-0 border border-white/5 group-hover:bg-primary/10 group-hover:border-primary/20 transition-all">
                     <span className="font-black text-lg text-foreground/40 group-hover:text-primary">{item.asset[0]}</span>
@@ -78,7 +84,6 @@ export function InventoryToggleCard({ item }: InventoryToggleCardProps) {
                         className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${buyEnabled ? "bg-primary" : "bg-white/10"}`}
                     >
                         <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${buyEnabled ? "translate-x-5" : "translate-x-0"}`}>
-                            {isUpdatingBuy && <Loader2 className="h-3 w-3 animate-spin m-1 text-primary" />}
                         </span>
                     </button>
                 </div>
@@ -100,7 +105,6 @@ export function InventoryToggleCard({ item }: InventoryToggleCardProps) {
                         className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${sellEnabled ? "bg-primary" : "bg-white/10"}`}
                     >
                         <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${sellEnabled ? "translate-x-5" : "translate-x-0"}`}>
-                            {isUpdatingSell && <Loader2 className="h-3 w-3 animate-spin m-1 text-primary" />}
                         </span>
                     </button>
                 </div>

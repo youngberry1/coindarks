@@ -3,14 +3,14 @@
 import { useState } from "react";
 import {
     Send,
-    Loader2,
     CheckCircle2,
     MessageCircle,
     ShoppingBag
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { createTicket } from "@/actions/support";
 import { toast } from "sonner";
+import { Loading } from "@/components/ui/Loading";
 import {
     Select,
     SelectContent,
@@ -72,6 +72,11 @@ export function SupportForm({ orders = [], onClose }: SupportFormProps) {
 
     return (
         <>
+            <AnimatePresence>
+                {isSubmitting && (
+                    <Loading message="Establishing secure connection to support..." />
+                )}
+            </AnimatePresence>
             {success ? (
                 <motion.div
                     initial={{ opacity: 0, y: 10 }}
@@ -152,12 +157,8 @@ export function SupportForm({ orders = [], onClose }: SupportFormProps) {
                         onClick={handleSubmit}
                         className="w-full py-6 rounded-2xl bg-primary text-white font-black text-lg uppercase tracking-[0.2em] shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-4 disabled:opacity-50 disabled:grayscale"
                     >
-                        {isSubmitting ? <Loader2 className="h-6 w-6 animate-spin" /> : (
-                            <>
-                                Open Support Ticket
-                                <Send className="h-5 w-5" />
-                            </>
-                        )}
+                        Open Support Ticket
+                        <Send className="h-5 w-5" />
                     </button>
                 </div>
             )}

@@ -58,28 +58,28 @@ export default async function AdminSupportPage({ searchParams }: AdminSupportPag
                                     <MessageSquare className="h-6 w-6" />
                                 </div>
 
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-3 mb-1">
-                                        <span className="font-mono text-xs font-bold text-foreground/40">#{ticket.ticket_id}</span>
-                                        <h3 className="text-lg font-bold truncate group-hover:text-primary transition-colors">{ticket.subject}</h3>
+                                <div className="flex-1 min-w-0 w-full">
+                                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-2">
+                                        <span className="font-mono text-[10px] md:text-xs font-bold text-foreground/40 px-2 py-0.5 rounded bg-white/5">#{ticket.ticket_id}</span>
+                                        <h3 className="text-base md:text-lg font-bold truncate group-hover:text-primary transition-colors">{ticket.subject}</h3>
                                     </div>
-                                    <p className="text-sm text-foreground/60 flex items-center gap-2">
-                                        <span className="font-medium text-foreground">{ticket.users?.first_name} {ticket.users?.last_name}</span>
-                                        <span className="text-foreground/30">•</span>
-                                        <span>{ticket.users?.email}</span>
-                                        <span className="text-foreground/30">•</span>
-                                        <span>{new Date(ticket.created_at).toLocaleString()}</span>
-                                    </p>
+                                    <div className="text-xs md:text-sm text-foreground/60 flex flex-wrap items-center gap-x-2 gap-y-1">
+                                        <span className="font-bold text-foreground truncate max-w-[150px] sm:max-w-none">{ticket.users?.first_name} {ticket.users?.last_name}</span>
+                                        <span className="hidden sm:inline text-foreground/20">•</span>
+                                        <span className="truncate max-w-[180px] sm:max-w-none font-medium">{ticket.users?.email}</span>
+                                        <span className="hidden md:inline text-foreground/20">•</span>
+                                        <span className="w-full md:w-auto mt-1 md:mt-0 opacity-40 text-[10px] md:text-xs">{new Date(ticket.created_at).toLocaleString()}</span>
+                                    </div>
                                 </div>
 
-                                <div className="flex items-center gap-4">
-                                    <Badge variant="outline" className={`${ticket.status === 'OPEN' ? 'border-primary/50 text-priority' :
+                                <div className="flex items-center gap-2 sm:gap-4 w-full md:w-auto justify-between md:justify-end pt-4 md:pt-0 border-t border-white/5 md:border-0 mt-2 md:mt-0">
+                                    <Badge variant="outline" className={`text-[10px] px-2 py-0.5 ${ticket.status === 'OPEN' ? 'border-primary/50 text-priority' :
                                         ticket.status === 'CLOSED' ? 'border-emerald-500/50 text-emerald-500' :
                                             'border-amber-500/50 text-amber-500'
                                         }`}>
                                         {ticket.status}
                                     </Badge>
-                                    <Badge variant="secondary" className="uppercase text-[10px] tracking-wider">
+                                    <Badge variant="secondary" className="uppercase text-[9px] md:text-[10px] tracking-wider px-2 py-0.5">
                                         {ticket.priority}
                                     </Badge>
                                 </div>

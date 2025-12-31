@@ -2,7 +2,7 @@
 
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { Quote, Star } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 const testimonials = [
     {
@@ -160,13 +160,15 @@ function TestimonialCard({ testimonial }: { testimonial: typeof testimonials[0] 
 }
 
 export default function Testimonials() {
-    const [mounted, setMounted] = useState(false);
+    const isMounted = useSyncExternalStore(
+        () => () => { },
+        () => true,
+        () => false
+    );
 
-    useEffect(() => {
-        setMounted(true);
-    }, []);
-
-    if (!mounted) return <div className="py-24" />; // Placeholder to avoid jump
+    if (!isMounted) {
+        return <div className="py-24" />; // Placeholder to avoid jump
+    }
 
     const firstRow = testimonials.slice(0, 6);
     const secondRow = testimonials.slice(6, 12);

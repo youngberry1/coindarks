@@ -1,18 +1,19 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import React, { useState } from "react";
+import React, { useSyncExternalStore } from "react";
 
 export function ThemeToggle() {
     const { setTheme, resolvedTheme } = useTheme();
-    const [mounted, setMounted] = useState(false);
 
-    // Avoid hydration mismatch
-    React.useEffect(() => {
-        setMounted(true);
-    }, []);
+    // Avoid hydration mismatch using React 18+ recommended pattern
+    const isMounted = useSyncExternalStore(
+        () => () => { },
+        () => true,
+        () => false
+    );
 
-    if (!mounted) {
+    if (!isMounted) {
         return (
             <div className="w-24 h-12 rounded-full bg-neutral-700/50 animate-pulse" />
         );

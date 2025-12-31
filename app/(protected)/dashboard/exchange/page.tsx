@@ -86,12 +86,12 @@ export default async function ExchangePage() {
             ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
                     {/* Main Trading Area */}
-                    <div className="lg:col-span-12 xl:col-span-8">
+                    <div className="lg:col-span-8">
                         <TradingForm initialInventory={inventory || []} supportedAssets={supportedAssets} />
                     </div>
 
                     {/* Sidebar / Info Area */}
-                    <div className="lg:col-span-12 xl:col-span-4 space-y-6">
+                    <div className="lg:col-span-4 space-y-6">
                         <div className="p-8 rounded-[40px] border border-border bg-card-bg/50 backdrop-blur-xl shadow-sm dark:shadow-none">
                             <h3 className="text-lg font-black mb-6">Trading Information</h3>
                             <div className="space-y-8">

@@ -66,7 +66,9 @@ export function DashboardSidebar({ user }: SidebarProps) {
             <div className="mb-14 md:mb-16 flex items-center justify-between px-2">
                 <Logo className="scale-90 md:scale-100 origin-left" />
                 {onClose && (
-                    <VisuallyHidden>Close</VisuallyHidden>
+                    <VisuallyHidden>
+                        <span>Close</span>
+                    </VisuallyHidden>
                 )}
             </div>
 
@@ -212,10 +214,10 @@ export function DashboardSidebar({ user }: SidebarProps) {
                         </button>
                     </SheetTrigger>
                     <SheetContent side="left" className="w-[300px] sm:w-[340px] border-r border-white/10 bg-background/95 backdrop-blur-xl p-6">
-                        <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-                        <SheetDescription className="sr-only">
-                            Dashboard navigation menu
-                        </SheetDescription>
+                        <VisuallyHidden>
+                            <SheetTitle>Navigation Menu</SheetTitle>
+                            <SheetDescription>Dashboard navigation menu</SheetDescription>
+                        </VisuallyHidden>
                         {renderContent(() => setIsMobileOpen(false))}
                     </SheetContent>
                 </Sheet>

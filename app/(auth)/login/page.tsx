@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, Lock, Loader2, ArrowRight, ShieldAlert, CheckCircle2 } from "lucide-react";
+import { Mail, Lock, ArrowRight, ShieldAlert, CheckCircle2 } from "lucide-react";
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
@@ -13,6 +13,7 @@ import { resendVerification } from "@/actions/resend-verification";
 import { checkVerification } from "@/actions/check-verification";
 import { login } from "@/actions/login";
 import { Logo } from "@/components/ui/Logo";
+import { Loading } from "@/components/ui/Loading";
 
 function LoginContent() {
     const [email, setEmail] = useState("");
@@ -100,6 +101,12 @@ function LoginContent() {
 
     return (
         <div className="flex min-h-screen items-center justify-center px-4 py-12 sm:px-6 lg:px-8 bg-background relative overflow-hidden">
+            <AnimatePresence>
+                {isLoading && (
+                    <Loading message="Securing your session..." />
+                )}
+            </AnimatePresence>
+
             {/* Theme Toggle Positioned Top Right */}
             <div className="absolute top-4 right-4 sm:top-8 sm:right-8 z-50">
                 <ThemeToggle />
@@ -153,11 +160,8 @@ function LoginContent() {
                                     type="button"
                                     onClick={handleResend}
                                     disabled={resendLoading || checkLoading}
-                                    className="text-[10px] font-bold uppercase tracking-widest bg-amber-500 text-white px-3 py-2 rounded-lg shadow hover:bg-amber-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                    className="text-[10px] font-bold uppercase tracking-widest bg-amber-500 text-white px-3 py-2 rounded-lg shadow hover:bg-amber-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                 >
-                                    {resendLoading ? (
-                                        <Loader2 className="h-3 w-3 animate-spin" />
-                                    ) : null}
                                     Resend Email
                                 </button>
 
@@ -166,11 +170,8 @@ function LoginContent() {
                                         type="button"
                                         onClick={handleCheckStatus}
                                         disabled={resendLoading || checkLoading}
-                                        className="text-[10px] font-bold uppercase tracking-widest bg-primary text-white px-3 py-2 rounded-lg shadow hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                        className="text-[10px] font-bold uppercase tracking-widest bg-primary text-white px-3 py-2 rounded-lg shadow hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                     >
-                                        {checkLoading ? (
-                                            <Loader2 className="h-3 w-3 animate-spin" />
-                                        ) : null}
                                         Check Status
                                     </button>
                                 )}
@@ -259,17 +260,11 @@ function LoginContent() {
                             disabled={isLoading}
                             className="relative flex w-full justify-center rounded-2xl bg-primary py-4 text-sm font-bold text-white shadow-xl shadow-primary/20 hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
                         >
-                            {isLoading ? (
-                                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                            ) : (
-                                <>
-                                    Sign in
-                                    <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                                </>
-                            )}
+                            Sign in
+                            <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                         </button>
                     </div>
-                </form>
+                </form >
 
                 <div className="text-center text-sm text-foreground/60">
                     Don&apos;t have an account?{" "}
@@ -277,18 +272,14 @@ function LoginContent() {
                         Create account
                     </Link>
                 </div>
-            </motion.div>
-        </div>
+            </motion.div >
+        </div >
     );
 }
 
 export default function LoginPage() {
     return (
-        <Suspense fallback={
-            <div className="flex min-h-screen items-center justify-center bg-background">
-                <Loader2 className="h-8 w-8 text-primary animate-spin" />
-            </div>
-        }>
+        <Suspense fallback={<Loading message="Synchronizing secure channel..." />}>
             <LoginContent />
         </Suspense>
     );

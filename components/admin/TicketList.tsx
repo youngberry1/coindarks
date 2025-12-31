@@ -7,11 +7,12 @@ import {
     Mail,
     Clock,
     CheckCircle2,
-    ShoppingBag,
-    Loader2
+    ShoppingBag
 } from "lucide-react";
 import { updateTicketStatus } from "@/actions/support";
 import { toast } from "sonner";
+import { Loading } from "@/components/ui/Loading";
+import { AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface Ticket {
@@ -58,6 +59,11 @@ export function TicketList({ initialTickets }: TicketListProps) {
 
     return (
         <div className="space-y-4">
+            <AnimatePresence>
+                {updatingId && (
+                    <Loading message="Synchronizing resolution status..." />
+                )}
+            </AnimatePresence>
             {tickets.map((ticket) => (
                 <div key={ticket.id} className="p-8 rounded-[32px] border border-white/5 bg-card-bg/50 backdrop-blur-md hover:border-white/10 transition-all group overflow-hidden relative">
                     <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 relative z-10">
@@ -116,7 +122,7 @@ export function TicketList({ initialTickets }: TicketListProps) {
                                     disabled={updatingId === ticket.id}
                                     className="px-6 py-3 rounded-2xl bg-emerald-500 text-white font-bold text-sm shadow-xl shadow-emerald-500/20 hover:scale-105 active:scale-[0.98] transition-all flex items-center gap-2"
                                 >
-                                    {updatingId === ticket.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
+                                    <CheckCircle2 className="h-4 w-4" />
                                     Resolve Ticket
                                 </button>
                             ) : (
@@ -125,7 +131,7 @@ export function TicketList({ initialTickets }: TicketListProps) {
                                     disabled={updatingId === ticket.id}
                                     className="px-6 py-3 rounded-2xl bg-white/5 border border-white/10 text-foreground/40 hover:text-foreground hover:bg-white/10 font-bold text-sm transition-all flex items-center gap-2"
                                 >
-                                    {updatingId === ticket.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Clock className="h-4 w-4" />}
+                                    <Clock className="h-4 w-4" />
                                     Reopen Ticket
                                 </button>
                             )}

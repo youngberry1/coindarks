@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import {
-    Loader2,
     CheckCircle2,
     Wallet,
     Info,
@@ -16,6 +15,8 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Cryptocurrency } from "@/actions/crypto";
 import { AssetSelector } from "@/components/dashboard/AssetSelector";
+import { Loading } from "@/components/ui/Loading";
+import { AnimatePresence } from "framer-motion";
 
 interface AssetMetadata {
     id: string;
@@ -150,6 +151,11 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
 
     return (
         <div className="p-6 md:p-10 lg:p-14 rounded-[40px] border border-border bg-card-bg/50 backdrop-blur-xl shadow-sm dark:shadow-none">
+            <AnimatePresence>
+                {isSubmitting && (
+                    <Loading message="Transmitting order to secure nodes..." />
+                )}
+            </AnimatePresence>
             {/* Type Toggle */}
             <div className="flex p-1.5 rounded-2xl bg-card-bg/50 border border-border mb-8 md:mb-12 w-full sm:w-max shadow-inner dark:shadow-none">
                 <button
@@ -172,7 +178,7 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-10 md:gap-14">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-14">
                 <div className="space-y-6 md:space-y-8">
                     {/* Send / Receive Inputs */}
                     <div className="space-y-6">
@@ -261,7 +267,11 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                             <div className="flex justify-between text-sm">
                                 <span className="text-foreground/40 font-medium">Exchange Rate</span>
                                 <span className="font-bold">
-                                    {isLoading ? <Loader2 className="h-3 w-3 animate-spin inline mr-2" /> : `1 ${asset.id} ≈ ${(price! * fiat.rate).toLocaleString()} ${fiat.id}`}
+                                    {isLoading ? (
+                                        <div className="inline-flex mr-2 scale-50">
+                                            <Loading fullScreen={false} message="" />
+                                        </div>
+                                    ) : `1 ${asset.id} ≈ ${(price! * fiat.rate).toLocaleString()} ${fiat.id}`}
                                 </span>
                             </div>
                             <div className="flex justify-between text-sm">
@@ -290,14 +300,8 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                                 (isSubmitting || !amountFiat || !receivingAddress) && "opacity-50 grayscale cursor-not-allowed scale-100"
                             )}
                         >
-                            {isSubmitting ? (
-                                <Loader2 className="h-7 w-7 animate-spin" />
-                            ) : (
-                                <>
-                                    Confirm {type === 'BUY' ? 'Purchase' : 'Sale'}
-                                    <ArrowRight className="h-6 w-6 group-hover:translate-x-1 transition-transform" />
-                                </>
-                            )}
+                            Confirm {type === 'BUY' ? 'Purchase' : 'Sale'}
+                            <ArrowRight className="h-6 w-6 group-hover:translate-x-1 transition-transform" />
                         </button>
                     )}
                 </div>

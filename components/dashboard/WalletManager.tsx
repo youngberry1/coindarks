@@ -4,7 +4,6 @@ import { useState } from "react";
 import {
     Plus,
     Trash2,
-    Loader2,
     AlertCircle
 } from "lucide-react";
 import {
@@ -16,6 +15,8 @@ import {
 } from "@/components/ui/select";
 import { saveWallet, deleteWallet } from "@/actions/wallets";
 import { toast } from "sonner";
+import { Loading } from "@/components/ui/Loading";
+import { AnimatePresence } from "framer-motion";
 
 interface Wallet {
     name: string;
@@ -130,6 +131,14 @@ export function WalletManager({ initialWallets, assets }: WalletManagerProps) {
 
     return (
         <div className="space-y-8">
+            <AnimatePresence>
+                {isSaving && (
+                    <Loading message="Encrypting wallet metadata..." />
+                )}
+                {isDeleting && (
+                    <Loading message="Purging secure records..." />
+                )}
+            </AnimatePresence>
             {/* Header + Add Button */}
             <div className="flex items-center justify-between">
                 <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em]">Your Saved Addresses</p>
@@ -222,7 +231,7 @@ export function WalletManager({ initialWallets, assets }: WalletManagerProps) {
                             disabled={isSaving || !form.address}
                             className="w-full sm:w-auto px-10 py-4 rounded-2xl bg-primary text-white font-bold text-sm shadow-xl shadow-primary/20 hover:scale-[1.02] disabled:opacity-50 transition-all flex items-center justify-center gap-2"
                         >
-                            {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : (editingWallet ? <Plus className="h-4 w-4 rotate-45" /> : <Plus className="h-4 w-4" />)}
+                            {editingWallet ? <Plus className="h-4 w-4 rotate-45" /> : <Plus className="h-4 w-4" />}
                             {editingWallet ? "Update Wallet Address" : "Save Wallet Address"}
                         </button>
                         <button
@@ -283,7 +292,7 @@ export function WalletManager({ initialWallets, assets }: WalletManagerProps) {
                                     disabled={isDeleting === `${wallet.asset}-${wallet.network}-${wallet.name}`}
                                     className="p-3.5 rounded-2xl bg-rose-500/5 border border-rose-500/10 text-rose-500/40 hover:text-rose-500 hover:bg-rose-500/10 hover:border-rose-500/20 transition-all flex items-center justify-center min-w-[50px]"
                                 >
-                                    {isDeleting === `${wallet.asset}-${wallet.network}-${wallet.name}` ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                                    <Trash2 className="h-4 w-4" />
                                 </button>
                             </div>
                         </div>
