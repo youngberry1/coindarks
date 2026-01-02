@@ -4,11 +4,13 @@ import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { Lock, Loader2, ArrowRight, CheckCircle2, AlertCircle, Eye, EyeOff } from "lucide-react";
+import { Lock, ArrowRight, CheckCircle2, AlertCircle, Eye, EyeOff } from "lucide-react";
 import { newPassword } from "@/actions/new-password";
 import { PasswordStrength } from "@/components/auth/PasswordStrength";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { Loading } from "@/components/ui/Loading";
 import { Logo } from "@/components/ui/Logo";
+import { AnimatePresence } from "framer-motion";
 
 function NewPasswordContent() {
     const searchParams = useSearchParams();
@@ -51,6 +53,12 @@ function NewPasswordContent() {
 
     return (
         <div className="flex min-h-screen items-center justify-center px-4 py-12 sm:px-6 lg:px-8 bg-background relative overflow-hidden">
+            <AnimatePresence>
+                {isLoading && (
+                    <Loading message="Recalibrating security protocols..." />
+                )}
+            </AnimatePresence>
+
             {/* Theme Toggle Positioned Top Right */}
             <div className="absolute top-8 right-8 z-50">
                 <ThemeToggle />
@@ -168,14 +176,8 @@ function NewPasswordContent() {
                                 disabled={isLoading}
                                 className="relative flex w-full justify-center rounded-2xl bg-primary py-4 text-sm font-bold text-white shadow-xl shadow-primary/20 hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
                             >
-                                {isLoading ? (
-                                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                                ) : (
-                                    <>
-                                        Update Password
-                                        <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                                    </>
-                                )}
+                                Update Password
+                                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                             </button>
                         </div>
 
@@ -194,11 +196,7 @@ function NewPasswordContent() {
 
 export default function NewPasswordPage() {
     return (
-        <Suspense fallback={
-            <div className="flex min-h-screen items-center justify-center bg-background">
-                <Loader2 className="h-8 w-8 text-primary animate-spin" />
-            </div>
-        }>
+        <Suspense fallback={<Loading message="Securing security nodes..." />}>
             <NewPasswordContent />
         </Suspense>
     );

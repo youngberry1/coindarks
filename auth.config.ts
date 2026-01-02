@@ -13,6 +13,7 @@ export const authConfig = {
                 token.name = user.name;
                 token.role = user.role;
                 token.status = user.status;
+                token.emailVerified = user.emailVerified;
             }
             return token;
         },
@@ -23,6 +24,7 @@ export const authConfig = {
                 session.user.name = token.name as string;
                 session.user.role = token.role as UserRole;
                 session.user.status = token.status as UserStatus;
+                session.user.emailVerified = token.emailVerified as Date | null;
             }
             return session;
         },

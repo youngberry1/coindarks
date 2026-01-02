@@ -1,5 +1,5 @@
 import NextAuth from "next-auth";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 import { authConfig } from "./auth.config";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
@@ -23,8 +23,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     console.log(`[AUTH CHECK] Attempting login for: ${email}`);
 
                     try {
-                        const { data: user } = await supabase
-                            .from('User')
+                        const { data: user } = await supabaseAdmin
+                            .from('users')
                             .select('*')
                             .eq('email', email)
                             .maybeSingle();
@@ -35,25 +35,25 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                         }
 
                         // Check status
-                        if (user.status === "SUSPENDED" || user.status === "DELETED") {
+                        if (user.status === "SUSPENDED" || user.status === "BANNED") {
                             console.log(`[AUTH CHECK] ❌ User is ${user.status}.`);
                             return null;
                         }
 
                         console.log(`[AUTH CHECK] ✅ User found: ${user.id}, Role: ${user.role}`);
 
-                        if (!user.passwordHash) {
+                        if (!user.password_hash) {
                             console.log(`[AUTH CHECK] ❌ User has no password hash.`);
                             return null;
                         }
 
-                        const passwordsMatch = await bcrypt.compare(password, user.passwordHash);
+                        const passwordsMatch = await bcrypt.compare(password, user.password_hash);
 
                         if (passwordsMatch) {
                             console.log(`[AUTH CHECK] ✅ Password valid!`);
 
                             // Construct name from parts for session
-                            const fullName = [user.firstName, user.middleName, user.lastName].filter(Boolean).join(" ");
+                            const fullName = [user.first_name, user.middle_name, user.last_name].filter(Boolean).join(" ");
 
                             return {
                                 id: user.id,
@@ -61,7 +61,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                                 name: fullName,
                                 role: user.role,
                                 status: user.status,
-                                emailVerified: user.emailVerified,
+                                emailVerified: user.email_verified,
                             };
                         } else {
                             console.log(`[AUTH CHECK] ❌ Password mismatch.`);

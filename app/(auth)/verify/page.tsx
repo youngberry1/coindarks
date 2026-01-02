@@ -3,9 +3,10 @@
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { CheckCircle2, XCircle, Loader2, ArrowRight } from "lucide-react";
+import { CheckCircle2, XCircle, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { verifyEmail } from "@/actions/verify";
+import { newVerification } from "@/actions/new-verification";
+import { Loading } from "@/components/ui/Loading";
 
 function VerifyContent() {
     const [error, setError] = useState<string | undefined>();
@@ -18,7 +19,7 @@ function VerifyContent() {
             if (!token || success || error) return;
 
             try {
-                const data = await verifyEmail(token);
+                const data = await newVerification(token);
                 if (data.success) {
                     setSuccess(data.success);
                 } else {
@@ -40,9 +41,7 @@ function VerifyContent() {
         >
             <div className="flex justify-center">
                 {!success && !error && (
-                    <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
-                        <Loader2 className="h-8 w-8 text-primary animate-spin" />
-                    </div>
+                    <Loading message="Synchronizing with central database..." />
                 )}
                 {success && (
                     <div className="h-16 w-16 rounded-full bg-green-500/10 flex items-center justify-center">
@@ -84,11 +83,7 @@ function VerifyContent() {
 export default function VerifyPage() {
     return (
         <div className="flex min-h-screen items-center justify-center bg-background px-4">
-            <Suspense fallback={
-                <div className="glass-morphism p-10 rounded-3xl text-center">
-                    <Loader2 className="h-8 w-8 text-primary animate-spin mx-auto" />
-                </div>
-            }>
+            <Suspense fallback={<Loading message="Accessing secure channel..." />}>
                 <VerifyContent />
             </Suspense>
         </div>

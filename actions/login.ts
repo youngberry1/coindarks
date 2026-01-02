@@ -4,7 +4,7 @@ import * as z from "zod";
 import { AuthError } from "next-auth";
 import { signIn } from "@/auth";
 import { LoginSchema } from "@/schemas";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 
 export const login = async (values: z.infer<typeof LoginSchema>) => {
     const validatedFields = LoginSchema.safeParse(values);
@@ -16,19 +16,19 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
     const { email, password } = validatedFields.data;
 
     // Pre-verification check: Check if user exists and is verified
-    // This is more reliable than waiting for Auth.js to callback
+    // Use supabaseAdmin to bypass RLS for this internal check
     try {
-        const { data: user } = await supabase
-            .from('User')
-            .select('email, emailVerified')
+        const { data: user } = await supabaseAdmin
+            .from('users')
+            .select('email, email_verified')
             .eq('email', email)
             .maybeSingle();
 
-        if (user && !user.emailVerified) {
+        if (user && !user.email_verified) {
             return { error: "EmailNotVerified" };
         }
-    } catch (error) {
-        console.error("Login verification check error:", error);
+    } catch {
+        // Silently continue if check fails
     }
 
     try {

@@ -3,10 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Mail, Loader2, ArrowRight, CheckCircle2, AlertCircle } from "lucide-react";
+import { Mail, ArrowRight, CheckCircle2, AlertCircle } from "lucide-react";
 import { reset } from "@/actions/reset";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { Loading } from "@/components/ui/Loading";
 import { Logo } from "@/components/ui/Logo";
+import { AnimatePresence } from "framer-motion";
 
 export default function ForgotPasswordPage() {
     const [email, setEmail] = useState("");
@@ -36,6 +38,12 @@ export default function ForgotPasswordPage() {
 
     return (
         <div className="flex min-h-screen items-center justify-center px-4 py-12 sm:px-6 lg:px-8 bg-background relative overflow-hidden">
+            <AnimatePresence>
+                {isLoading && (
+                    <Loading message="Initiating recovery sequence..." />
+                )}
+            </AnimatePresence>
+
             {/* Theme Toggle Positioned Top Right */}
             <div className="absolute top-8 right-8 z-50">
                 <ThemeToggle />
@@ -109,14 +117,8 @@ export default function ForgotPasswordPage() {
                                 disabled={isLoading}
                                 className="relative flex w-full justify-center rounded-2xl bg-primary py-4 text-sm font-bold text-white shadow-xl shadow-primary/20 hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
                             >
-                                {isLoading ? (
-                                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                                ) : (
-                                    <>
-                                        Send Reset Link
-                                        <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                                    </>
-                                )}
+                                Send Reset Link
+                                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                             </button>
                         </div>
 

@@ -4,11 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Mail, Lock, User, Loader2, ArrowRight, ShieldCheck, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, User, ArrowRight, ShieldCheck, Eye, EyeOff } from "lucide-react";
 import { register } from "@/actions/register";
 import { PasswordStrength } from "@/components/auth/PasswordStrength";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { Loading } from "@/components/ui/Loading";
 import { Logo } from "@/components/ui/Logo";
+import { AnimatePresence } from "framer-motion";
 
 export default function RegisterPage() {
     const [formData, setFormData] = useState({
@@ -59,8 +61,14 @@ export default function RegisterPage() {
 
     return (
         <div className="flex min-h-screen items-center justify-center px-4 py-12 sm:px-6 lg:px-8 bg-background relative overflow-hidden">
+            <AnimatePresence>
+                {isLoading && (
+                    <Loading message="Initializing your account..." />
+                )}
+            </AnimatePresence>
+
             {/* Theme Toggle Positioned Top Right */}
-            <div className="absolute top-8 right-8 z-50">
+            <div className="absolute top-4 right-4 sm:top-8 sm:right-8 z-50">
                 <ThemeToggle />
             </div>
 
@@ -71,7 +79,7 @@ export default function RegisterPage() {
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="w-full max-w-md space-y-8 glass-morphism p-10 rounded-3xl shadow-2xl relative z-10"
+                className="w-full max-w-md space-y-6 md:space-y-8 glass-morphism p-6 md:p-10 rounded-[32px] md:rounded-3xl shadow-2xl relative z-10"
             >
                 <div className="text-center">
                     <Logo className="inline-flex mb-8" />
@@ -95,6 +103,7 @@ export default function RegisterPage() {
                                     onChange={handleChange}
                                     className="w-full rounded-2xl border border-white/10 bg-white/5 py-4 pl-12 pr-4 text-foreground placeholder:text-foreground/30 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all duration-300"
                                     placeholder="First Name"
+                                    aria-label="First Name"
                                 />
                                 {errors?.firstName && <p className="mt-1 text-xs text-red-500 ml-2">{errors.firstName[0]}</p>}
                             </div>
@@ -107,6 +116,7 @@ export default function RegisterPage() {
                                     onChange={handleChange}
                                     className="w-full rounded-2xl border border-white/10 bg-white/5 py-4 pl-4 pr-4 text-foreground placeholder:text-foreground/30 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all duration-300"
                                     placeholder="Last Name"
+                                    aria-label="Last Name"
                                 />
                                 {errors?.lastName && <p className="mt-1 text-xs text-red-500 ml-2">{errors.lastName[0]}</p>}
                             </div>
@@ -120,6 +130,7 @@ export default function RegisterPage() {
                                 onChange={handleChange}
                                 className="w-full rounded-2xl border border-white/10 bg-white/5 py-4 pl-4 pr-4 text-foreground placeholder:text-foreground/30 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all duration-300"
                                 placeholder="Middle Name (Optional)"
+                                aria-label="Middle Name"
                             />
                         </div>
 
@@ -133,6 +144,7 @@ export default function RegisterPage() {
                                 onChange={handleChange}
                                 className="w-full rounded-2xl border border-white/10 bg-white/5 py-4 pl-12 pr-4 text-foreground placeholder:text-foreground/30 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all duration-300"
                                 placeholder="Email address"
+                                aria-label="Email address"
                             />
                             {errors?.email && <p className="mt-1 text-xs text-red-500 ml-2">{errors.email[0]}</p>}
                         </div>
@@ -147,6 +159,7 @@ export default function RegisterPage() {
                                 onChange={handleChange}
                                 className="w-full rounded-2xl border border-white/10 bg-white/5 py-4 pl-12 pr-12 text-foreground placeholder:text-foreground/30 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all duration-300"
                                 placeholder="Password"
+                                aria-label="Password"
                             />
                             <button
                                 type="button"
@@ -168,6 +181,7 @@ export default function RegisterPage() {
                                 onChange={handleChange}
                                 className="w-full rounded-2xl border border-white/10 bg-white/5 py-4 pl-12 pr-12 text-foreground placeholder:text-foreground/30 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all duration-300"
                                 placeholder="Confirm Password"
+                                aria-label="Confirm Password"
                             />
                             <button
                                 type="button"
@@ -186,6 +200,18 @@ export default function RegisterPage() {
                                 confirmPassword={formData.confirmPassword}
                                 showMatch={true}
                             />
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-3 p-4 rounded-2xl bg-amber-500/5 border border-amber-500/10">
+                        <div className="flex items-start gap-3">
+                            <ShieldCheck className="h-5 w-5 text-amber-500 shrink-0" />
+                            <div>
+                                <p className="text-[12px] font-bold text-amber-500 uppercase tracking-wider mb-1">Important: Official Identity</p>
+                                <p className="text-[12px] text-foreground/60 leading-tight">
+                                    Please use your **real name** as it appears on your official ID. You will not be able to change your name or email after registration.
+                                </p>
+                            </div>
                         </div>
                     </div>
 
@@ -208,14 +234,8 @@ export default function RegisterPage() {
                             disabled={isLoading}
                             className="relative flex w-full justify-center rounded-2xl bg-primary py-4 text-sm font-bold text-white shadow-xl shadow-primary/20 hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
                         >
-                            {isLoading ? (
-                                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                            ) : (
-                                <>
-                                    Create Account
-                                    <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                                </>
-                            )}
+                            Create Account
+                            <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                         </button>
                     </div>
                 </form>

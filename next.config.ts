@@ -9,16 +9,30 @@ const nextConfig: NextConfig = {
         hostname: 'raw.githubusercontent.com',
         pathname: '/spothq/cryptocurrency-icons/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'fddwtxxqimdseecezoje.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'fddwtxxqimdseecezoje.supabase.co',
+        pathname: '/storage/v1/object/sign/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'coin-images.coingecko.com',
+        pathname: '/**',
+      },
     ],
   },
-  turbopack: {
-    rules: {
-      '*.svg': {
-        loaders: ['@svgr/webpack'],
-        as: '*.js',
-      },
+
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '50mb',
     },
   },
 };
+
 
 export default nextConfig;

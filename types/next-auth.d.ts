@@ -4,6 +4,7 @@ import { DefaultSession } from "next-auth";
 export type ExtendedUser = DefaultSession["user"] & {
     role: UserRole;
     status: UserStatus;
+    emailVerified: Date | null;
 };
 
 declare module "next-auth" {
@@ -14,7 +15,7 @@ declare module "next-auth" {
     interface User {
         role: UserRole;
         status: UserStatus;
-        emailVerified: Date | string | null;
+        emailVerified: Date | null;
     }
 }
 
@@ -22,6 +23,6 @@ declare module "next-auth/jwt" {
     interface JWT {
         role: UserRole;
         status: UserStatus;
-        emailVerified: Date | string | null;
+        emailVerified: Date | null;
     }
 }
