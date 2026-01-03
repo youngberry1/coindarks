@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     siteName: "CoinDarks",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: "CoinDarks - Secure Crypto Exchange",
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "CoinDarks | Secure Crypto-Fiat Exchange",
     description: "Instant Crypto-Fiat exchange in Ghana & Nigeria. Secure, fast, and reliable.",
-    images: ["/og-image.jpg"],
+    images: ["/og-image.png"],
   },
 };
 

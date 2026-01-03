@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { Menu, LayoutDashboard, LogOut, Shield, Zap, Globe, ArrowRight, Star } from "lucide-react";
+import { Menu, LayoutDashboard, LogOut, Shield, Zap, Globe, ArrowRight, Star, ShieldCheck } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Logo } from "@/components/ui/Logo";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetHeader, SheetDescription } from "@/components/ui/sheet";
@@ -17,8 +17,9 @@ export default function Navbar() {
     const navLinks = [
         { name: "Exchange", href: "/#", icon: Zap },
         { name: "Live Market", href: "/#market", icon: Globe },
-        { name: "Testimonials", href: "/#testimonials", icon: Star },
+        { name: "Features", href: "/#how-it-works", icon: ShieldCheck },
         { name: "Security", href: "/#security", icon: Shield },
+        { name: "Testimonials", href: "/#testimonials", icon: Star },
     ];
 
     return (
