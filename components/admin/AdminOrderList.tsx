@@ -112,7 +112,7 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                                 <th className="px-8 py-6 text-[10px] font-black text-foreground/40 uppercase tracking-widest">Type / Asset</th>
                                 <th className="px-8 py-6 text-[10px] font-black text-foreground/40 uppercase tracking-widest">Amount</th>
                                 <th className="px-8 py-6 text-[10px] font-black text-foreground/40 uppercase tracking-widest">Status</th>
-                                <th className="px-8 py-6 text-[10px] font-black text-foreground/40 uppercase tracking-widest text-right">Fulfillment</th>
+                                <th className="px-8 py-6 text-[10px] font-black text-foreground/40 uppercase tracking-widest text-right">Action</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5 font-bold">
@@ -173,8 +173,8 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                                         <div className="flex items-center justify-end gap-2">
                                             <button
                                                 onClick={() => copyAddress(order.receiving_address, order.id)}
-                                                className="p-2 rounded-lg bg-white/5 text-foreground/20 hover:text-foreground hover:bg-white/10 transition-all border border-white/5 group/btn"
-                                                title="Copy Receiving Address"
+                                                className="p-2 rounded-lg bg-white/5 text-foreground/20 hover:text-foreground hover:bg-white/10 transition-all border border-white/5 group/btn relative"
+                                                title={order.type === 'BUY' ? "Copy Wallet Address" : "Copy Payment Details"}
                                             >
                                                 {copiedId === order.id ? (
                                                     <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
@@ -182,13 +182,15 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                                                     <Copy className="h-3.5 w-3.5" />
                                                 )}
                                             </button>
-                                            <button
-                                                onClick={() => openExplorer(order.receiving_address)}
-                                                className="p-2 rounded-lg bg-white/5 text-foreground/20 hover:text-foreground hover:bg-white/10 transition-all border border-white/5"
-                                                title="View on Block Explorer"
-                                            >
-                                                <ExternalLink className="h-3.5 w-3.5" />
-                                            </button>
+                                            {order.type === 'BUY' && (
+                                                <button
+                                                    onClick={() => openExplorer(order.receiving_address)}
+                                                    className="p-2 rounded-lg bg-white/5 text-foreground/20 hover:text-foreground hover:bg-white/10 transition-all border border-white/5"
+                                                    title="View on Block Explorer"
+                                                >
+                                                    <ExternalLink className="h-3.5 w-3.5" />
+                                                </button>
+                                            )}
                                         </div>
                                     </td>
                                 </tr>
@@ -254,6 +256,7 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                                 <button
                                     onClick={() => copyAddress(order.receiving_address, order.id)}
                                     className="p-3 rounded-xl bg-white/5 text-foreground/30 hover:text-primary transition-all border border-white/5"
+                                    title={order.type === 'BUY' ? "Copy Wallet Address" : "Copy Payment Details"}
                                 >
                                     {copiedId === order.id ? (
                                         <CheckCircle2 className="h-4 w-4 text-emerald-500" />
@@ -261,12 +264,14 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                                         <Copy className="h-4 w-4" />
                                     )}
                                 </button>
-                                <button
-                                    onClick={() => openExplorer(order.receiving_address)}
-                                    className="p-3 rounded-xl bg-white/5 text-foreground/30 hover:text-primary transition-all border border-white/5"
-                                >
-                                    <ExternalLink className="h-4 w-4" />
-                                </button>
+                                {order.type === 'BUY' && (
+                                    <button
+                                        onClick={() => openExplorer(order.receiving_address)}
+                                        className="p-3 rounded-xl bg-white/5 text-foreground/30 hover:text-primary transition-all border border-white/5"
+                                    >
+                                        <ExternalLink className="h-4 w-4" />
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>

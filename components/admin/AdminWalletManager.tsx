@@ -36,8 +36,19 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
         label: ''
     });
 
+    const [walletType, setWalletType] = useState<'CRYPTO' | 'FIAT'>('CRYPTO');
+
+    // Fiat Specific State (Concatenated into address/chain/currency)
+    const [fiatData, setFiatData] = useState({
+        provider: '', // Bank Name or Network
+        accountNumber: '',
+        accountName: '',
+        currency: 'GHS'
+    });
+
     const resetForm = () => {
         setFormData({ chain: '', currency: '', address: '', label: '' });
+        setFiatData({ provider: '', accountNumber: '', accountName: '', currency: 'GHS' });
         setIsAdding(false);
         setIsEditing(null);
     };
@@ -80,21 +91,36 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
         const toastId = toast.loading(isEditing ? "Updating wallet..." : "Adding wallet...");
 
         try {
+            const finalData = { ...formData }; // Copy
+
+            if (walletType === 'FIAT') {
+                // Construct fields for Fiat
+                // Chain = 'BANK' (or maybe customize later, but simplify for now)
+                // Actually, let's use the Provider as Chain for clarity in DB, or just 'BANK'
+                // Plan said: chain='BANK', address="Provider - Num (Name)"
+                // Better: chain='BANK', currency='GHS', address='GTBank|123456|John Doe' -> pipe sep for easy parsing? 
+                // Or just formatted string as plan: "GTBank - 123456 (John Doe)"
+
+                finalData.chain = 'BANK';
+                finalData.currency = fiatData.currency;
+                finalData.address = `${fiatData.provider} - ${fiatData.accountNumber} (${fiatData.accountName})`;
+                finalData.label = 'System Fiat Account';
+            }
+
             if (isEditing) {
-                const res = await updateAdminWallet(isEditing, formData);
+                const res = await updateAdminWallet(isEditing, finalData);
                 if (res.error) throw new Error(res.error);
 
-                setWallets(prev => prev.map(w => w.id === isEditing ? { ...w, ...formData } : w));
+                setWallets(prev => prev.map(w => w.id === isEditing ? { ...w, ...finalData } : w));
                 toast.success("Wallet updated successfully", { id: toastId });
             } else {
-                const res = await createAdminWallet(formData);
+                const res = await createAdminWallet(finalData);
                 if (res.error) throw new Error(res.error);
 
                 if (res.wallet) {
                     setWallets(prev => [res.wallet!, ...prev]);
                     toast.success("Wallet added successfully", { id: toastId });
                 } else {
-                    // Fallback if return type isn't updated properly yet
                     toast.success("Wallet added (refresh to see)", { id: toastId });
                 }
             }
@@ -184,47 +210,109 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
                         className="p-6 rounded-2xl bg-white/5 border border-white/5 space-y-4 overflow-hidden"
                         onSubmit={handleSubmit}
                     >
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold text-foreground/40 uppercase tracking-wider">Chain</label>
-                                <input
-                                    required
-                                    value={formData.chain}
-                                    onChange={e => setFormData({ ...formData, chain: e.target.value })}
-                                    placeholder="e.g. Bitcoin"
-                                    className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary transition-all"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold text-foreground/40 uppercase tracking-wider">Currency Symbol</label>
-                                <input
-                                    required
-                                    value={formData.currency}
-                                    onChange={e => setFormData({ ...formData, currency: e.target.value })}
-                                    placeholder="e.g. BTC"
-                                    className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary transition-all"
-                                />
-                            </div>
-                            <div className="col-span-2 space-y-2">
-                                <label className="text-xs font-bold text-foreground/40 uppercase tracking-wider">Wallet Address</label>
-                                <input
-                                    required
-                                    value={formData.address}
-                                    onChange={e => setFormData({ ...formData, address: e.target.value })}
-                                    placeholder="0x..."
-                                    className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm font-mono focus:outline-none focus:border-primary transition-all"
-                                />
-                            </div>
-                            <div className="col-span-2 space-y-2">
-                                <label className="text-xs font-bold text-foreground/40 uppercase tracking-wider">Label (Optional)</label>
-                                <input
-                                    value={formData.label}
-                                    onChange={e => setFormData({ ...formData, label: e.target.value })}
-                                    placeholder="e.g. Cold Storage"
-                                    className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary transition-all"
-                                />
-                            </div>
+                        <div className="flex gap-4 mb-4 p-1 bg-white/5 rounded-xl w-max">
+                            <button
+                                type="button"
+                                onClick={() => setWalletType('CRYPTO')}
+                                className={cn("px-4 py-2 rounded-lg text-xs font-bold transition-all", walletType === 'CRYPTO' ? "bg-primary text-white" : "text-foreground/40 hover:text-foreground")}
+                            >
+                                Crypto Wallet
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setWalletType('FIAT')}
+                                className={cn("px-4 py-2 rounded-lg text-xs font-bold transition-all", walletType === 'FIAT' ? "bg-primary text-white" : "text-foreground/40 hover:text-foreground")}
+                            >
+                                Fiat Account
+                            </button>
                         </div>
+
+                        {walletType === 'CRYPTO' ? (
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-foreground/40 uppercase tracking-wider">Chain</label>
+                                    <input
+                                        required
+                                        value={formData.chain}
+                                        onChange={e => setFormData({ ...formData, chain: e.target.value })}
+                                        placeholder="e.g. Bitcoin"
+                                        className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary transition-all"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-foreground/40 uppercase tracking-wider">Currency Symbol</label>
+                                    <input
+                                        required
+                                        value={formData.currency}
+                                        onChange={e => setFormData({ ...formData, currency: e.target.value })}
+                                        placeholder="e.g. BTC"
+                                        className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary transition-all"
+                                    />
+                                </div>
+                                <div className="col-span-2 space-y-2">
+                                    <label className="text-xs font-bold text-foreground/40 uppercase tracking-wider">Wallet Address</label>
+                                    <input
+                                        required
+                                        value={formData.address}
+                                        onChange={e => setFormData({ ...formData, address: e.target.value })}
+                                        placeholder="0x..."
+                                        className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm font-mono focus:outline-none focus:border-primary transition-all"
+                                    />
+                                </div>
+                                <div className="col-span-2 space-y-2">
+                                    <label className="text-xs font-bold text-foreground/40 uppercase tracking-wider">Label (Optional)</label>
+                                    <input
+                                        value={formData.label}
+                                        onChange={e => setFormData({ ...formData, label: e.target.value })}
+                                        placeholder="e.g. Cold Storage"
+                                        className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary transition-all"
+                                    />
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-foreground/40 uppercase tracking-wider">Banks/Provider</label>
+                                    <input
+                                        required
+                                        value={fiatData.provider}
+                                        onChange={e => setFiatData({ ...fiatData, provider: e.target.value })}
+                                        placeholder="e.g. GTBank"
+                                        className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary transition-all"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-foreground/40 uppercase tracking-wider">Fiat Currency</label>
+                                    <input
+                                        required
+                                        value={fiatData.currency}
+                                        onChange={e => setFiatData({ ...fiatData, currency: e.target.value })}
+                                        placeholder="e.g. GHS"
+                                        className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary transition-all"
+                                    />
+                                </div>
+                                <div className="col-span-2 space-y-2">
+                                    <label className="text-xs font-bold text-foreground/40 uppercase tracking-wider">Account Number</label>
+                                    <input
+                                        required
+                                        value={fiatData.accountNumber}
+                                        onChange={e => setFiatData({ ...fiatData, accountNumber: e.target.value })}
+                                        placeholder="1234567890"
+                                        className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm font-mono focus:outline-none focus:border-primary transition-all"
+                                    />
+                                </div>
+                                <div className="col-span-2 space-y-2">
+                                    <label className="text-xs font-bold text-foreground/40 uppercase tracking-wider">Account Name</label>
+                                    <input
+                                        required
+                                        value={fiatData.accountName}
+                                        onChange={e => setFiatData({ ...fiatData, accountName: e.target.value })}
+                                        placeholder="e.g. Coindarks Ltd"
+                                        className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary transition-all"
+                                    />
+                                </div>
+                            </div>
+                        )}
                         <div className="flex justify-end gap-3 pt-2">
                             <button
                                 type="button"

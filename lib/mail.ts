@@ -614,21 +614,30 @@ export const sendOrderStatusEmail = async (
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif; line-height: 1.6; color: #475569; margin: 0; padding: 0; background-color: #ffffff; }
+        body { font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif; line-height: 1.6; color: #475569; margin: 0; padding: 0; background-color: #f1f5f9; }
         .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; margin-top: 40px; margin-bottom: 40px; }
-        .header { padding: 32px 40px; text-align: center; background: linear-gradient(135deg, ${template.color} 0%, ${template.color}dd 100%); }
-        .header h1 { margin: 0; font-size: 28px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; }
+        .header { padding: 40px 20px; text-align: center; background: linear-gradient(135deg, ${template.color} 0%, ${template.color}dd 100%); }
+        .header h1 { margin: 0; font-size: 24px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; text-transform: uppercase; }
         .content { padding: 40px; }
         .content p { font-size: 16px; margin-bottom: 24px; color: #475569; }
-        .details-box { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 24px; margin: 24px 0; }
-        .detail-row { display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0; }
-        .detail-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .detail-label { font-size: 12px; font-weight: 700; text-transform: uppercase; color: #94a3b8; letter-spacing: 0.5px; }
-        .detail-value { font-size: 14px; font-weight: 600; color: #1e293b; }
-        .footer { padding: 32px 40px; background-color: #f8fafc; border-top: 1px solid #e2e8f0; text-align: center; }
+        .details-box { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 0 20px; margin: 30px 0; }
+        .details-table { width: 100%; border-collapse: collapse; }
+        .details-table td { padding: 16px 0; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
+        .details-table tr:last-child td { border-bottom: none; }
+        .detail-label { font-size: 13px; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px; white-space: nowrap; }
+        .detail-value { font-size: 15px; font-weight: 600; color: #1e293b; text-align: right; padding-left: 20px; word-break: break-all; }
+        .footer { padding: 32px 20px; background-color: #f8fafc; border-top: 1px solid #e2e8f0; text-align: center; }
         .footer p { margin: 0; font-size: 12px; color: #94a3b8; font-weight: 500; }
-        .button { display: inline-block; padding: 14px 32px; background-color: ${template.color}; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; text-align: center; width: 100%; box-sizing: border-box; }
+        .button { display: block; padding: 16px 32px; background-color: ${template.color}; color: #ffffff; text-decoration: none; border-radius: 12px; font-weight: 700; text-align: center; font-size: 16px; transition: opacity 0.2s; }
+        .button:hover { opacity: 0.9; }
+        
+        @media only screen and (max-width: 600px) {
+            .container { width: 100% !important; margin: 0 !important; border-radius: 0 !important; border: none !important; }
+            .content { padding: 24px !important; }
+            .header { padding: 32px 20px !important; }
+        }
     </style>
 </head>
 <body>
@@ -638,21 +647,23 @@ export const sendOrderStatusEmail = async (
         </div>
         <div class="content">
             <p>Hello <strong>${fullName}</strong>,</p>
-            <p>${template.message}</p>
+            <p style="font-size: 16px; line-height: 1.6;">${template.message}</p>
             
             <div class="details-box">
-                <div class="detail-row">
-                    <span class="detail-label">Order Number</span>
-                    <span class="detail-value">#${orderNumber}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Asset Amount</span>
-                    <span class="detail-value">${amount} ${asset}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Fiat Value</span>
-                    <span class="detail-value">${fiatAmount}</span>
-                </div>
+                <table class="details-table" role="presentation">
+                    <tr>
+                        <td class="detail-label">Order Number</td>
+                        <td class="detail-value">#${orderNumber}</td>
+                    </tr>
+                    <tr>
+                        <td class="detail-label">Asset Amount</td>
+                        <td class="detail-value">${amount} ${asset}</td>
+                    </tr>
+                    <tr>
+                        <td class="detail-label">Fiat Value</td>
+                        <td class="detail-value">${fiatAmount}</td>
+                    </tr>
+                </table>
             </div>
 
             <a href="${domain}/dashboard/orders" class="button">View Order Details</a>

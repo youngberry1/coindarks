@@ -8,12 +8,16 @@ import {
     ArrowRight,
     AlertCircle,
     ArrowDown,
-    Copy
+    Copy,
+    Landmark,
+    Smartphone,
+    Plus
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createOrder } from "@/actions/exchange";
 import { getExchangeRates } from "@/actions/rates";
 import { getWallets } from "@/actions/wallets";
+import { getPaymentMethods } from "@/actions/payment-methods";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Cryptocurrency } from "@/actions/crypto";
@@ -39,11 +43,12 @@ interface TradingFormProps {
 
 interface SavedWallet {
     id: string;
-    user_id: string;
+    user_id?: string;
     asset: string;
     address: string;
     network: string;
     name: string;
+    type?: 'CRYPTO' | 'FIAT';
 }
 
 export function TradingForm({ initialInventory, supportedAssets }: TradingFormProps) {
@@ -78,11 +83,23 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
     const [showWalletDropdown, setShowWalletDropdown] = useState(false);
 
     useEffect(() => {
-        // Fetch saved wallets for this asset
+        // Fetch saved wallets or payment methods
         const loadWallets = async () => {
+            setSavedWallets([]); // Clear on toggle
             if (type === 'BUY') {
                 const wallets = await getWallets(asset.id);
-                setSavedWallets(wallets);
+                setSavedWallets(wallets.map(w => ({ ...w, type: 'CRYPTO' })));
+            } else {
+                // Fetch fiat payment methods for SELL
+                const methods = await getPaymentMethods();
+                setSavedWallets(methods.map(m => ({
+                    id: m.id,
+                    asset: 'FIAT', // generic
+                    address: `${m.provider} - ${m.account_number} (${m.account_name})`,
+                    network: m.method_type === 'MOBILE_MONEY' ? 'Mobile Money' : 'Bank Transfer',
+                    name: m.provider,
+                    type: 'FIAT'
+                })));
             }
         };
         loadWallets();
@@ -321,11 +338,27 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                         </div>
                     </div>
 
-                    {type === 'SELL' && orderSuccess.depositAddress ? (
+                    {orderSuccess.depositAddress ? (
                         <>
-                            <div className="space-y-1">
+                            <div className="space-y-2">
                                 <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-500">Action Required</p>
-                                <p className="text-sm font-bold">Please send exactly <span className="text-primary">{orderSuccess.amounts.crypto} {asset.id}</span> to:</p>
+                                <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl space-y-1">
+                                    <p className="text-xs text-amber-500 font-bold">1. Send EXACTLY <span className="text-foreground">{type === 'BUY' ? `${fiat.symbol}${orderSuccess.amounts.fiat}` : `${orderSuccess.amounts.crypto} ${asset.id}`}</span></p>
+                                    <p className="text-[10px] text-amber-500/80 font-medium">Sending a different amount may delay your order.</p>
+                                </div>
+                                {type === 'BUY' && (
+                                    <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl text-blue-500 space-y-1">
+                                        <p className="text-xs font-bold">2. Use Reference: <span className="text-white font-mono">{orderSuccess.id}</span></p>
+                                        <p className="text-[10px] text-blue-500/80 font-medium">Add this as the &quot;Note&quot; or &quot;Remarks&quot; in your bank app.</p>
+                                    </div>
+                                )}
+                                {type === 'SELL' && (
+                                    <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl text-blue-500 space-y-1">
+                                        <p className="text-xs font-bold">2. Use High/Priority Gas Fee</p>
+                                        <p className="text-[10px] text-blue-500/80 font-medium">Increase your network fee to ensure the transaction hits the blockchain instantly.</p>
+                                    </div>
+                                )}
+                                <p className="text-xs font-bold pt-2">{type === 'BUY' ? 'Payment Account Details:' : 'Send Wallet Address:'}</p>
                             </div>
                             <div className="flex items-center gap-3 p-4 bg-black/40 rounded-2xl border border-white/5 group cursor-pointer" onClick={() => copyToClipboard(orderSuccess.depositAddress!)}>
                                 <p className="font-mono text-xs break-all text-foreground/80 flex-1">{orderSuccess.depositAddress}</p>
@@ -335,7 +368,7 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                     ) : (
                         <div className="space-y-2">
                             <p className="text-sm text-foreground/80 leading-relaxed font-medium">
-                                Payment Instructions Sent to <span className="text-primary">{savedWallets.find(w => w.address === receivingAddress)?.name || 'Email'}</span>
+                                Payment Instructions Sent to <span className="text-primary">your email</span>
                             </p>
                             <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl flex gap-3 text-amber-500 text-xs font-bold leading-relaxed">
                                 <Info className="h-4 w-4 shrink-0 mt-0.5" />
@@ -475,31 +508,51 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                                 <input
                                     type="text"
                                     value={receivingAddress}
-                                    onChange={(e) => setReceivingAddress(e.target.value)}
+                                    onChange={(e) => type !== 'SELL' && setReceivingAddress(e.target.value)}
+                                    readOnly={type === 'SELL'}
                                     onFocus={() => setShowWalletDropdown(true)}
+                                    // Delay blur to allow clicking items
                                     onBlur={() => setTimeout(() => setShowWalletDropdown(false), 200)}
-                                    placeholder={type === 'BUY' ? `Enter your ${asset.id} wallet...` : "Enter Mobile Money Name & Number..."}
-                                    className="w-full pl-16 pr-6 py-5 rounded-[24px] bg-card-bg/30 border border-border focus:border-primary focus:bg-card-bg/50 focus:outline-none transition-all font-bold text-sm shadow-inner dark:shadow-none"
+                                    placeholder={type === 'BUY' ? `Enter your ${asset.id} wallet...` : "Select a saved account..."}
+                                    className={cn(
+                                        "w-full pl-16 pr-6 py-5 rounded-[24px] bg-card-bg/30 border border-border focus:border-primary focus:bg-card-bg/50 focus:outline-none transition-all font-bold text-sm shadow-inner dark:shadow-none",
+                                        type === 'SELL' ? "cursor-pointer hover:bg-card-bg/40 selection:bg-transparent" : ""
+                                    )}
                                 />
                                 <AnimatePresence>
-                                    {showWalletDropdown && savedWallets.length > 0 && type === 'BUY' && (
+                                    {showWalletDropdown && savedWallets.length > 0 && (
                                         <motion.div
                                             initial={{ opacity: 0, y: -10 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             exit={{ opacity: 0, y: -10 }}
                                             className="absolute top-full left-0 right-0 mt-2 bg-black/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl z-50 overflow-hidden max-h-48 overflow-y-auto"
                                         >
-                                            <div className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-foreground/30 bg-white/5">Saved Wallets</div>
+                                            <div className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-foreground/30 bg-white/5">
+                                                {type === 'BUY' ? 'Saved Wallets' : 'Saved Accounts'}
+                                            </div>
                                             {savedWallets.map((w: SavedWallet) => (
                                                 <button
                                                     key={w.id}
                                                     onClick={() => setReceivingAddress(w.address)}
-                                                    className="w-full text-left px-4 py-3 hover:bg-primary/20 hover:text-primary text-sm font-medium flex flex-col gap-0.5 transition-colors"
+                                                    className="w-full text-left px-4 py-3 hover:bg-primary/20 hover:text-primary text-sm font-medium flex flex-col gap-0.5 transition-colors border-b border-white/5 last:border-0"
                                                 >
-                                                    <span className="font-bold">{w.name || 'Unnamed Wallet'}</span>
-                                                    <span className="text-[10px] font-mono opacity-50">{w.address}</span>
+                                                    <div className="flex items-center gap-2">
+                                                        {w.type === 'FIAT' && (w.network === 'Mobile Money' ? <Smartphone className="h-3 w-3" /> : <Landmark className="h-3 w-3" />)}
+                                                        <span className="font-bold">{w.name || 'Unnamed'}</span>
+                                                    </div>
+                                                    <span className="text-[10px] font-mono opacity-50 truncate w-full block">{w.address}</span>
                                                 </button>
                                             ))}
+                                            {/* Add New Option */}
+                                            <a
+                                                href="/dashboard/wallets?tab=fiat"
+                                                className="w-full text-left px-4 py-3 bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-colors sticky bottom-0 backdrop-blur-xl border-t border-white/10"
+                                            >
+                                                <div className="h-4 w-4 rounded-full border border-current flex items-center justify-center">
+                                                    <Plus className="h-2 w-2" />
+                                                </div>
+                                                Add New Account
+                                            </a>
                                         </motion.div>
                                     )}
                                 </AnimatePresence>
