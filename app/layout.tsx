@@ -19,10 +19,24 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_APP_URL?.startsWith('http')
       ? process.env.NEXT_PUBLIC_APP_URL
-      : `http://${process.env.NEXT_PUBLIC_APP_URL || 'localhost:3000'}`
+      : `https://${process.env.NEXT_PUBLIC_APP_URL || 'coindarks.com'}`
   ),
   title: "CoinDarks | Secure Crypto-Fiat Exchange Ghana & Nigeria",
-  description: "Experience the fastest and most secure way to exchange Crypto to Fiat in Ghana and Nigeria. Premium rates, instant transactions.",
+  description: "CoinDarks is Ghana and Nigeria's most secure platform to exchange Crypto to Fiat instantly. Buy and sell BTC, USDT with GHS and NGN at premium rates.",
+  keywords: ["crypto exchange ghana", "crypto exchange nigeria", "buy bitcoin ghana", "sell usdt nigeria", "ghs to btc", "ngn to usdt", "secure crypto fiat bridge"],
+  authors: [{ name: "Abdul Barcky Arimiyao" }, { name: "The TBX Team" }],
+  creator: "Abdul Barcky Arimiyao",
+  publisher: "The TBX Team - Trending Boss Next-Gen Technology",
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/icon1.png', sizes: '32x32', type: 'image/png' },
+      { url: '/icon0.svg', type: 'image/svg+xml' },
+    ],
+    apple: [
+      { url: '/apple-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
   appleWebApp: {
     title: "Coindarks",
     statusBarStyle: "default",
@@ -52,6 +66,58 @@ export const metadata: Metadata = {
   },
 };
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "FinancialService",
+      "@id": "https://coindarks.com/#organization",
+      "name": "CoinDarks",
+      "url": "https://coindarks.com",
+      "logo": "https://coindarks.com/icon1.png",
+      "description": "Premium Crypto-to-Fiat exchange service in West Africa.",
+      "address": [
+        {
+          "@type": "PostalAddress",
+          "streetAddress": "Suite 402, Heritage Tower, Ridge",
+          "addressLocality": "Accra",
+          "addressCountry": "GH"
+        },
+        {
+          "@type": "PostalAddress",
+          "streetAddress": "15 Admiralty Way, Lekki Phase 1",
+          "addressLocality": "Lagos",
+          "addressCountry": "NG"
+        }
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "support@coindarks.com",
+        "contactType": "customer service"
+      }
+    },
+    {
+      "@type": "Person",
+      "@id": "https://coindarks.com/#author",
+      "name": "Abdul Barcky Arimiyao",
+      "jobTitle": "Lead Developer & System Architect",
+      "url": "https://coindarks.com",
+      "worksFor": {
+        "@type": "Organization",
+        "name": "The TBX Team - Trending Boss Next-Gen Technology"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://coindarks.com/#website",
+      "url": "https://coindarks.com",
+      "name": "CoinDarks",
+      "publisher": { "@id": "https://coindarks.com/#organization" },
+      "author": { "@id": "https://coindarks.com/#author" }
+    }
+  ]
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -59,6 +125,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

@@ -10,7 +10,7 @@ import TrustSection from "@/components/sections/TrustSection";
 import Testimonials from "@/components/sections/Testimonials";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Logo } from "@/components/ui/Logo";
+import { Footer } from "@/components/layout/Footer";
 
 export default function Home() {
   return (
@@ -62,19 +62,7 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="py-12 border-t border-white/5 bg-background">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
-          <Logo variant="footer" />
-          <p className="text-xs text-foreground/40 font-mono">
-            © {new Date().getFullYear()} COINDARKS. SECURE CRYPTO BRIDGE.
-          </p>
-          <div className="flex gap-6 text-xs text-foreground/60">
-            <a href="#" className="hover:text-primary transition-colors">Privacy</a>
-            <a href="#" className="hover:text-primary transition-colors">Terms</a>
-            <a href="#" className="hover:text-primary transition-colors">Help</a>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 }
