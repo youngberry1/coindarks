@@ -97,6 +97,7 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                     placeholder="Search by CD-XXXX, email, or name..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
+                    aria-label="Search orders"
                     className="w-full pl-11 pr-6 py-3 rounded-2xl bg-white/5 border border-white/10 focus:border-primary focus:outline-none transition-all font-bold text-sm"
                 />
             </div>
@@ -153,10 +154,13 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                                                 onValueChange={(val) => handleStatusUpdate(order.id, val)}
                                                 defaultValue={order.status}
                                             >
-                                                <SelectTrigger className={cn(
-                                                    "h-8 w-[140px] border text-[10px] font-black uppercase tracking-widest",
-                                                    getStatusColor(order.status)
-                                                )}>
+                                                <SelectTrigger
+                                                    className={cn(
+                                                        "h-8 w-[140px] border text-[10px] font-black uppercase tracking-widest",
+                                                        getStatusColor(order.status)
+                                                    )}
+                                                    aria-label={`Change status for order ${order.order_number}`}
+                                                >
                                                     <SelectValue placeholder="Status" />
                                                 </SelectTrigger>
                                                 <SelectContent>

@@ -151,10 +151,15 @@ export function OrderDetailsCard({ order, depositAddress }: OrderDetailsCardProp
                             <p className="text-xs font-bold pt-2">{order.type === 'BUY' ? 'Payment Account Details:' : 'Send Wallet Address:'}</p>
                         </div>
 
-                        <div className="flex items-center gap-3 p-4 bg-black/40 rounded-2xl border border-white/5 group cursor-pointer" onClick={() => copyToClipboard(depositAddress)}>
-                            <p className="font-mono text-xs break-all text-foreground/80 flex-1">{depositAddress}</p>
+                        <button
+                            type="button"
+                            className="flex items-center gap-3 p-4 bg-black/40 rounded-2xl border border-white/5 group cursor-pointer w-full"
+                            onClick={() => copyToClipboard(depositAddress)}
+                            aria-label="Copy deposit address"
+                        >
+                            <p className="font-mono text-xs break-all text-foreground/80 flex-1 text-left">{depositAddress}</p>
                             <Copy className="h-4 w-4 text-foreground/20 group-hover:text-primary transition-colors" />
-                        </div>
+                        </button>
                     </>
                 ) : isPending && !depositAddress ? (
                     <div className="space-y-2">

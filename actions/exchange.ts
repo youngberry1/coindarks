@@ -22,11 +22,12 @@ export async function createOrder(data: {
         // 1. Verify KYC
         const { data: user } = await supabaseAdmin
             .from('users')
-            .select('kyc_status')
+            .select('kyc_status, role')
             .eq('id', session.user.id)
             .single();
 
-        if (user?.kyc_status !== 'APPROVED') {
+        // Exempt ADMINs from KYC check
+        if (user?.role !== 'ADMIN' && user?.kyc_status !== 'APPROVED') {
             return { error: "KYC verification required to trade" };
         }
 

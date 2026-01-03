@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { Metadata } from "next";
 import {
     AlertCircle,
     ArrowUpRight,
@@ -16,6 +17,11 @@ import { supabaseAdmin } from "@/lib/supabase-admin";
 import TradeableAssets from '@/components/dashboard/TradeableAssets';
 import { getCryptos } from '@/actions/crypto';
 import { getUserTickets } from "@/actions/support";
+
+export const metadata: Metadata = {
+    title: "Dashboard | CoinDarks",
+    description: "Manage your crypto trades and view real-time market activity.",
+};
 
 export default async function DashboardPage() {
     const session = await auth();
@@ -43,6 +49,16 @@ export default async function DashboardPage() {
     const kycStatus = userData?.kyc_status || 'UNSUBMITTED';
     const isAdmin = user?.role === "ADMIN";
     const firstName = user?.name?.split(" ")[0] || "Trader";
+
+    // Platform-wide stats for Admin
+    let totalPlatformOrders = 0;
+    if (isAdmin) {
+        const { count } = await supabaseAdmin
+            .from('orders')
+            .select('*', { count: 'exact', head: true })
+            .eq('status', 'COMPLETED');
+        totalPlatformOrders = count || 0;
+    }
 
     // Fetch active cryptos
     const cryptos = await getCryptos(true);
@@ -127,7 +143,7 @@ export default async function DashboardPage() {
                         </div>
                         <span className="text-[10px] font-black text-foreground/20 uppercase tracking-widest">{isAdmin ? "Total Transactions" : "Active Orders"}</span>
                     </div>
-                    <p className="text-4xl font-black mb-1">{orders?.length || 0}</p>
+                    <p className="text-4xl font-black mb-1">{isAdmin ? totalPlatformOrders : (orders?.length || 0)}</p>
                     <p className="text-sm text-foreground/40 font-medium">{isAdmin ? "Platform wide" : "In the last 30 days"}</p>
                 </div>
 

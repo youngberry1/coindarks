@@ -1,6 +1,7 @@
 
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { Metadata } from "next";
 import { WalletManager } from "@/components/dashboard/WalletManager";
 import { PaymentMethodManager } from "@/components/dashboard/PaymentMethodManager";
 import { getWallets } from "@/actions/wallets";
@@ -8,6 +9,11 @@ import { getPaymentMethods } from "@/actions/payment-methods";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { Wallet as WalletIcon, ShieldCheck, CreditCard } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+export const metadata: Metadata = {
+    title: "My Wallets | CoinDarks",
+    description: "Manage your saved crypto and fiat accounts.",
+};
 
 export default async function WalletsPage(props: { searchParams: Promise<{ tab?: string }> }) {
     const searchParams = await props.searchParams;

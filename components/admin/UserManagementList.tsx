@@ -85,6 +85,7 @@ export function UserManagementList({ users }: UserManagementListProps) {
                     placeholder="Search users..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
+                    aria-label="Search users by name or email"
                     className="w-full pl-11 pr-6 py-3 rounded-2xl bg-white/5 border border-white/10 focus:border-primary focus:outline-none transition-all font-bold text-sm"
                 />
             </div>
@@ -160,13 +161,16 @@ export function UserManagementList({ users }: UserManagementListProps) {
                                                 }`}
                                             title={user.status === 'BANNED' ? "Revoke Ban" : "Ban User"}
                                         >
-                                            <Ban className="h-4 w-4" />
+                                            <Ban className="h-4 w-4" aria-hidden="true" />
                                         </button>
 
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
-                                                <button className="p-2.5 rounded-xl bg-white/5 text-foreground/40 hover:bg-white/10 transition-all focus:outline-none">
-                                                    <MoreHorizontal className="h-4 w-4" />
+                                                <button
+                                                    className="p-2.5 rounded-xl bg-white/5 text-foreground/40 hover:bg-white/10 transition-all focus:outline-none"
+                                                    aria-label="User actions"
+                                                >
+                                                    <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
                                                 </button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end" className="w-[160px]">

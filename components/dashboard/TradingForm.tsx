@@ -360,10 +360,15 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                                 )}
                                 <p className="text-xs font-bold pt-2">{type === 'BUY' ? 'Payment Account Details:' : 'Send Wallet Address:'}</p>
                             </div>
-                            <div className="flex items-center gap-3 p-4 bg-black/40 rounded-2xl border border-white/5 group cursor-pointer" onClick={() => copyToClipboard(orderSuccess.depositAddress!)}>
-                                <p className="font-mono text-xs break-all text-foreground/80 flex-1">{orderSuccess.depositAddress}</p>
+                            <button
+                                type="button"
+                                className="flex items-center gap-3 p-4 bg-black/40 rounded-2xl border border-white/5 group cursor-pointer w-full"
+                                onClick={() => copyToClipboard(orderSuccess.depositAddress!)}
+                                aria-label="Copy deposit address"
+                            >
+                                <p className="font-mono text-xs break-all text-foreground/80 flex-1 text-left">{orderSuccess.depositAddress}</p>
                                 <Copy className="h-4 w-4 text-foreground/20 group-hover:text-primary transition-colors" />
-                            </div>
+                            </button>
                         </>
                     ) : (
                         <div className="space-y-2">
@@ -444,10 +449,12 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                             </div>
                             <div className="flex items-end justify-between gap-4 relative z-10">
                                 <input
+                                    id="pay-amount"
                                     type="number"
                                     value={type === 'BUY' ? amountFiat : amountCrypto}
                                     onChange={(e) => type === 'BUY' ? handleFiatChange(e.target.value) : handleCryptoChange(e.target.value)}
                                     placeholder="0.00"
+                                    aria-label={type === 'BUY' ? 'Amount to pay in fiat' : 'Amount to send in crypto'}
                                     className={cn(
                                         "bg-transparent text-2xl md:text-4xl font-black outline-none w-full placeholder:text-foreground/10 transition-colors",
                                         error && type === 'BUY' ? "text-rose-500" : ""
@@ -485,11 +492,13 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                             </div>
                             <div className="flex items-end justify-between gap-4">
                                 <input
+                                    id="receive-amount"
                                     type="number"
                                     value={type === 'BUY' ? amountCrypto : amountFiat}
                                     onChange={(e) => type === 'BUY' ? handleCryptoChange(e.target.value) : handleFiatChange(e.target.value)}
                                     placeholder="0.00"
                                     readOnly={true}
+                                    aria-label={type === 'BUY' ? 'Estimated crypto to receive' : 'Estimated fiat to receive'}
                                     className="bg-transparent text-2xl md:text-3xl font-black outline-none w-full placeholder:text-foreground/10 cursor-default"
                                 />
                             </div>

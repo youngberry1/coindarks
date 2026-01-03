@@ -1,6 +1,7 @@
 
 import { auth } from "@/auth";
 import { redirect, notFound } from "next/navigation";
+import { Metadata } from "next";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { OrderDetailsCard } from "@/components/dashboard/OrderDetailsCard";
 import Link from "next/link";
@@ -8,6 +9,14 @@ import { ArrowLeft } from "lucide-react";
 
 interface PageProps {
     params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    const resolvedParams = await params;
+    return {
+        title: `Order Details #${resolvedParams.id.slice(0, 8)} | CoinDarks`,
+        description: "View the status and details of your crypto exchange order.",
+    };
 }
 
 export default async function OrderDetailsPage({ params }: PageProps) {

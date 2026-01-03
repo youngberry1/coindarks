@@ -1,7 +1,13 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { Metadata } from "next";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { SettingsTabs } from "@/components/dashboard/settings/SettingsTabs";
+
+export const metadata: Metadata = {
+    title: "Settings | CoinDarks",
+    description: "Manage your account settings and profile.",
+};
 
 export default async function SettingsPage() {
     const session = await auth();

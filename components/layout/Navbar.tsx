@@ -90,8 +90,9 @@ export default function Navbar() {
                                 <SheetTrigger asChild>
                                     <button
                                         className="h-10 w-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-foreground transition-all active:scale-90"
+                                        aria-label="Open navigation menu"
                                     >
-                                        <Menu className="h-6 w-6" />
+                                        <Menu className="h-6 w-6" aria-hidden="true" />
                                     </button>
                                 </SheetTrigger>
                                 <SheetContent side="right" className="w-[300px] sm:w-[540px] border-l border-white/10 bg-background/95 backdrop-blur-xl p-0">

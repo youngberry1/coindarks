@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { Metadata } from "next";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import {
     History,
@@ -14,6 +15,11 @@ import {
 import { SearchInput } from "@/components/dashboard/SearchInput";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+
+export const metadata: Metadata = {
+    title: "My Orders | CoinDarks",
+    description: "View and track your crypto exchange history.",
+};
 
 export default async function UserOrdersPage({
     searchParams

@@ -1,7 +1,6 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import CryptoManager from "@/components/admin/CryptoManager";
-import { Package } from "lucide-react";
 
 export default async function AdminInventoryPage() {
     const session = await auth();

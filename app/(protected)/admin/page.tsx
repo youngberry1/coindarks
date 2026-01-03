@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { Metadata } from "next";
 import { supabaseAdmin } from "@/lib/kyc-storage";
 import {
     Users,
@@ -13,6 +14,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { getCryptos } from "@/actions/crypto";
 import { CryptoIcon } from "@/components/CryptoIcon";
+
+export const metadata: Metadata = {
+    title: "Admin Hub | CoinDarks",
+    description: "Platform oversight and management dashboard.",
+};
 
 export default async function AdminDashboardPage() {
     const session = await auth();

@@ -11,7 +11,6 @@ import {
     CheckCircle2,
     Clock,
     ArrowLeft,
-    Image as ImageIcon
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";

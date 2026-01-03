@@ -2,6 +2,7 @@
 
 import { useTheme } from "next-themes"
 import { Toaster as Sonner } from "sonner"
+import "sonner/dist/styles.css"
 
 type ToasterProps = React.ComponentProps<typeof Sonner>
 
@@ -11,8 +12,10 @@ const Toaster = ({ ...props }: ToasterProps) => {
     return (
         <Sonner
             theme={theme as ToasterProps["theme"]}
-            className="toaster group z-[99999] pointer-events-auto"
+            className="toaster group"
+            style={{ zIndex: 100000 }}
             toastOptions={{
+                style: { zIndex: 99999 },
                 classNames: {
                     toast:
                         "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",

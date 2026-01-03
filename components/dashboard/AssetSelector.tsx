@@ -33,7 +33,10 @@ export function AssetSelector({ value, onChange, options, type, className }: Ass
 
     return (
         <Select value={value} onValueChange={onChange}>
-            <SelectTrigger className={cn("w-full md:min-w-[180px] border-none bg-transparent focus:ring-0 px-0 h-auto gap-2 shadow-none", className)}>
+            <SelectTrigger
+                className={cn("w-full md:min-w-[180px] border-none bg-transparent focus:ring-0 px-0 h-auto gap-2 shadow-none", className)}
+                aria-label={`Select ${type === 'CRYPTO' ? 'Cryptocurrency' : 'Fiat Currency'}`}
+            >
                 <div className="flex items-center gap-3">
                     {/* Icon handling */}
                     {/* Icon handling */}
