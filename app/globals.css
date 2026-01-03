@@ -158,8 +158,7 @@ body {
 
 /* Performance Optimizations */
 section:not(:first-child) {
-  content-visibility: auto;
-  contain-intrinsic-size: 0 500px;
+  contain: paint;
 }
 
 body {

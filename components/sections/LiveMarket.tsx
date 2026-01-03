@@ -122,7 +122,7 @@ export default function LiveMarket() {
                                     ease: "easeOut",
                                     delay: index * 0.05
                                 }}
-                                className="group block relative overflow-hidden p-8 rounded-4xl border border-card-border bg-card-bg hover:bg-foreground/3 transition-all duration-500"
+                                className="group block relative overflow-hidden p-8 rounded-4xl border border-card-border bg-card-bg hover:bg-foreground/3 transition-all duration-500 will-change-transform transform-gpu"
                             >
                                 <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0">
                                     <ExternalLink className="h-4 w-4 text-primary" />

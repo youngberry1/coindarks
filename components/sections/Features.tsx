@@ -55,15 +55,15 @@ export default function Features() {
                     {features.map((feature, index) => (
                         <motion.div
                             key={feature.title}
-                            initial={{ opacity: 0, y: 8, scale: 0.99 }}
-                            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                            initial={{ opacity: 0, y: 10 }}
+                            whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, amount: 0.1 }}
                             transition={{
-                                duration: 0.4,
-                                ease: [0.25, 0.1, 0.25, 1],
+                                duration: 0.5,
+                                ease: "easeOut",
                                 delay: index * 0.05,
                             }}
-                            className="p-8 rounded-3xl border border-card-border bg-card-bg transition-shadow duration-500 hover:shadow-2xl hover:shadow-primary/5 hover:bg-foreground/3 group will-change-transform"
+                            className="p-8 rounded-3xl border border-card-border bg-card-bg transition-shadow duration-500 hover:shadow-2xl hover:shadow-primary/5 hover:bg-foreground/3 group will-change-transform transform-gpu"
                         >
                             <div className={`h-14 w-14 rounded-2xl ${feature.bg} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500`}>
                                 <feature.icon className={`h-7 w-7 ${feature.color}`} />

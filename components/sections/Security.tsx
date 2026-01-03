@@ -116,7 +116,7 @@ export default function Security() {
                                     ease: "easeOut",
                                     delay: index * 0.08
                                 }}
-                                className="p-8 rounded-4xl border border-card-border bg-card-bg/50 backdrop-blur-md hover:bg-foreground/3 transition-all group min-h-[180px]"
+                                className="p-8 rounded-4xl border border-card-border bg-card-bg/50 backdrop-blur-md hover:bg-foreground/3 transition-all group min-h-[180px] will-change-transform transform-gpu"
                             >
                                 <div className={`h-12 w-12 rounded-2xl ${feature.bg} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500`}>
                                     <feature.icon className={`h-6 w-6 ${feature.color}`} />
