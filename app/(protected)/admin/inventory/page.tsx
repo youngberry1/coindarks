@@ -1,6 +1,12 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { Metadata } from "next";
 import CryptoManager from "@/components/admin/CryptoManager";
+
+export const metadata: Metadata = {
+    title: "Inventory Control | CoinDarks Admin",
+    description: "Manage tradeable assets and stock levels.",
+};
 
 export default async function AdminInventoryPage() {
     const session = await auth();

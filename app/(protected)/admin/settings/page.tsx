@@ -1,8 +1,14 @@
+import { Metadata } from "next";
 import { getAdminWallets } from "@/actions/admin-wallets";
 import { getExchangeRates } from "@/actions/rates";
 import { AdminWalletManager } from "@/components/admin/AdminWalletManager";
 import { ExchangeRateManager } from "@/components/admin/ExchangeRateManager";
 import { Settings } from "lucide-react";
+
+export const metadata: Metadata = {
+    title: "System Settings | CoinDarks Admin",
+    description: "Configure exchange parameters and deposit addresses.",
+};
 
 export default async function AdminSettingsPage() {
     const wallets = await getAdminWallets();

@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { Metadata } from "next";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import {
     MessageSquare,
@@ -9,6 +10,11 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 
 import { TicketSearch } from "@/components/admin/TicketSearch";
+
+export const metadata: Metadata = {
+    title: "Support Tickets | CoinDarks Admin",
+    description: "Manage and respond to user support requests.",
+};
 
 interface AdminSupportPageProps {
     searchParams: Promise<{ q?: string }>;

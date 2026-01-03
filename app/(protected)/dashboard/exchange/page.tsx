@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { Metadata } from "next";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import {
     Coins,
@@ -10,6 +11,11 @@ import {
 import Link from "next/link";
 import { TradingForm } from "@/components/dashboard/TradingForm";
 import { getCryptos } from "@/actions/crypto";
+
+export const metadata: Metadata = {
+    title: "Instant Exchange | CoinDarks",
+    description: "Exchange crypto and fiat instantly with the best rates in Ghana and Nigeria.",
+};
 
 const ASSET_METADATA: Record<string, { name: string; coingeckoId: string }> = {
     "BTC": { name: "Bitcoin", coingeckoId: "bitcoin" },

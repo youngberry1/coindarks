@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { Metadata } from "next";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import {
     User,
@@ -19,6 +20,15 @@ import { Card } from "@/components/ui/card";
 
 interface UserProfilePageProps {
     params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({ params }: UserProfilePageProps): Promise<Metadata> {
+    const { id } = await params;
+    const { data: user } = await supabaseAdmin.from('users').select('first_name, last_name').eq('id', id).single();
+    return {
+        title: `${user?.first_name} ${user?.last_name} | User Profile Admin`,
+        description: `Managing user profile for ${user?.first_name} ${user?.last_name}`,
+    };
 }
 
 interface Order {

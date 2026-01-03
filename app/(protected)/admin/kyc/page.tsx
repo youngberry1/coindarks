@@ -1,11 +1,17 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { Metadata } from "next";
 import { supabaseAdmin } from "@/lib/kyc-storage";
 import {
     CheckCircle2,
     Clock
 } from "lucide-react";
 import { KYCReviewList } from "@/components/admin/KYCReviewList";
+
+export const metadata: Metadata = {
+    title: "KYC Review Center | CoinDarks Admin",
+    description: "Review user identity documents for verification.",
+};
 
 export default async function AdminKYCPage() {
     const session = await auth();

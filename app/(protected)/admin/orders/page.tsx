@@ -1,10 +1,16 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { Metadata } from "next";
 import { supabaseAdmin } from "@/lib/kyc-storage";
 import {
     ShoppingBag
 } from "lucide-react";
 import { AdminOrderList } from "@/components/admin/AdminOrderList";
+
+export const metadata: Metadata = {
+    title: "Order Management | CoinDarks Admin",
+    description: "Monitor and manage platform-wide orders.",
+};
 
 export default async function AdminOrdersPage() {
     const session = await auth();

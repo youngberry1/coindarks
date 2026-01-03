@@ -1,10 +1,16 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { Metadata } from "next";
 import { supabaseAdmin } from "@/lib/kyc-storage";
 import {
     Search
 } from "lucide-react";
 import { UserManagementList } from "@/components/admin/UserManagementList";
+
+export const metadata: Metadata = {
+    title: "User Directory | CoinDarks Admin",
+    description: "Manage platform users and access levels.",
+};
 
 export default async function AdminUsersPage() {
     const session = await auth();

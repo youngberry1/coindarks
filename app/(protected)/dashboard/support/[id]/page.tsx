@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { Metadata } from "next";
 import { getUserTicket, getTicketMessages } from "@/actions/support";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +9,15 @@ import { UserReplyForm } from "@/components/dashboard/UserReplyForm";
 
 interface TicketDetailProps {
     params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({ params }: TicketDetailProps): Promise<Metadata> {
+    const { id } = await params;
+    const ticket = await getUserTicket(id);
+    return {
+        title: `Support Ticket #${ticket?.ticket_id || id} | CoinDarks`,
+        description: "View and respond to your support ticket.",
+    };
 }
 
 export default async function UserTicketDetailPage({ params }: TicketDetailProps) {

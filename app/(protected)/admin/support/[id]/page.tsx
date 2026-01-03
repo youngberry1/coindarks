@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { Metadata } from "next";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import {
     ArrowLeft,
@@ -28,6 +29,20 @@ interface SupportMessage {
 
 interface TicketPageProps {
     params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({ params }: TicketPageProps): Promise<Metadata> {
+    const { id } = await params;
+    const { data: ticket } = await supabaseAdmin
+        .from('support_tickets')
+        .select('ticket_id, subject')
+        .eq('id', id)
+        .single();
+
+    return {
+        title: `Ticket #${ticket?.ticket_id || id} | Support Admin`,
+        description: `Managing: ${ticket?.subject || 'Support Ticket'}`,
+    };
 }
 
 export default async function AdminTicketPage({ params }: TicketPageProps) {
