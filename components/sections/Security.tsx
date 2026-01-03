@@ -49,10 +49,10 @@ export default function Security() {
                     {/* Left content */}
                     <div className="lg:w-1/2">
                         <motion.div
-                            initial={{ opacity: 0, x: -30 }}
+                            initial={{ opacity: 0, x: -12 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true, amount: 0.15 }}
-                            transition={{ type: "spring", stiffness: 50, damping: 15 }}
+                            transition={{ duration: 0.5, ease: "easeOut" }}
                             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest mb-6"
                         >
                             <ShieldCheck className="h-4 w-4" />
@@ -60,10 +60,10 @@ export default function Security() {
                         </motion.div>
 
                         <motion.h2
-                            initial={{ opacity: 0, y: 30 }}
+                            initial={{ opacity: 0, y: 12 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, amount: 0.15 }}
-                            transition={{ type: "spring", stiffness: 50, damping: 15, delay: 0.1 }}
+                            transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
                             className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-8 leading-tight"
                         >
                             Your Security is <br />
@@ -71,16 +71,16 @@ export default function Security() {
                         </motion.h2>
 
                         <motion.p
-                            initial={{ opacity: 0, y: 20 }}
+                            initial={{ opacity: 0, y: 10 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, amount: 0.15 }}
-                            transition={{ type: "spring", stiffness: 50, damping: 15, delay: 0.2 }}
+                            transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
                             className="text-foreground/60 text-lg mb-10 leading-relaxed max-w-lg"
                         >
                             We employ multiple layers of protection to ensure your funds and personal information remain safe. From advanced encryption to real-time threat detection, we&apos;ve got you covered.
                         </motion.p>
 
-                        <div className="space-y-4">
+                        <div className="space-y-4 h-[108px] sm:h-auto">
                             {[
                                 "Licensed & Regulated Standards",
                                 "Regular External Security Audits",
@@ -88,10 +88,10 @@ export default function Security() {
                             ].map((item, idx) => (
                                 <motion.div
                                     key={idx}
-                                    initial={{ opacity: 0, x: -10 }}
+                                    initial={{ opacity: 0, x: -8 }}
                                     whileInView={{ opacity: 1, x: 0 }}
                                     viewport={{ once: true }}
-                                    transition={{ delay: 0.3 + idx * 0.1 }}
+                                    transition={{ duration: 0.4, delay: 0.3 + idx * 0.1 }}
                                     className="flex items-center gap-3 text-sm font-semibold"
                                 >
                                     <div className="h-5 w-5 rounded-full bg-emerald-500/20 flex items-center justify-center">
@@ -108,16 +108,15 @@ export default function Security() {
                         {securityFeatures.map((feature, index) => (
                             <motion.div
                                 key={feature.title}
-                                initial={{ opacity: 0, y: 40 }}
+                                initial={{ opacity: 0, y: 10 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true, amount: 0.15 }}
                                 transition={{
-                                    type: "spring",
-                                    stiffness: 50,
-                                    damping: 15,
-                                    delay: index * 0.1
+                                    duration: 0.5,
+                                    ease: "easeOut",
+                                    delay: index * 0.08
                                 }}
-                                className="p-8 rounded-4xl border border-card-border bg-card-bg/50 backdrop-blur-md hover:bg-foreground/3 transition-all group"
+                                className="p-8 rounded-4xl border border-card-border bg-card-bg/50 backdrop-blur-md hover:bg-foreground/3 transition-all group min-h-[180px]"
                             >
                                 <div className={`h-12 w-12 rounded-2xl ${feature.bg} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500`}>
                                     <feature.icon className={`h-6 w-6 ${feature.color}`} />

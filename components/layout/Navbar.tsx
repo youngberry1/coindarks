@@ -5,7 +5,7 @@ import { useSession, signOut } from "next-auth/react";
 import { Menu, LayoutDashboard, LogOut, Shield, Zap, Globe, ArrowRight, Star, ShieldCheck } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Logo } from "@/components/ui/Logo";
-import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetHeader, SheetDescription } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { useState } from "react";
@@ -15,7 +15,7 @@ export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
 
     const navLinks = [
-        { name: "Exchange", href: "/#", icon: Zap },
+        { name: "Exchange", href: "/#home", icon: Zap },
         { name: "Live Market", href: "/#market", icon: Globe },
         { name: "Features", href: "/#how-it-works", icon: ShieldCheck },
         { name: "Security", href: "/#security", icon: Shield },
@@ -96,96 +96,94 @@ export default function Navbar() {
                                         <Menu className="h-6 w-6" aria-hidden="true" />
                                     </button>
                                 </SheetTrigger>
-                                <SheetContent side="right" className="w-[300px] sm:w-[540px] border-l border-white/10 bg-background/95 backdrop-blur-xl p-0">
-                                    <div className="flex flex-col h-full">
-                                        <SheetHeader className="p-6 border-b border-white/5">
-                                            <VisuallyHidden>
-                                                <SheetTitle>Navigation Menu</SheetTitle>
-                                                <SheetDescription>Mobile navigation menu for CoinDarks</SheetDescription>
-                                            </VisuallyHidden>
-                                            <Logo className="text-left" />
-                                        </SheetHeader>
-
-                                        <ScrollArea className="flex-1">
-                                            <div className="p-6 flex flex-col gap-6">
-                                                <div className="flex items-center justify-between px-2">
-                                                    <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Menu Navigation</span>
-                                                    <ThemeToggle />
-                                                </div>
-
-                                                <div className="grid grid-cols-1 gap-2">
-                                                    {navLinks.map((link) => (
-                                                        <Link
-                                                            key={link.name}
-                                                            href={link.href}
-                                                            onClick={(e) => {
-                                                                const id = link.href.split("#")[1];
-                                                                if (id) {
-                                                                    const element = document.getElementById(id);
-                                                                    if (element) {
-                                                                        e.preventDefault();
-                                                                        element.scrollIntoView({ behavior: "smooth" });
-                                                                    }
-                                                                }
-                                                                setIsOpen(false);
-                                                            }}
-                                                            className="flex items-center gap-4 p-3.5 rounded-2xl bg-white/5 border border-white/5 hover:bg-primary/10 hover:border-primary/20 transition-all group"
-                                                        >
-                                                            <div className="h-9 w-9 rounded-xl bg-background flex items-center justify-center shrink-0">
-                                                                <link.icon className="h-4.5 w-4.5 text-foreground/60 group-hover:text-primary transition-colors" />
-                                                            </div>
-                                                            <span className="text-sm font-bold uppercase tracking-wider">{link.name}</span>
-                                                        </Link>
-                                                    ))}
-
-                                                    <Link
-                                                        href="/dashboard"
-                                                        onClick={() => setIsOpen(false)}
-                                                        className="flex items-center gap-4 p-3.5 rounded-2xl bg-white/5 border border-white/5 hover:bg-secondary/10 hover:border-secondary/20 transition-all group"
-                                                    >
-                                                        <div className="h-9 w-9 rounded-xl bg-background flex items-center justify-center shrink-0">
-                                                            <LayoutDashboard className="h-4.5 w-4.5 text-foreground/60 group-hover:text-secondary transition-colors" />
-                                                        </div>
-                                                        <span className="text-sm font-bold uppercase tracking-wider">Dashboard</span>
-                                                    </Link>
-                                                </div>
-
-                                                <div className="h-px bg-white/5 my-1" />
-
-                                                <div className="flex flex-col gap-2">
-                                                    {!session ? (
-                                                        <>
-                                                            <Link
-                                                                href="/login"
-                                                                onClick={() => setIsOpen(false)}
-                                                                className="w-full py-4 rounded-2xl bg-white/5 border border-white/5 text-center text-sm font-bold hover:bg-white/10 transition-all"
-                                                            >
-                                                                Login to Account
-                                                            </Link>
-                                                            <Link
-                                                                href="/register"
-                                                                onClick={() => setIsOpen(false)}
-                                                                className="w-full py-4 rounded-2xl bg-primary text-center font-bold text-white text-sm shadow-xl shadow-primary/20 flex items-center justify-center gap-2"
-                                                            >
-                                                                Get Started <ArrowRight className="h-4 w-4" />
-                                                            </Link>
-                                                        </>
-                                                    ) : (
-                                                        <button
-                                                            onClick={() => {
-                                                                signOut();
-                                                                setIsOpen(false);
-                                                            }}
-                                                            className="w-full py-4 rounded-2xl bg-red-500/10 text-red-500 text-sm font-bold border border-red-500/20 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center gap-2"
-                                                        >
-                                                            <LogOut className="h-4 w-4" />
-                                                            Sign Out
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </ScrollArea>
+                                <SheetContent side="right" className="w-[300px] sm:w-[400px] border-l border-white/10 bg-background/95 backdrop-blur-3xl p-0 flex flex-col h-dvh">
+                                    <div className="p-6 border-b border-white/5 shrink-0">
+                                        <Logo className="text-left" />
+                                        <VisuallyHidden>
+                                            <SheetTitle>Navigation Menu</SheetTitle>
+                                        </VisuallyHidden>
                                     </div>
+
+                                    <ScrollArea className="flex-1">
+                                        <div className="p-6 pb-32 flex flex-col gap-8">
+                                            <div className="flex items-center justify-between px-2">
+                                                <span className="text-[10px] font-black uppercase tracking-widest opacity-40">Menu Navigation</span>
+                                                <ThemeToggle />
+                                            </div>
+
+                                            <div className="grid grid-cols-1 gap-3">
+                                                {navLinks.map((link) => (
+                                                    <Link
+                                                        key={link.name}
+                                                        href={link.href}
+                                                        onClick={(e) => {
+                                                            const id = link.href.split("#")[1];
+                                                            if (id) {
+                                                                const element = document.getElementById(id);
+                                                                if (element) {
+                                                                    e.preventDefault();
+                                                                    element.scrollIntoView({ behavior: "smooth" });
+                                                                }
+                                                            }
+                                                            setIsOpen(false);
+                                                        }}
+                                                        className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-primary/10 hover:border-primary/20 transition-all group"
+                                                    >
+                                                        <div className="h-10 w-10 rounded-xl bg-background flex items-center justify-center shrink-0 border border-white/5">
+                                                            <link.icon className="h-5 w-5 text-foreground/40 group-hover:text-primary transition-colors" />
+                                                        </div>
+                                                        <span className="text-sm font-bold uppercase tracking-wider">{link.name}</span>
+                                                    </Link>
+                                                ))}
+
+                                                <Link
+                                                    href="/dashboard"
+                                                    onClick={() => setIsOpen(false)}
+                                                    className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-secondary/10 hover:border-secondary/20 transition-all group"
+                                                >
+                                                    <div className="h-10 w-10 rounded-xl bg-background flex items-center justify-center shrink-0 border border-white/5">
+                                                        <LayoutDashboard className="h-5 w-5 text-foreground/40 group-hover:text-secondary transition-colors" />
+                                                    </div>
+                                                    <span className="text-sm font-bold uppercase tracking-wider">Dashboard</span>
+                                                </Link>
+                                            </div>
+
+                                            <div className="h-px bg-white/5 mx-2" />
+
+                                            <div className="flex flex-col gap-3">
+                                                {!session ? (
+                                                    <>
+                                                        <Link
+                                                            href="/login"
+                                                            onClick={() => setIsOpen(false)}
+                                                            className="w-full py-4 rounded-2xl bg-white/5 border border-white/5 text-center text-sm font-bold hover:bg-white/10 transition-all uppercase tracking-widest"
+                                                        >
+                                                            Login to Account
+                                                        </Link>
+                                                        <Link
+                                                            href="/register"
+                                                            onClick={() => setIsOpen(false)}
+                                                            className="w-full py-4 rounded-2xl bg-primary text-center font-bold text-white text-sm shadow-xl shadow-primary/20 flex items-center justify-center gap-2 uppercase tracking-widest group"
+                                                        >
+                                                            Get Started
+                                                            <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                                                        </Link>
+                                                    </>
+                                                ) : (
+                                                    <button
+                                                        onClick={() => {
+                                                            signOut();
+                                                            setIsOpen(false);
+                                                        }}
+                                                        className="w-full py-4 rounded-2xl bg-red-500/10 text-red-500 text-sm font-bold border border-red-500/20 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center gap-2 uppercase tracking-widest"
+                                                    >
+                                                        <LogOut className="h-4 w-4" />
+                                                        Sign Out
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </ScrollArea>
                                 </SheetContent>
                             </Sheet>
                         </div>

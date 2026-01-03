@@ -7,7 +7,7 @@ import { ArrowRight, ShieldCheck, Zap, Globe } from "lucide-react";
 
 export default function Hero() {
     return (
-        <section className="relative overflow-hidden pt-32 pb-20 lg:pt-48 lg:pb-32">
+        <section id="home" className="relative overflow-hidden pt-32 pb-20 lg:pt-48 lg:pb-32">
             {/* Background Gradients */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[800px] hero-gradient pointer-events-none -z-10" />
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 blur-[80px] rounded-full pointer-events-none -z-10 will-change-[filter]" />
@@ -18,9 +18,9 @@ export default function Hero() {
 
                     {/* Left Column: Text */}
                     <motion.div
-                        initial={{ opacity: 0, x: -20 }}
+                        initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.5, ease: "easeOut" }}
+                        transition={{ duration: 0.6, ease: "easeOut" }}
                     >
                         <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 py-1 px-4 mb-6">
                             <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse" />
@@ -70,9 +70,9 @@ export default function Hero() {
 
                     {/* Right Column: Hero Image/Graphic */}
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
+                        initial={{ opacity: 0, scale: 0.98 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.6, ease: "easeOut" }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
                         className="relative"
                     >
                         <div className="relative aspect-square overflow-hidden rounded-3xl border border-white/10 shadow-2xl glass-morphism p-4 bg-foreground/2">

@@ -85,7 +85,7 @@ export default function LiveMarket() {
                         </motion.h2>
                     </div>
 
-                    <div className="flex flex-col items-end gap-2">
+                    <div className="flex flex-col items-end gap-2 h-[38px] justify-center">
                         <button
                             onClick={fetchData}
                             disabled={loading}
@@ -105,7 +105,7 @@ export default function LiveMarket() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {loading && data.length === 0 ? (
                         Array.from({ length: 6 }).map((_, i) => (
-                            <div key={i} className="h-48 rounded-4xl bg-white/5 animate-pulse border border-white/5" />
+                            <div key={i} className="h-[218px] rounded-4xl bg-white/5 animate-pulse border border-white/5" />
                         ))
                     ) : (
                         data.map((asset, index) => (
@@ -114,13 +114,12 @@ export default function LiveMarket() {
                                 href={`https://www.coingecko.com/en/coins/${asset.id}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                initial={{ opacity: 0, y: 40 }}
+                                initial={{ opacity: 0, y: 10 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true, amount: 0.15 }}
                                 transition={{
-                                    type: "spring",
-                                    stiffness: 50,
-                                    damping: 15,
+                                    duration: 0.5,
+                                    ease: "easeOut",
                                     delay: index * 0.05
                                 }}
                                 className="group block relative overflow-hidden p-8 rounded-4xl border border-card-border bg-card-bg hover:bg-foreground/3 transition-all duration-500"

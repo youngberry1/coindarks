@@ -111,8 +111,8 @@ function TestimonialCard({ testimonial }: { testimonial: typeof testimonials[0] 
     return (
         <motion.div
             style={{
-                rotateX,
-                rotateY,
+                rotateX: typeof window !== 'undefined' && window.matchMedia('(hover: hover)').matches ? rotateX : 0,
+                rotateY: typeof window !== 'undefined' && window.matchMedia('(hover: hover)').matches ? rotateY : 0,
                 transformStyle: "preserve-3d",
             }}
             onMouseMove={handleMouseMove}

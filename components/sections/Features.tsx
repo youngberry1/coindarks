@@ -55,14 +55,13 @@ export default function Features() {
                     {features.map((feature, index) => (
                         <motion.div
                             key={feature.title}
-                            initial={{ opacity: 0, y: 15, scale: 0.98 }}
+                            initial={{ opacity: 0, y: 8, scale: 0.99 }}
                             whileInView={{ opacity: 1, y: 0, scale: 1 }}
                             viewport={{ once: true, amount: 0.1 }}
                             transition={{
-                                type: "spring",
-                                stiffness: 80,
-                                damping: 25,
-                                delay: index * 0.03,
+                                duration: 0.4,
+                                ease: [0.25, 0.1, 0.25, 1],
+                                delay: index * 0.05,
                             }}
                             className="p-8 rounded-3xl border border-card-border bg-card-bg transition-shadow duration-500 hover:shadow-2xl hover:shadow-primary/5 hover:bg-foreground/3 group will-change-transform"
                         >

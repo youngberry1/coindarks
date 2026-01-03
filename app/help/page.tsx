@@ -10,7 +10,6 @@ import {
     MessageSquare,
     Clock,
     Globe,
-    ChevronRight,
     ExternalLink
 } from "lucide-react";
 import { Footer } from "@/components/layout/Footer";
@@ -35,11 +34,6 @@ export default function HelpPage() {
         }
     ];
 
-    const faqs = [
-        { q: "How fast are transactions?", a: "Most exchanges are processed in under 15 minutes, depending on blockchain confirmations." },
-        { q: "What are the fees?", a: "Our fees are dynamically calculated and included in the shown exchange rate. No hidden costs." },
-        { q: "Is KYC mandatory?", a: "Yes, to ensure security and regulatory compliance, all users must complete a basic identity verification." }
-    ];
 
     return (
         <>
@@ -155,22 +149,17 @@ export default function HelpPage() {
                         </div>
                     </div>
 
-                    {/* FAQ Quick Links */}
-                    <div className="mt-32 pt-24 border-t border-white/5">
-                        <h2 className="text-3xl font-black tracking-tight mb-12 text-center">Frequently Asked <span className="text-gradient">Questions</span></h2>
-                        <div className="max-w-3xl mx-auto space-y-4">
-                            {faqs.map((faq, i) => (
-                                <div key={i} className="p-6 rounded-[32px] border border-white/5 bg-white/5 hover:bg-white/10 transition-all cursor-pointer group">
-                                    <div className="flex items-center justify-between">
-                                        <p className="font-bold tracking-tight">{faq.q}</p>
-                                        <ChevronRight className="h-4 w-4 text-primary group-hover:translate-x-1 transition-transform" />
-                                    </div>
-                                    <p className="mt-4 text-sm text-foreground/50 font-medium leading-relaxed overflow-hidden max-h-0 group-hover:max-h-24 transition-all duration-500">
-                                        {faq.a}
-                                    </p>
-                                </div>
-                            ))}
-                        </div>
+                    {/* FAQ Redirect CTA */}
+                    <div className="mt-32 pt-24 border-t border-white/5 text-center">
+                        <h2 className="text-3xl font-black tracking-tight mb-6">Need More Detailed <span className="text-gradient">Information?</span></h2>
+                        <p className="text-foreground/60 font-medium text-lg max-w-2xl mx-auto mb-10">
+                            Check out our comprehensive FAQ for in-depth answers about security, payments, and our bridge technology.
+                        </p>
+                        <Link href="/faq">
+                            <button className="px-12 py-5 rounded-full bg-primary text-white font-black text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-primary/20">
+                                View Full FAQ Center
+                            </button>
+                        </Link>
                     </div>
                 </div>
             </main>
