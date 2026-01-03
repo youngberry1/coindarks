@@ -5,7 +5,6 @@ import { supabaseAdmin } from "@/lib/supabase-admin";
 import { revalidatePath } from "next/cache";
 import { generateOrderId } from "@/lib/utils/order-id";
 import { getExchangeRates } from "@/actions/rates";
-import { getAdminWallets } from "@/actions/admin-wallets";
 import { sendOrderStatusEmail } from "@/lib/mail";
 
 export async function createOrder(data: {
@@ -81,17 +80,41 @@ export async function createOrder(data: {
         amount_crypto = parseFloat(amount_crypto.toFixed(8));
         amount_fiat = parseFloat(amount_fiat.toFixed(2));
 
-        // 5. Get Admin Wallet (If SELL, user needs to deposit crypto)
-        let deposit_address = null;
+        // -- MINIMUM ORDER CHECK --
         if (data.type === 'SELL') {
-            const wallets = await getAdminWallets();
-            // Match wallet by currency/chain. Assuming Asset = Currency Symbol
-            const adminWallet = wallets.find(w => w.currency === data.asset && w.is_active);
-            if (!adminWallet) {
-                return { error: "System wallet not available for this asset. Please contact support." };
+            if (data.fiat_currency === 'GHS' && amount_fiat < 100) {
+                return { error: `Minimum sell amount is 100 GHS (You are trying to sell ${amount_fiat} GHS)` };
             }
-            deposit_address = adminWallet.address;
+            if (data.fiat_currency === 'NGN' && amount_fiat < 15000) { // Approx 100 GHS equivalent
+                return { error: `Minimum sell amount is 15,000 NGN (You are trying to sell ${amount_fiat} NGN)` };
+            }
         }
+        // -------------------------
+
+        // 5. Get Admin Wallet
+        let deposit_address = null;
+
+        let targetCurrency = '';
+        if (data.type === 'SELL') {
+            targetCurrency = data.asset;
+        } else {
+            // BUY -> we need a wallet for the FIAT currency (e.g. GHS)
+            targetCurrency = data.fiat_currency;
+        }
+
+        // Direct query to bypass "getAdminWallets" role check (which restricts to ADMIN users)
+        // We use supabaseAdmin here which is safe as we are on server side controlling the query
+        const { data: adminWallet } = await supabaseAdmin
+            .from('admin_wallets')
+            .select('address')
+            .eq('currency', targetCurrency)
+            .eq('is_active', true)
+            .single();
+
+        if (!adminWallet) {
+            return { error: `System account not available for ${targetCurrency}. Please contact support.` };
+        }
+        deposit_address = adminWallet.address;
 
         // 5. Create Order
         const orderNumber = generateOrderId();

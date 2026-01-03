@@ -102,7 +102,11 @@ export default async function UserOrdersPage({
             ) : (
                 <div className="grid grid-cols-1 gap-4">
                     {orders.map((order) => (
-                        <div key={order.id} className="p-6 md:p-8 rounded-[32px] border border-white/5 bg-card-bg/50 backdrop-blur-md hover:border-white/10 transition-all group relative overflow-hidden">
+                        <Link
+                            key={order.id}
+                            href={`/dashboard/orders/${order.id}`}
+                            className="block p-6 md:p-8 rounded-[32px] border border-white/5 bg-card-bg/50 backdrop-blur-md hover:border-white/10 hover:bg-card-bg/60 transition-all group relative overflow-hidden"
+                        >
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
                                 <div className="flex items-center gap-6">
                                     <div className={cn(
@@ -159,7 +163,7 @@ export default async function UserOrdersPage({
                                     <p className="text-sm font-black">{order.amount_fiat} {order.fiat_currency}</p>
                                 </div>
                             </div>
-                        </div>
+                        </Link>
                     ))}
                 </div>
             )}
