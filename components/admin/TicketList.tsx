@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { Loading } from "@/components/ui/Loading";
 import { AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 interface Ticket {
     id: string;
@@ -26,6 +27,7 @@ interface Ticket {
         first_name: string;
         last_name: string;
         email: string;
+        profile_image?: string | null;
     };
     orders?: {
         order_number: string;
@@ -87,9 +89,21 @@ export function TicketList({ initialTickets }: TicketListProps) {
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-4 text-xs text-foreground/40 font-medium">
-                                        <div className="flex items-center gap-1.5">
-                                            <User className="h-3 w-3" />
-                                            <span>{ticket.users.first_name} {ticket.users.last_name}</span>
+                                        <div className="flex items-center gap-1.5 min-w-0">
+                                            {ticket.users.profile_image ? (
+                                                <div className="h-4 w-4 rounded-full overflow-hidden relative shrink-0">
+                                                    <Image
+                                                        src={ticket.users.profile_image}
+                                                        alt={ticket.users.first_name}
+                                                        fill
+                                                        className="object-cover"
+                                                        unoptimized
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <User className="h-3 w-3" />
+                                            )}
+                                            <span className="truncate">{ticket.users.first_name} {ticket.users.last_name}</span>
                                         </div>
                                         <div className="flex items-center gap-1.5">
                                             <Mail className="h-3 w-3" />

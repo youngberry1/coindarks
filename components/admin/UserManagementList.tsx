@@ -13,6 +13,7 @@ import {
     MoreHorizontal,
     Eye
 } from "lucide-react";
+import Image from "next/image";
 import { toggleUserStatus } from "@/actions/admin";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -25,6 +26,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { DirectEmailModal } from "./DirectEmailModal";
 
 interface User {
     id: string;
@@ -34,6 +36,7 @@ interface User {
     kyc_status: string;
     role: string;
     status: string;
+    profile_image?: string | null;
     created_at: string;
 }
 
@@ -46,6 +49,8 @@ export function UserManagementList({ users }: UserManagementListProps) {
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [isBanModalOpen, setIsBanModalOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
+    const [emailTarget, setEmailTarget] = useState<{ id: string, name: string, email: string } | null>(null);
 
     const filteredUsers = users.filter(user =>
         user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -101,8 +106,18 @@ export function UserManagementList({ users }: UserManagementListProps) {
                             <tr key={user.id} className="hover:bg-white/5 transition-colors group">
                                 <td className="px-8 py-6">
                                     <div className="flex items-center gap-4">
-                                        <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0 transition-transform group-hover:scale-110">
-                                            <UserIcon className="h-5 w-5" />
+                                        <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0 transition-transform group-hover:scale-110 relative overflow-hidden">
+                                            {user.profile_image ? (
+                                                <Image
+                                                    src={user.profile_image}
+                                                    alt={user.first_name}
+                                                    fill
+                                                    className="object-cover"
+                                                    unoptimized
+                                                />
+                                            ) : (
+                                                <UserIcon className="h-5 w-5" />
+                                            )}
                                         </div>
                                         <div>
                                             <p className="text-sm truncate">{user.first_name} {user.last_name}</p>
@@ -172,7 +187,14 @@ export function UserManagementList({ users }: UserManagementListProps) {
                                                     Copy ID
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem
-                                                    onClick={() => window.location.href = `mailto:${user.email}`}
+                                                    onClick={() => {
+                                                        setEmailTarget({
+                                                            id: user.id,
+                                                            name: `${user.first_name} ${user.last_name}`,
+                                                            email: user.email
+                                                        });
+                                                        setIsEmailModalOpen(true);
+                                                    }}
                                                 >
                                                     <Mail className="mr-2 h-4 w-4" />
                                                     Email User
@@ -204,8 +226,18 @@ export function UserManagementList({ users }: UserManagementListProps) {
                     <div key={user.id} className="p-6 rounded-[28px] border border-white/5 bg-card-bg/50 backdrop-blur-md space-y-4">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                                <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                                    <UserIcon className="h-5 w-5" />
+                                <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0 relative overflow-hidden">
+                                    {user.profile_image ? (
+                                        <Image
+                                            src={user.profile_image}
+                                            alt={user.first_name}
+                                            fill
+                                            className="object-cover"
+                                            unoptimized
+                                        />
+                                    ) : (
+                                        <UserIcon className="h-5 w-5" />
+                                    )}
                                 </div>
                                 <div className="min-w-0">
                                     <p className="text-sm font-bold truncate">{user.first_name} {user.last_name}</p>
@@ -285,6 +317,15 @@ export function UserManagementList({ users }: UserManagementListProps) {
                 }
                 confirmText={selectedUser?.status === 'BANNED' ? "Reactivate User" : "Suspend Account"}
                 variant={selectedUser?.status === 'BANNED' ? "success" : "destructive"}
+            />
+
+            <DirectEmailModal
+                isOpen={isEmailModalOpen}
+                onClose={() => {
+                    setIsEmailModalOpen(false);
+                    setEmailTarget(null);
+                }}
+                user={emailTarget}
             />
         </div>
     );

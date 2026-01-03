@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 import {
     History,
     TrendingUp,
@@ -11,18 +11,37 @@ import {
     ArrowRight,
     ShoppingBag
 } from "lucide-react";
+import { SearchInput } from "@/components/dashboard/SearchInput";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-export default async function UserOrdersPage() {
+export default async function UserOrdersPage({
+    searchParams
+}: {
+    searchParams: Promise<{ q?: string }>
+}) {
     const session = await auth();
     if (!session) redirect("/login");
 
-    const { data: orders } = await supabase
+    // Await searchParams in Next.js 15
+    const params = await searchParams;
+
+    // Use service role admin client to bypass RLS (since we are server-side and authenticated via NextAuth)
+    const supabase = supabaseAdmin;
+
+    let query = supabase
         .from('orders')
         .select('*')
         .eq('user_id', session.user.id)
         .order('created_at', { ascending: false });
+
+    if (params.q) {
+        query = query.ilike('order_number', `%${params.q}%`);
+    }
+
+    const { data: orders } = await query;
+
+
 
     const { data: user } = await supabase
         .from('users')
@@ -42,15 +61,22 @@ export default async function UserOrdersPage() {
                     </p>
                 </div>
 
-                {isKycApproved && (
-                    <Link
-                        href="/dashboard/exchange"
-                        className="flex items-center gap-2 px-6 py-4 rounded-2xl bg-primary text-white font-bold shadow-xl shadow-primary/20 hover:scale-[1.02] transition-all"
-                    >
-                        <ShoppingBag className="h-5 w-5" />
-                        New Trade
-                    </Link>
-                )}
+                <div className="flex items-center gap-3">
+                    {/* Search Form */}
+                    {/* Search Form */}
+                    <SearchInput />
+
+                    {isKycApproved && (
+                        <Link
+                            href="/dashboard/exchange"
+                            className="flex items-center gap-2 px-6 py-4 rounded-2xl bg-primary text-white font-bold shadow-xl shadow-primary/20 hover:scale-[1.02] transition-all whitespace-nowrap"
+                        >
+                            <ShoppingBag className="h-5 w-5" />
+                            <span className="hidden md:inline">New Trade</span>
+                            <span className="md:hidden">New</span>
+                        </Link>
+                    )}
+                </div>
             </div>
 
             {(!orders || orders.length === 0) ? (
@@ -60,11 +86,16 @@ export default async function UserOrdersPage() {
                     </div>
                     <h2 className="text-2xl font-black mb-3">No orders found</h2>
                     <p className="text-foreground/40 font-medium max-w-sm mx-auto mb-8">
-                        You haven&apos;t made any trades yet. Start your crypto journey by making your first purchase.
+                        {params.q ? `No orders matching "${params.q}"` : "You haven't made any trades yet. Start your crypto journey by making your first purchase."}
                     </p>
-                    {isKycApproved && (
+                    {isKycApproved && !params.q && (
                         <Link href="/dashboard/exchange" className="inline-flex items-center gap-2 text-primary font-bold hover:gap-3 transition-all">
                             Buy Crypto Now <ArrowRight className="h-4 w-4" />
+                        </Link>
+                    )}
+                    {params.q && (
+                        <Link href="/dashboard/orders" className="text-sm font-bold text-primary hover:underline">
+                            Clear Search
                         </Link>
                     )}
                 </div>

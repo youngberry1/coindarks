@@ -30,6 +30,7 @@ interface KYCSubmission {
         first_name: string;
         last_name: string;
         email: string;
+        profile_image?: string | null;
     };
 }
 
@@ -73,8 +74,18 @@ export function KYCReviewList({ submissions }: KYCReviewListProps) {
                 {submissions.map((sub) => (
                     <div key={sub.id} className="p-8 rounded-[32px] border border-white/5 bg-card-bg/50 backdrop-blur-md hover:border-white/10 transition-all group">
                         <div className="flex flex-col sm:flex-row gap-6 mb-8">
-                            <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
-                                <User className="h-8 w-8 text-primary" />
+                            <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 relative overflow-hidden">
+                                {sub.users.profile_image ? (
+                                    <Image
+                                        src={sub.users.profile_image}
+                                        alt={sub.users.first_name}
+                                        fill
+                                        className="object-cover"
+                                        unoptimized
+                                    />
+                                ) : (
+                                    <User className="h-8 w-8 text-primary" />
+                                )}
                             </div>
                             <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-3 mb-1">

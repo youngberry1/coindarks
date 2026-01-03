@@ -10,8 +10,10 @@ import {
     ShieldAlert,
     CheckCircle2,
     Clock,
-    ArrowLeft
+    ArrowLeft,
+    Image as ImageIcon
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -78,8 +80,18 @@ export default async function UserProfilePage({ params }: UserProfilePageProps) 
                 {/* User Info Card */}
                 <Card className="p-6 md:p-8 rounded-[28px] md:rounded-[32px] border-white/5 bg-card-bg/50 backdrop-blur-md space-y-6">
                     <div className="flex items-center gap-4">
-                        <div className="h-16 w-16 md:h-20 md:w-20 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                            <User className="h-8 w-8 md:h-10 md:w-10" />
+                        <div className="h-16 w-16 md:h-20 md:w-20 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0 relative overflow-hidden">
+                            {user.profile_image ? (
+                                <Image
+                                    src={user.profile_image}
+                                    alt={`${user.first_name} ${user.last_name}`}
+                                    fill
+                                    className="object-cover"
+                                    unoptimized
+                                />
+                            ) : (
+                                <User className="h-8 w-8 md:h-10 md:w-10" />
+                            )}
                         </div>
                         <div className="min-w-0">
                             <h2 className="text-lg md:text-xl font-bold truncate">{user.first_name} {user.last_name}</h2>

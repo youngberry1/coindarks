@@ -488,3 +488,191 @@ export const sendTicketClosedEmail = async (
         console.error("Failed to send ticket closed email via Resend:", error);
     }
 }
+
+export const sendDirectEmail = async (
+    email: string,
+    fullName: string,
+    subject: string,
+    message: string,
+    fromEmail?: string
+) => {
+    console.log("-----------------------------------------");
+    console.log(`DIRECT ADMIN EMAIL SENT TO: ${email}`);
+    console.log(`FROM: ${fromEmail || process.env.EMAIL_FROM}`);
+    console.log(`SUBJECT: ${subject}`);
+    console.log("-----------------------------------------");
+
+    const resend = getResend();
+    if (!resend) return;
+
+    try {
+        const emailHtml = `
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif; line-height: 1.6; color: #475569; margin: 0; padding: 0; background-color: #ffffff; }
+        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; margin-top: 40px; margin-bottom: 40px; }
+        .header { padding: 32px 40px; text-align: center; }
+        .header h1 { margin: 0; font-size: 28px; font-weight: 800; color: #1e293b; letter-spacing: -0.5px; }
+        .content { padding: 0 40px 40px; }
+        .content p { font-size: 16px; margin-bottom: 24px; color: #475569; }
+        .message-box { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 24px; margin: 24px 0; color: #1e293b; font-size: 16px; line-height: 1.7; }
+        .footer { padding: 32px 40px; background-color: #ffffff; border-top: 1px solid #e2e8f0; text-align: center; }
+        .footer p { margin: 0; font-size: 12px; color: #94a3b8; font-weight: 500; }
+        .footer .legal { margin-bottom: 8px; }
+        .logo-text { color: #3b82f6; font-weight: 800; font-size: 20px; margin-bottom: 16px; display: block; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Official Correspondence</h1>
+        </div>
+        <div class="content">
+            <span class="logo-text">CoinDarks</span>
+            <p>Hello <strong>${fullName}</strong>,</p>
+            <p>This is an official communication regarding your account on the CoinDarks platform.</p>
+            
+            <div class="message-box">
+                ${message.replace(/\n/g, '<br/>')}
+            </div>
+
+            <p>If you have any further questions or require immediate assistance, please do not hesitate to reach out via our support center.</p>
+            
+            <p>Best regards,<br>
+            <strong>The CoinDarks Administration</strong></p>
+        </div>
+        <div class="footer">
+            <p class="legal">This is an automated administrative email. Please do not reply directly to this message.</p>
+            <p>© ${new Date().getFullYear()} CoinDarks. Global Financial Technology. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
+        `;
+
+        await resend.emails.send({
+            from: `CoinDarks <${fromEmail || process.env.EMAIL_FROM}>`,
+            to: email,
+            subject: subject,
+            html: emailHtml,
+        });
+        console.log("Direct admin email sent via Resend!");
+    } catch (error) {
+        console.error("Failed to send direct admin email via Resend:", error);
+    }
+}
+
+export const sendOrderStatusEmail = async (
+    email: string,
+    fullName: string,
+    orderNumber: string,
+    status: 'COMPLETED' | 'CANCELLED' | 'PROCESSING' | 'PENDING',
+    asset: string,
+    amount: string,
+    fiatAmount: string
+) => {
+    console.log("-----------------------------------------");
+    console.log(`ORDER STATUS EMAIL (${status}) SENT TO: ${email}`);
+    console.log("-----------------------------------------");
+
+    const resend = getResend();
+    if (!resend) return;
+
+    const config = {
+        PENDING: {
+            color: '#6366f1', // Indigo for new/pending
+            title: 'Order Received',
+            message: 'Your order has been placed and is currently pending payment confirmation.',
+            subject: `Order #${orderNumber} Confirmation - CoinDarks`
+        },
+        COMPLETED: {
+            color: '#10b981',
+            title: 'Order Completed',
+            message: 'Your transaction has been successfully completed.',
+            subject: `Order #${orderNumber} Completed - CoinDarks`
+        },
+        CANCELLED: {
+            color: '#ef4444',
+            title: 'Order Cancelled',
+            message: 'Your order has been cancelled.',
+            subject: `Order #${orderNumber} Cancelled - CoinDarks`
+        },
+        PROCESSING: {
+            color: '#f59e0b',
+            title: 'Order Processing',
+            message: 'We are currently processing your transaction.',
+            subject: `Order #${orderNumber} Processing - CoinDarks`
+        }
+    };
+
+    const template = config[status];
+
+    try {
+        const emailHtml = `
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif; line-height: 1.6; color: #475569; margin: 0; padding: 0; background-color: #ffffff; }
+        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; margin-top: 40px; margin-bottom: 40px; }
+        .header { padding: 32px 40px; text-align: center; background: linear-gradient(135deg, ${template.color} 0%, ${template.color}dd 100%); }
+        .header h1 { margin: 0; font-size: 28px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; }
+        .content { padding: 40px; }
+        .content p { font-size: 16px; margin-bottom: 24px; color: #475569; }
+        .details-box { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 24px; margin: 24px 0; }
+        .detail-row { display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0; }
+        .detail-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .detail-label { font-size: 12px; font-weight: 700; text-transform: uppercase; color: #94a3b8; letter-spacing: 0.5px; }
+        .detail-value { font-size: 14px; font-weight: 600; color: #1e293b; }
+        .footer { padding: 32px 40px; background-color: #f8fafc; border-top: 1px solid #e2e8f0; text-align: center; }
+        .footer p { margin: 0; font-size: 12px; color: #94a3b8; font-weight: 500; }
+        .button { display: inline-block; padding: 14px 32px; background-color: ${template.color}; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; text-align: center; width: 100%; box-sizing: border-box; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>${template.title}</h1>
+        </div>
+        <div class="content">
+            <p>Hello <strong>${fullName}</strong>,</p>
+            <p>${template.message}</p>
+            
+            <div class="details-box">
+                <div class="detail-row">
+                    <span class="detail-label">Order Number</span>
+                    <span class="detail-value">#${orderNumber}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Asset Amount</span>
+                    <span class="detail-value">${amount} ${asset}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Fiat Value</span>
+                    <span class="detail-value">${fiatAmount}</span>
+                </div>
+            </div>
+
+            <a href="${domain}/dashboard/orders" class="button">View Order Details</a>
+        </div>
+        <div class="footer">
+            <p>© ${new Date().getFullYear()} CoinDarks. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
+        `;
+
+        await resend.emails.send({
+            from: `CoinDarks <${process.env.EMAIL_FROM}>`,
+            to: email,
+            subject: template.subject,
+            html: emailHtml,
+        });
+        console.log(`Order status email (${status}) sent via Resend!`);
+    } catch (error) {
+        console.error("Failed to send order status email:", error);
+    }
+}

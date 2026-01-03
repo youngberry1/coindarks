@@ -7,6 +7,7 @@ import {
     User,
     Shield
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -21,6 +22,7 @@ interface SupportMessage {
         first_name: string;
         last_name: string;
         role: string;
+        profile_image?: string | null;
     };
 }
 
@@ -37,7 +39,7 @@ export default async function AdminTicketPage({ params }: TicketPageProps) {
     // Fetch Ticket + User
     const { data: ticket } = await supabaseAdmin
         .from('support_tickets')
-        .select('*, users(first_name, last_name, email, role, kyc_status)')
+        .select('*, users(first_name, last_name, email, role, kyc_status, profile_image)')
         .eq('id', id)
         .single();
 
@@ -46,7 +48,7 @@ export default async function AdminTicketPage({ params }: TicketPageProps) {
     // Fetch Messages
     const { data: rawMessages } = await supabaseAdmin
         .from('support_messages')
-        .select('*, users(first_name, last_name, role)')
+        .select('*, users(first_name, last_name, role, profile_image)')
         .eq('ticket_id', id)
         .order('created_at', { ascending: true });
 
@@ -97,8 +99,18 @@ export default async function AdminTicketPage({ params }: TicketPageProps) {
                         {messages?.map((msg) => (
                             <div key={msg.id} className={`flex gap - 3 md: gap - 4 ${msg.is_admin_reply ? 'justify-end' : 'justify-start'} `}>
                                 {!msg.is_admin_reply && (
-                                    <div className="h-8 w-8 md:h-10 md:w-10 rounded-full bg-foreground/10 flex items-center justify-center shrink-0">
-                                        <span className="font-bold text-[10px] md:text-xs">{msg.users?.first_name[0]}{msg.users?.last_name[0]}</span>
+                                    <div className="h-8 w-8 md:h-10 md:w-10 rounded-full bg-foreground/10 flex items-center justify-center shrink-0 relative overflow-hidden">
+                                        {msg.users?.profile_image ? (
+                                            <Image
+                                                src={msg.users.profile_image}
+                                                alt={msg.users.first_name}
+                                                fill
+                                                className="object-cover"
+                                                unoptimized
+                                            />
+                                        ) : (
+                                            <span className="font-bold text-[10px] md:text-xs">{msg.users?.first_name[0]}{msg.users?.last_name[0]}</span>
+                                        )}
                                     </div>
                                 )}
 

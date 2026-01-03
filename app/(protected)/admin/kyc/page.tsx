@@ -23,7 +23,8 @@ export default async function AdminKYCPage() {
             users (
                 first_name,
                 last_name,
-                email
+                email,
+                profile_image
             )
         `)
         .eq('status', 'PENDING')
