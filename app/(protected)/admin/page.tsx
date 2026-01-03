@@ -82,10 +82,14 @@ export default async function AdminDashboardPage() {
 
                     <div className="rounded-[40px] border border-white/5 bg-card-bg/30 overflow-hidden">
                         {(recentUsers || []).map((user, idx) => (
-                            <div key={user.id} className={`p-6 flex items-center justify-between hover:bg-white/5 transition-colors border-b border-white/5 ${idx === recentUsers!.length - 1 ? "border-b-0" : ""}`}>
-                                <div className="flex items-center gap-4">
+                            <Link
+                                key={user.id}
+                                href={`/admin/users/${user.id}`}
+                                className={`p-6 flex flex-col sm:flex-row sm:items-center justify-between hover:bg-white/10 transition-all border-b border-white/5 active:scale-[0.98] ${idx === recentUsers!.length - 1 ? "border-b-0" : ""}`}
+                            >
+                                <div className="flex items-center gap-4 mb-4 sm:mb-0">
                                     {user.profile_image ? (
-                                        <div className="h-10 w-10 rounded-xl overflow-hidden border border-white/5 relative">
+                                        <div className="h-12 w-12 rounded-2xl overflow-hidden border border-white/10 relative shrink-0">
                                             <Image
                                                 src={user.profile_image}
                                                 alt={`${user.first_name} ${user.last_name}`}
@@ -95,16 +99,16 @@ export default async function AdminDashboardPage() {
                                             />
                                         </div>
                                     ) : (
-                                        <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center font-bold text-primary">
+                                        <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center font-bold text-primary shrink-0 text-lg">
                                             {user.first_name?.[0]}
                                         </div>
                                     )}
-                                    <div>
-                                        <p className="font-bold">{user.first_name} {user.last_name}</p>
-                                        <p className="text-[10px] text-foreground/40 font-medium">{user.email}</p>
+                                    <div className="min-w-0">
+                                        <p className="font-bold truncate">{user.first_name} {user.last_name}</p>
+                                        <p className="text-[10px] text-foreground/40 font-medium truncate">{user.email}</p>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-6">
+                                <div className="flex items-center justify-between sm:justify-end gap-6">
                                     <div className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border ${user.kyc_status === 'APPROVED' ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/10" :
                                         user.kyc_status === 'PENDING' ? "bg-amber-500/10 text-amber-500 border-amber-500/10" :
                                             "bg-white/5 text-foreground/40 border-white/5"
@@ -115,7 +119,7 @@ export default async function AdminDashboardPage() {
                                         {new Date(user.created_at).toLocaleDateString()}
                                     </p>
                                 </div>
-                            </div>
+                            </Link>
                         ))}
                     </div>
                 </div>
