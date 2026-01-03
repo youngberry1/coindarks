@@ -3,7 +3,31 @@
 import { supabaseAdmin } from "@/lib/kyc-storage";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
-import { sendKYCApprovalEmail, sendKYCRejectionEmail } from "@/lib/mail";
+import { sendKYCApprovalEmail, sendKYCRejectionEmail, sendDirectEmail } from "@/lib/mail";
+
+export async function sendDirectUserEmail(userId: string, subject: string, message: string, fromEmail?: string) {
+    const session = await auth();
+    if (session?.user?.role !== "ADMIN") return { error: "Unauthorized" };
+
+    try {
+        const { data: user, error: fetchError } = await supabaseAdmin
+            .from('users')
+            .select('id, email, first_name, last_name')
+            .eq('id', userId)
+            .single();
+
+        if (fetchError || !user) return { error: "User not found" };
+
+        const fullName = `${user.first_name} ${user.last_name}`;
+        await sendDirectEmail(user.email, fullName, subject, message, fromEmail);
+
+        return { success: "Email sent successfully" };
+    } catch (error) {
+        console.error("Direct Email Error:", error);
+        return { error: "Failed to send email" };
+    }
+}
+
 
 export async function processKYC(submissionId: string, action: 'APPROVE' | 'REJECT', reason?: string) {
     const session = await auth();
@@ -144,17 +168,48 @@ export async function toggleInventoryStatus(asset: string, field: 'buy_enabled' 
     }
 }
 
+import { sendOrderStatusEmail } from "@/lib/mail";
+
+// ... existing code ...
+
 export async function updateOrderStatus(orderId: string, status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'CANCELLED' | 'REFUNDED') {
     const session = await auth();
     if (session?.user?.role !== "ADMIN") return { error: "Unauthorized" };
 
     try {
-        const { error } = await supabaseAdmin
+        // 1. Update Status
+        const { data: order, error } = await supabaseAdmin
             .from('orders')
             .update({ status, updated_at: new Date().toISOString() })
-            .eq('id', orderId);
+            .eq('id', orderId)
+            .select(`
+                *,
+                users (
+                    email,
+                    first_name,
+                    last_name
+                )
+            `)
+            .single();
 
         if (error) throw error;
+
+        // 2. Send Email Notification
+        if (['COMPLETED', 'CANCELLED', 'PROCESSING'].includes(status) && order) {
+            const fullName = `${order.users.first_name} ${order.users.last_name}`;
+            const fiatDisplay = `${order.amount_fiat} ${order.fiat_currency}`;
+
+            await sendOrderStatusEmail(
+                order.users.email,
+                fullName,
+                order.order_number,
+                status as 'COMPLETED' | 'CANCELLED' | 'PROCESSING',
+                order.asset,
+                order.amount_crypto.toString(),
+                fiatDisplay
+            );
+        }
+
         revalidatePath("/admin/orders");
         revalidatePath("/admin");
         revalidatePath("/dashboard/orders");

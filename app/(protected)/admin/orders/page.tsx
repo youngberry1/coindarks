@@ -38,6 +38,13 @@ export default async function AdminOrdersPage() {
                 </div>
 
                 <div className="flex items-center gap-3">
+                    <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center gap-3">
+                        <ShoppingBag className="h-5 w-5 text-amber-500" />
+                        <div>
+                            <p className="text-[10px] font-black text-amber-500/50 uppercase tracking-widest leading-none mb-1">Pending Action</p>
+                            <p className="text-sm font-bold text-amber-500">{orders?.filter((o: { status: string }) => o.status === 'PENDING' || o.status === 'PROCESSING').length || 0}</p>
+                        </div>
+                    </div>
                     <div className="p-4 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-3">
                         <ShoppingBag className="h-5 w-5 text-primary" />
                         <div>

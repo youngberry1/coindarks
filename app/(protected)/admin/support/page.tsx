@@ -22,7 +22,7 @@ export default async function AdminSupportPage({ searchParams }: AdminSupportPag
 
     let query = supabaseAdmin
         .from('support_tickets')
-        .select('*, users(first_name, last_name, email)')
+        .select('*, users(first_name, last_name, email, profile_image)')
         .order('created_at', { ascending: false });
 
     if (q) {

@@ -10,6 +10,7 @@ import {
     AlertTriangle
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { getCryptos } from "@/actions/crypto";
 import { CryptoIcon } from "@/components/CryptoIcon";
 
@@ -31,7 +32,7 @@ export default async function AdminDashboardPage() {
         supabaseAdmin.from('users').select('*', { count: 'exact', head: true }),
         supabaseAdmin.from('kyc_submissions').select('*', { count: 'exact', head: true }).eq('status', 'PENDING'),
         supabaseAdmin.from('orders').select('*', { count: 'exact', head: true }),
-        supabaseAdmin.from('users').select('id, first_name, last_name, email, created_at, kyc_status').order('created_at', { ascending: false }).limit(5),
+        supabaseAdmin.from('users').select('id, first_name, last_name, email, created_at, kyc_status, profile_image').order('created_at', { ascending: false }).limit(5),
         getCryptos(false)
     ]);
 
@@ -77,9 +78,21 @@ export default async function AdminDashboardPage() {
                         {(recentUsers || []).map((user, idx) => (
                             <div key={user.id} className={`p-6 flex items-center justify-between hover:bg-white/5 transition-colors border-b border-white/5 ${idx === recentUsers!.length - 1 ? "border-b-0" : ""}`}>
                                 <div className="flex items-center gap-4">
-                                    <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center font-bold text-primary">
-                                        {user.first_name?.[0]}
-                                    </div>
+                                    {user.profile_image ? (
+                                        <div className="h-10 w-10 rounded-xl overflow-hidden border border-white/5 relative">
+                                            <Image
+                                                src={user.profile_image}
+                                                alt={`${user.first_name} ${user.last_name}`}
+                                                fill
+                                                className="object-cover"
+                                                unoptimized
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center font-bold text-primary">
+                                            {user.first_name?.[0]}
+                                        </div>
+                                    )}
                                     <div>
                                         <p className="font-bold">{user.first_name} {user.last_name}</p>
                                         <p className="text-[10px] text-foreground/40 font-medium">{user.email}</p>

@@ -58,15 +58,21 @@ export async function deleteWallet(asset: string, network: string, name: string)
     }
 }
 
-export async function getWallets() {
+export async function getWallets(asset?: string) {
     const session = await auth();
     if (!session?.user?.id) return [];
 
     try {
-        const { data: wallets } = await supabaseAdmin
+        let query = supabaseAdmin
             .from('wallets')
             .select('*')
             .eq('user_id', session.user.id);
+
+        if (asset) {
+            query = query.eq('asset', asset);
+        }
+
+        const { data: wallets } = await query;
 
         return wallets || [];
     } catch {

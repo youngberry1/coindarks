@@ -7,12 +7,12 @@ import {
     User,
     Copy,
     ExternalLink,
-    Search
+    Search,
+    CheckCircle2
 } from "lucide-react";
 import { updateOrderStatus } from "@/actions/admin";
 import { toast } from "sonner";
-import { Loading } from "@/components/ui/Loading";
-import { AnimatePresence } from "framer-motion";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
 type OrderStatus = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'CANCELLED' | 'REFUNDED';
@@ -42,6 +42,7 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
     const [orders, setOrders] = useState(initialOrders);
     const [searchTerm, setSearchTerm] = useState("");
     const [updatingId, setUpdatingId] = useState<string | null>(null);
+    const [copiedId, setCopiedId] = useState<string | null>(null);
 
     const handleStatusUpdate = async (orderId: string, newStatus: string) => {
         setUpdatingId(orderId);
@@ -60,9 +61,15 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
         }
     };
 
-    const copyAddress = (address: string) => {
+    const copyAddress = (address: string, id: string) => {
         navigator.clipboard.writeText(address);
         toast.success("Address copied to clipboard");
+        setCopiedId(id);
+        setTimeout(() => setCopiedId(null), 2000);
+    };
+
+    const openExplorer = (address: string) => {
+        window.open(`https://blockchair.com/search?q=${address}`, '_blank');
     };
 
     const filteredOrders = orders.filter(o =>
@@ -71,6 +78,16 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
         o.users.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         o.users.last_name.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    const getStatusColor = (status: string) => {
+        switch (status) {
+            case 'COMPLETED': return "text-emerald-500 border-emerald-500/20 bg-emerald-500/10";
+            case 'CANCELLED': return "text-rose-500 border-rose-500/20 bg-rose-500/10";
+            case 'PROCESSING': return "text-amber-500 border-amber-500/20 bg-amber-500/10";
+            case 'PENDING': return "text-blue-500 border-blue-500/20 bg-blue-500/10";
+            default: return "text-foreground/50 border-white/10 bg-white/5";
+        }
+    };
 
     return (
         <div className="space-y-6">
@@ -130,42 +147,46 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                                         <p className="text-[10px] text-foreground/40 font-medium">≈ {order.amount_fiat} {order.fiat_currency}</p>
                                     </td>
                                     <td className="px-8 py-6">
-                                        <div className="relative inline-block">
-                                            <select
-                                                value={order.status}
-                                                onChange={(e) => handleStatusUpdate(order.id, e.target.value)}
+                                        <div className="relative">
+                                            <Select
                                                 disabled={updatingId === order.id}
-                                                className={cn(
-                                                    "bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-[10px] font-black uppercase tracking-widest focus:outline-none focus:border-primary transition-all",
-                                                    order.status === 'COMPLETED' ? "text-emerald-500 border-emerald-500/20" :
-                                                        order.status === 'CANCELLED' ? "text-rose-500 border-rose-500/20" :
-                                                            order.status === 'PROCESSING' ? "text-amber-500 border-amber-500/20" :
-                                                                "text-primary border-primary/20"
-                                                )}
+                                                onValueChange={(val) => handleStatusUpdate(order.id, val)}
+                                                defaultValue={order.status}
                                             >
-                                                <option value="PENDING">PENDING</option>
-                                                <option value="PROCESSING">PROCESSING</option>
-                                                <option value="COMPLETED">COMPLETED</option>
-                                                <option value="CANCELLED">CANCELLED</option>
-                                                <option value="REFUNDED">REFUNDED</option>
-                                            </select>
-                                            <AnimatePresence>
-                                                {updatingId === order.id && (
-                                                    <Loading message="Applying state transition..." fullScreen={false} />
-                                                )}
-                                            </AnimatePresence>
+                                                <SelectTrigger className={cn(
+                                                    "h-8 w-[140px] border text-[10px] font-black uppercase tracking-widest",
+                                                    getStatusColor(order.status)
+                                                )}>
+                                                    <SelectValue placeholder="Status" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="PENDING" className="text-[10px] font-bold uppercase">Pending</SelectItem>
+                                                    <SelectItem value="PROCESSING" className="text-[10px] font-bold uppercase">Processing</SelectItem>
+                                                    <SelectItem value="COMPLETED" className="text-[10px] font-bold uppercase">Completed</SelectItem>
+                                                    <SelectItem value="CANCELLED" className="text-[10px] font-bold uppercase">Cancelled</SelectItem>
+                                                    <SelectItem value="REFUNDED" className="text-[10px] font-bold uppercase">Refunded</SelectItem>
+                                                </SelectContent>
+                                            </Select>
                                         </div>
                                     </td>
                                     <td className="px-8 py-6 text-right">
                                         <div className="flex items-center justify-end gap-2">
                                             <button
-                                                onClick={() => copyAddress(order.receiving_address)}
+                                                onClick={() => copyAddress(order.receiving_address, order.id)}
                                                 className="p-2 rounded-lg bg-white/5 text-foreground/20 hover:text-foreground hover:bg-white/10 transition-all border border-white/5 group/btn"
                                                 title="Copy Receiving Address"
                                             >
-                                                <Copy className="h-3.5 w-3.5" />
+                                                {copiedId === order.id ? (
+                                                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                                                ) : (
+                                                    <Copy className="h-3.5 w-3.5" />
+                                                )}
                                             </button>
-                                            <button className="p-2 rounded-lg bg-white/5 text-foreground/20 hover:text-foreground hover:bg-white/10 transition-all border border-white/5">
+                                            <button
+                                                onClick={() => openExplorer(order.receiving_address)}
+                                                className="p-2 rounded-lg bg-white/5 text-foreground/20 hover:text-foreground hover:bg-white/10 transition-all border border-white/5"
+                                                title="View on Block Explorer"
+                                            >
                                                 <ExternalLink className="h-3.5 w-3.5" />
                                             </button>
                                         </div>
@@ -183,25 +204,26 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                     <div key={order.id} className="p-6 rounded-[28px] border border-white/5 bg-card-bg/50 backdrop-blur-md space-y-4">
                         <div className="flex items-center justify-between">
                             <span className="font-mono text-[10px] font-bold text-foreground/40 bg-white/5 px-2 py-1 rounded-md">#{order.order_number}</span>
-                            <div className="relative inline-block">
-                                <select
-                                    value={order.status}
-                                    onChange={(e) => handleStatusUpdate(order.id, e.target.value)}
+                            <div className="relative">
+                                <Select
                                     disabled={updatingId === order.id}
-                                    className={cn(
-                                        "bg-white/5 border border-white/10 rounded-lg px-3 py-1 text-[10px] font-black uppercase tracking-widest focus:outline-none focus:border-primary transition-all",
-                                        order.status === 'COMPLETED' ? "text-emerald-500 border-emerald-500/20" :
-                                            order.status === 'CANCELLED' ? "text-rose-500 border-rose-500/20" :
-                                                order.status === 'PROCESSING' ? "text-amber-500 border-amber-500/20" :
-                                                    "text-primary border-primary/20"
-                                    )}
+                                    onValueChange={(val) => handleStatusUpdate(order.id, val)}
+                                    defaultValue={order.status}
                                 >
-                                    <option value="PENDING">PENDING</option>
-                                    <option value="PROCESSING">PROCESSING</option>
-                                    <option value="COMPLETED">COMPLETED</option>
-                                    <option value="CANCELLED">CANCELLED</option>
-                                    <option value="REFUNDED">REFUNDED</option>
-                                </select>
+                                    <SelectTrigger className={cn(
+                                        "h-8 w-[130px] border text-[10px] font-black uppercase tracking-widest",
+                                        getStatusColor(order.status)
+                                    )}>
+                                        <SelectValue placeholder="Status" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="PENDING">PENDING</SelectItem>
+                                        <SelectItem value="PROCESSING">PROCESSING</SelectItem>
+                                        <SelectItem value="COMPLETED">COMPLETED</SelectItem>
+                                        <SelectItem value="CANCELLED">CANCELLED</SelectItem>
+                                        <SelectItem value="REFUNDED">REFUNDED</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
                         </div>
 
@@ -230,12 +252,19 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                             </div>
                             <div className="flex gap-2">
                                 <button
-                                    onClick={() => copyAddress(order.receiving_address)}
+                                    onClick={() => copyAddress(order.receiving_address, order.id)}
                                     className="p-3 rounded-xl bg-white/5 text-foreground/30 hover:text-primary transition-all border border-white/5"
                                 >
-                                    <Copy className="h-4 w-4" />
+                                    {copiedId === order.id ? (
+                                        <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                                    ) : (
+                                        <Copy className="h-4 w-4" />
+                                    )}
                                 </button>
-                                <button className="p-3 rounded-xl bg-white/5 text-foreground/30 hover:text-primary transition-all border border-white/5">
+                                <button
+                                    onClick={() => openExplorer(order.receiving_address)}
+                                    className="p-3 rounded-xl bg-white/5 text-foreground/30 hover:text-primary transition-all border border-white/5"
+                                >
                                     <ExternalLink className="h-4 w-4" />
                                 </button>
                             </div>
