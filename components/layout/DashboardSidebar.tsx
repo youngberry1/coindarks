@@ -91,13 +91,13 @@ export function DashboardSidebar({ user }: SidebarProps) {
                     </div>
                     <div className="overflow-hidden">
                         <p className="font-bold truncate leading-none mb-1">{user?.name || "User"}</p>
-                        <p className="text-[10px] text-foreground/40 truncate uppercase tracking-widestBold">{isAdmin ? "Administrator" : "Trader"}</p>
+                        <p className="text-[10px] text-foreground/60 truncate uppercase tracking-widestBold">{isAdmin ? "Administrator" : "Trader"}</p>
                     </div>
                 </div>
             </div>
 
             <nav className="flex-1 space-y-2 overflow-y-auto custom-scrollbar">
-                <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.3em] px-4 mb-6">
+                <p className="text-[10px] font-black text-foreground/40 uppercase tracking-[0.3em] px-4 mb-6">
                     {isAdmin ? "Management" : "Main Navigation"}
                 </p>
                 {links.map((link) => {
@@ -112,7 +112,7 @@ export function DashboardSidebar({ user }: SidebarProps) {
                                 : "text-foreground/50 hover:bg-white/5 hover:text-foreground"
                                 }`}
                         >
-                            <link.icon className={`h-5 w-5 transition-transform group-hover:scale-110 ${isActive ? "text-white" : "text-foreground/30 group-hover:text-primary"}`} />
+                            <link.icon className={`h-5 w-5 transition-transform group-hover:scale-110 ${isActive ? "text-white" : "text-foreground/50 group-hover:text-primary"}`} />
                             <span className="font-bold text-sm tracking-tight">{link.name}</span>
                             {isActive && (
                                 <motion.div
@@ -129,7 +129,7 @@ export function DashboardSidebar({ user }: SidebarProps) {
                 {isAdmin && (
                     <>
                         <div className="pt-6 pb-2">
-                            <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em] px-4">Trader View</p>
+                            <p className="text-[10px] font-black text-foreground/40 uppercase tracking-[0.2em] px-4">Trader View</p>
                         </div>
                         {userLinks.slice(0, 2).map((link) => {
                             const isActive = pathname === link.href;
@@ -181,7 +181,7 @@ export function DashboardSidebar({ user }: SidebarProps) {
                 )}
 
                 <div className="flex items-center justify-between px-4 py-2 bg-white/5 rounded-2xl border border-white/10">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Appearance</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-foreground/60">Appearance</span>
                     <ThemeToggle />
                 </div>
 

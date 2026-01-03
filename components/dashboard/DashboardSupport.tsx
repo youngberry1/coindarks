@@ -28,10 +28,10 @@ export function DashboardSupport({ orders }: DashboardSupportProps) {
                     </div>
                     <div className="text-left overflow-hidden">
                         <p className="font-black text-sm">Need Assistance?</p>
-                        <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest truncate">Connect with Support</p>
+                        <p className="text-[10px] text-foreground/60 font-bold uppercase tracking-widest truncate">Connect with Support</p>
                     </div>
                 </div>
-                <div className="h-10 w-10 rounded-xl bg-card-bg/50 border border-border flex items-center justify-center text-foreground/20 group-hover:text-primary transition-colors shrink-0">
+                <div className="h-10 w-10 rounded-xl bg-card-bg/50 border border-border flex items-center justify-center text-foreground/50 group-hover:text-primary transition-colors shrink-0">
                     <Send className="h-4 w-4" />
                 </div>
             </button>

@@ -23,8 +23,8 @@ export default function Navbar() {
     ];
 
     return (
-        <nav className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 py-4 mt-2">
-            <div className="mx-auto max-w-7xl rounded-4xl border bg-black/60 backdrop-blur-2xl border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] py-3 px-6">
+        <header className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 py-4 mt-2">
+            <nav className="mx-auto max-w-7xl rounded-4xl border bg-black/60 backdrop-blur-2xl border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] py-3 px-6">
                 <div className="flex items-center justify-between">
                     {/* Logo */}
                     <Logo />
@@ -35,9 +35,9 @@ export default function Navbar() {
                             <Link
                                 key={link.name}
                                 href={link.href}
-                                className="px-5 py-2 rounded-xl text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-white/5 transition-all flex items-center gap-2"
+                                className="px-5 py-2 rounded-xl text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-white/5 transition-all flex items-center gap-2"
                             >
-                                <link.icon className="h-4 w-4 opacity-50" />
+                                <link.icon className="h-4 w-4 opacity-70" />
                                 {link.name}
                             </Link>
                         ))}
@@ -109,7 +109,7 @@ export default function Navbar() {
                                         <ScrollArea className="flex-1">
                                             <div className="p-6 flex flex-col gap-6">
                                                 <div className="flex items-center justify-between px-2">
-                                                    <span className="text-[10px] font-black uppercase tracking-widest opacity-40">Menu Navigation</span>
+                                                    <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Menu Navigation</span>
                                                     <ThemeToggle />
                                                 </div>
 
@@ -132,7 +132,7 @@ export default function Navbar() {
                                                             className="flex items-center gap-4 p-3.5 rounded-2xl bg-white/5 border border-white/5 hover:bg-primary/10 hover:border-primary/20 transition-all group"
                                                         >
                                                             <div className="h-9 w-9 rounded-xl bg-background flex items-center justify-center shrink-0">
-                                                                <link.icon className="h-4.5 w-4.5 text-foreground/40 group-hover:text-primary transition-colors" />
+                                                                <link.icon className="h-4.5 w-4.5 text-foreground/60 group-hover:text-primary transition-colors" />
                                                             </div>
                                                             <span className="text-sm font-bold uppercase tracking-wider">{link.name}</span>
                                                         </Link>
@@ -144,7 +144,7 @@ export default function Navbar() {
                                                         className="flex items-center gap-4 p-3.5 rounded-2xl bg-white/5 border border-white/5 hover:bg-secondary/10 hover:border-secondary/20 transition-all group"
                                                     >
                                                         <div className="h-9 w-9 rounded-xl bg-background flex items-center justify-center shrink-0">
-                                                            <LayoutDashboard className="h-4.5 w-4.5 text-foreground/40 group-hover:text-secondary transition-colors" />
+                                                            <LayoutDashboard className="h-4.5 w-4.5 text-foreground/60 group-hover:text-secondary transition-colors" />
                                                         </div>
                                                         <span className="text-sm font-bold uppercase tracking-wider">Dashboard</span>
                                                     </Link>
@@ -191,7 +191,7 @@ export default function Navbar() {
                         </div>
                     </div>
                 </div>
-            </div>
-        </nav>
+            </nav>
+        </header>
     );
 }

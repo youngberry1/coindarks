@@ -71,7 +71,7 @@ export default async function DashboardPage() {
                     <h1 className="text-3xl font-black tracking-tight mb-2">
                         Welcome back, <span className="text-gradient">{firstName}!</span>
                     </h1>
-                    <p className="text-foreground/50 font-medium">
+                    <p className="text-foreground/70 font-medium">
                         {isAdmin ? "Platform oversight and management dashboard." : "What would you like to trade today?"}
                     </p>
                 </div>
@@ -113,7 +113,7 @@ export default async function DashboardPage() {
                                     kycStatus === 'REJECTED' ? 'Verification Rejected' :
                                         'Action Required: ID Verification'}
                             </h3>
-                            <p className="text-sm text-foreground/60 max-w-2xl font-medium">
+                            <p className="text-sm text-foreground/70 max-w-2xl font-medium">
                                 {kycStatus === 'PENDING' ? 'Your documents have been submitted and are currently being reviewed by our team. This usually takes 24-48 hours.' :
                                     kycStatus === 'REJECTED' ? 'Your verification was rejected. Please review the email sent to you for the reason and resubmit your documents.' :
                                         'To ensure maximum security and reliability, please complete your Identity Verification. It only takes 2 minutes and a valid ID card.'}
@@ -141,10 +141,10 @@ export default async function DashboardPage() {
                         <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center">
                             <RefreshCcw className="h-6 w-6 text-primary" />
                         </div>
-                        <span className="text-[10px] font-black text-foreground/20 uppercase tracking-widest">{isAdmin ? "Total Transactions" : "Active Orders"}</span>
+                        <span className="text-[10px] font-black text-foreground/40 uppercase tracking-widest">{isAdmin ? "Total Transactions" : "Active Orders"}</span>
                     </div>
                     <p className="text-4xl font-black mb-1">{isAdmin ? totalPlatformOrders : (orders?.length || 0)}</p>
-                    <p className="text-sm text-foreground/40 font-medium">{isAdmin ? "Platform wide" : "In the last 30 days"}</p>
+                    <p className="text-sm text-foreground/60 font-medium">{isAdmin ? "Platform wide" : "In the last 30 days"}</p>
                 </div>
 
                 <div className="p-8 rounded-[32px] border border-border bg-card-bg/50 backdrop-blur-md shadow-sm dark:shadow-none">
@@ -160,7 +160,7 @@ export default async function DashboardPage() {
                                         <ShieldCheck className="h-6 w-6 text-primary" />
                             )}
                         </div>
-                        <span className="text-[10px] font-black text-foreground/20 uppercase tracking-widest">{isAdmin ? "Admin Role" : "Verified Status"}</span>
+                        <span className="text-[10px] font-black text-foreground/40 uppercase tracking-widest">{isAdmin ? "Admin Role" : "Verified Status"}</span>
                     </div>
                     <p className={`text-2xl font-black mb-1 uppercase tracking-tight ${isAdmin ? "text-emerald-500" : (kycStatus === 'APPROVED' ? 'text-emerald-500' :
                         kycStatus === 'PENDING' ? 'text-amber-500' :
@@ -169,7 +169,7 @@ export default async function DashboardPage() {
                         }`}>
                         {isAdmin ? "Authorized" : (kycStatus === 'APPROVED' ? 'Verified' : kycStatus === 'UNSUBMITTED' ? 'Not Verified' : kycStatus)}
                     </p>
-                    <p className="text-sm text-foreground/40 font-medium">
+                    <p className="text-sm text-foreground/60 font-medium">
                         {isAdmin ? "Full Access Granted" : (kycStatus === 'APPROVED' ? 'Identity Secured' :
                             kycStatus === 'PENDING' ? 'Under Review' :
                                 kycStatus === 'REJECTED' ? 'Action Required' :
@@ -182,7 +182,7 @@ export default async function DashboardPage() {
                         <div className="h-12 w-12 rounded-2xl bg-secondary/10 flex items-center justify-center">
                             <Globe className="h-6 w-6 text-secondary" />
                         </div>
-                        <span className="text-[10px] font-black text-foreground/20 uppercase tracking-widest">Global Rates</span>
+                        <span className="text-[10px] font-black text-foreground/40 uppercase tracking-widest">Global Rates</span>
                     </div>
                     <p className="text-2xl font-black mb-1">Live Feed</p>
                     <Link href="/#market" className="text-sm text-secondary hover:underline font-bold flex items-center gap-1">

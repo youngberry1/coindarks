@@ -49,12 +49,12 @@ export function SupportModal({ isOpen, onClose, orders = [] }: SupportModalProps
                                     </div>
                                     <div>
                                         <h3 className="text-2xl font-black tracking-tight">Support Ticket</h3>
-                                        <p className="text-[10px] text-foreground/40 font-black uppercase tracking-[0.2em]">Typical response: 15 mins</p>
+                                        <p className="text-[10px] text-foreground/60 font-black uppercase tracking-[0.2em]">Typical response: 15 mins</p>
                                     </div>
                                 </div>
                                 <button
                                     onClick={onClose}
-                                    className="p-3 rounded-2xl bg-card-bg/50 border border-border text-foreground/40 hover:text-foreground transition-all hover:scale-110 active:scale-95"
+                                    className="p-3 rounded-2xl bg-card-bg/50 border border-border text-foreground/60 hover:text-foreground transition-all hover:scale-110 active:scale-95"
                                 >
                                     <X className="h-5 w-5" />
                                 </button>
