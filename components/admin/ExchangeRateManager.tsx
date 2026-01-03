@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { updateRateConfig, createRatePair, deleteRatePair, ExchangeRate } from "@/actions/rates";
 import { toast } from "sonner";
-import { Plus, RefreshCw, Calculator, DollarSign, Activity, Trash2, Loader2 } from "lucide-react";
+import { Plus, RefreshCw, Calculator, DollarSign, Activity, Trash2, Loader2, Info, ArrowRightLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import {
@@ -106,6 +106,53 @@ export function ExchangeRateManager({ initialRates }: ExchangeRateManagerProps) 
                 </button>
             </div>
 
+            {/* Admin Guidance / Help Section */}
+            <div className="p-6 rounded-[32px] bg-primary/5 border border-primary/10 space-y-4">
+                <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                        <Info className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                        <h3 className="text-sm font-black uppercase tracking-wider">Exchange Logic Guide</h3>
+                        <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest leading-none mt-1">How your rates are calculated</p>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-4 rounded-2xl bg-black/20 border border-white/5 space-y-2">
+                        <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary">
+                            <Activity className="h-3 w-3" /> Step 1: Direct Pair Matching
+                        </div>
+                        <p className="text-xs text-foreground/60 leading-relaxed font-medium">
+                            The system first looks for an exact match (e.g., <code className="text-primary">BTC-GHS</code>). If found, it uses that specific rate and margin.
+                        </p>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-black/20 border border-white/5 space-y-2">
+                        <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-secondary">
+                            <ArrowRightLeft className="h-3 w-3" /> Step 2: Global Multiplier (Fallback)
+                        </div>
+                        <p className="text-xs text-foreground/60 leading-relaxed font-medium">
+                            If no direct pair exists, it calculates: <br />
+                            <span className="text-foreground font-bold">(Asset-USD Rate)</span> × <span className="text-foreground font-bold">(USD-Fiat Rate)</span>.
+                        </p>
+                    </div>
+                </div>
+
+                <div className="mt-4 p-4 rounded-2xl bg-amber-500/5 border border-amber-500/10 flex items-start gap-3">
+                    <div className="h-6 w-6 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0 mt-0.5">
+                        <Calculator className="h-3.5 w-3.5 text-amber-500" />
+                    </div>
+                    <div>
+                        <p className="text-xs font-black text-amber-500 uppercase tracking-widest mb-1">Cedi (GHS) Optimization Tip</p>
+                        <p className="text-xs text-foreground/50 font-medium leading-relaxed">
+                            Since CoinGecko doesn&apos;t support GHS, you only need to manage **one manual rate** for <code className="bg-amber-500/10 px-1 rounded text-amber-500 font-bold italic">USD-GHS</code> or <code className="bg-amber-500/10 px-1 rounded text-amber-500 font-bold italic">USDT-GHS</code>.
+                            This single rate will automatically update the prices for ALL crypto assets when users trade in GHS.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
             {isAdding && (
                 <form onSubmit={handleAddPair} className="flex gap-2 p-4 bg-white/5 rounded-2xl border border-white/5 mb-4">
                     <input
@@ -164,12 +211,14 @@ export function ExchangeRateManager({ initialRates }: ExchangeRateManagerProps) 
                             {/* Base Rate Display/Input */}
                             <div className="space-y-2">
                                 <div className="flex justify-between text-[10px] uppercase font-bold text-foreground/40 tracking-wider">
-                                    <span>Base Rate ($)</span>
+                                    <span>Base Rate ({rate.pair.split('-')[1] || 'USD'})</span>
                                     {rate.is_automated && <span>Source: CoinGecko</span>}
                                 </div>
                                 {rate.is_automated ? (
                                     <div className="px-4 py-3 bg-black/20 rounded-xl flex justify-between items-center opacity-75">
-                                        <span className="font-mono font-bold text-sm">${rate.rate.toLocaleString()}</span>
+                                        <span className="font-mono font-bold text-sm">
+                                            {rate.rate.toLocaleString()} {rate.pair.split('-')[1] || 'USD'}
+                                        </span>
                                         <RefreshCw className="h-3 w-3 text-foreground/20" />
                                     </div>
                                 ) : (
@@ -204,7 +253,7 @@ export function ExchangeRateManager({ initialRates }: ExchangeRateManagerProps) 
                                 <span className="text-[10px] font-bold text-foreground/30 uppercase tracking-widest">Final User Price</span>
                                 <div className="text-right">
                                     <p className="font-mono font-bold text-lg text-emerald-500">
-                                        ${((rate.is_automated ? rate.rate : (rate.manual_rate || 0)) * (1 + rate.margin_percent / 100)).toLocaleString()}
+                                        {((rate.is_automated ? rate.rate : (rate.manual_rate || 0)) * (1 + rate.margin_percent / 100)).toLocaleString()} {rate.pair.split('-')[1] || 'USD'}
                                     </p>
                                 </div>
                             </div>

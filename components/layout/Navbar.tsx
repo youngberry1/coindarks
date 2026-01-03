@@ -97,7 +97,7 @@ export default function Navbar() {
                                     </button>
                                 </SheetTrigger>
                                 <SheetContent side="right" className="w-[300px] sm:w-[400px] border-l border-white/10 bg-background/95 backdrop-blur-3xl p-0 flex flex-col h-dvh">
-                                    <div className="p-6 border-b border-white/5 shrink-0">
+                                    <div className="p-3 border-b border-white/5 shrink-0">
                                         <Logo className="text-left" />
                                         <VisuallyHidden>
                                             <SheetTitle>Navigation Menu</SheetTitle>
@@ -105,13 +105,13 @@ export default function Navbar() {
                                     </div>
 
                                     <ScrollArea className="flex-1">
-                                        <div className="p-6 pb-32 flex flex-col gap-8">
+                                        <div className="p-4 pb-10 flex flex-col gap-4">
                                             <div className="flex items-center justify-between px-2">
                                                 <span className="text-[10px] font-black uppercase tracking-widest opacity-40">Menu Navigation</span>
                                                 <ThemeToggle />
                                             </div>
 
-                                            <div className="grid grid-cols-1 gap-3">
+                                            <div className="grid grid-cols-1 gap-2">
                                                 {navLinks.map((link) => (
                                                     <Link
                                                         key={link.name}
@@ -127,43 +127,43 @@ export default function Navbar() {
                                                             }
                                                             setIsOpen(false);
                                                         }}
-                                                        className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-primary/10 hover:border-primary/20 transition-all group"
+                                                        className="flex items-center gap-4 p-2.5 rounded-2xl bg-white/5 border border-white/5 hover:bg-primary/10 hover:border-primary/20 transition-all group"
                                                     >
-                                                        <div className="h-10 w-10 rounded-xl bg-background flex items-center justify-center shrink-0 border border-white/5">
-                                                            <link.icon className="h-5 w-5 text-foreground/40 group-hover:text-primary transition-colors" />
+                                                        <div className="h-8 w-8 rounded-xl bg-background flex items-center justify-center shrink-0 border border-white/5">
+                                                            <link.icon className="h-3.5 w-3.5 text-foreground/40 group-hover:text-primary transition-colors" />
                                                         </div>
-                                                        <span className="text-sm font-bold uppercase tracking-wider">{link.name}</span>
+                                                        <span className="text-[10px] font-bold uppercase tracking-wider">{link.name}</span>
                                                     </Link>
                                                 ))}
 
                                                 <Link
                                                     href="/dashboard"
                                                     onClick={() => setIsOpen(false)}
-                                                    className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-secondary/10 hover:border-secondary/20 transition-all group"
+                                                    className="flex items-center gap-4 p-2.5 rounded-2xl bg-white/5 border border-white/5 hover:bg-secondary/10 hover:border-secondary/20 transition-all group"
                                                 >
-                                                    <div className="h-10 w-10 rounded-xl bg-background flex items-center justify-center shrink-0 border border-white/5">
-                                                        <LayoutDashboard className="h-5 w-5 text-foreground/40 group-hover:text-secondary transition-colors" />
+                                                    <div className="h-8 w-8 rounded-xl bg-background flex items-center justify-center shrink-0 border border-white/5">
+                                                        <LayoutDashboard className="h-3.5 w-3.5 text-foreground/40 group-hover:text-secondary transition-colors" />
                                                     </div>
-                                                    <span className="text-sm font-bold uppercase tracking-wider">Dashboard</span>
+                                                    <span className="text-[10px] font-bold uppercase tracking-wider">Dashboard</span>
                                                 </Link>
                                             </div>
 
                                             <div className="h-px bg-white/5 mx-2" />
 
-                                            <div className="flex flex-col gap-3">
+                                            <div className="flex flex-col gap-2">
                                                 {!session ? (
                                                     <>
                                                         <Link
                                                             href="/login"
                                                             onClick={() => setIsOpen(false)}
-                                                            className="w-full py-4 rounded-2xl bg-white/5 border border-white/5 text-center text-sm font-bold hover:bg-white/10 transition-all uppercase tracking-widest"
+                                                            className="w-full py-2.5 rounded-2xl bg-white/5 border border-white/5 text-center text-[11px] font-bold hover:bg-white/10 transition-all uppercase tracking-widest"
                                                         >
                                                             Login to Account
                                                         </Link>
                                                         <Link
                                                             href="/register"
                                                             onClick={() => setIsOpen(false)}
-                                                            className="w-full py-4 rounded-2xl bg-primary text-center font-bold text-white text-sm shadow-xl shadow-primary/20 flex items-center justify-center gap-2 uppercase tracking-widest group"
+                                                            className="w-full py-2.5 rounded-2xl bg-primary text-center font-bold text-white text-[11px] shadow-xl shadow-primary/20 flex items-center justify-center gap-2 uppercase tracking-widest group"
                                                         >
                                                             Get Started
                                                             <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
@@ -175,7 +175,7 @@ export default function Navbar() {
                                                             signOut();
                                                             setIsOpen(false);
                                                         }}
-                                                        className="w-full py-4 rounded-2xl bg-red-500/10 text-red-500 text-sm font-bold border border-red-500/20 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center gap-2 uppercase tracking-widest"
+                                                        className="w-full py-2.5 rounded-2xl bg-red-500/10 text-red-500 text-[11px] font-bold border border-red-500/20 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center gap-2 uppercase tracking-widest"
                                                     >
                                                         <LogOut className="h-4 w-4" />
                                                         Sign Out
