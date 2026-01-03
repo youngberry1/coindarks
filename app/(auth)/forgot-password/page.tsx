@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Mail, ArrowRight, CheckCircle2, AlertCircle } from "lucide-react";
@@ -15,6 +15,35 @@ export default function ForgotPasswordPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+    const [countdown, setCountdown] = useState(0);
+
+    // Handle countdown persistence
+    useEffect(() => {
+        const savedEndTime = localStorage.getItem("resetCooldownEnd");
+        if (savedEndTime) {
+            const remaining = Math.ceil((parseInt(savedEndTime) - Date.now()) / 1000);
+            if (remaining > 0) {
+                setCountdown(remaining);
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        if (countdown <= 0) return;
+
+        const timer = setInterval(() => {
+            setCountdown((prev) => {
+                if (prev <= 1) {
+                    clearInterval(timer);
+                    localStorage.removeItem("resetCooldownEnd");
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [countdown]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -28,6 +57,10 @@ export default function ForgotPasswordPage() {
                 setError(result.error);
             } else if (result.success) {
                 setSuccess(result.success);
+                // Start 60s cooldown
+                const cooldownSeconds = 60;
+                setCountdown(cooldownSeconds);
+                localStorage.setItem("resetCooldownEnd", (Date.now() + cooldownSeconds * 1000).toString());
             }
         } catch {
             setError("Something went wrong. Please try again.");
@@ -114,10 +147,10 @@ export default function ForgotPasswordPage() {
                         <div>
                             <button
                                 type="submit"
-                                disabled={isLoading}
+                                disabled={isLoading || countdown > 0}
                                 className="relative flex w-full justify-center rounded-2xl bg-primary py-4 text-sm font-bold text-white shadow-xl shadow-primary/20 hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
                             >
-                                Send Reset Link
+                                {countdown > 0 ? `Resend In ${countdown}s` : "Send Reset Link"}
                                 <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                             </button>
                         </div>

@@ -45,8 +45,8 @@ export default function RegisterPage() {
             if (result.error) {
                 setErrors(result.error);
             } else {
-                // Redirect to login or verification page
-                router.push("/login?registered=true");
+                // Redirect to login or verification page with email pre-filled
+                router.push(`/login?registered=true&email=${encodeURIComponent(formData.email)}`);
             }
         } catch {
             setErrors({ message: "Something went wrong. Please try again." });

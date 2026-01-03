@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -25,10 +25,47 @@ function LoginContent() {
     const [resendLoading, setResendLoading] = useState(false);
     const [checkLoading, setCheckLoading] = useState(false);
     const [resendMessage, setResendMessage] = useState({ type: "", text: "" });
+    const [countdown, setCountdown] = useState(0);
+
+    // Handle countdown persistence
+    useEffect(() => {
+        const savedEndTime = localStorage.getItem("resendCooldownEnd");
+        if (savedEndTime) {
+            const remaining = Math.ceil((parseInt(savedEndTime) - Date.now()) / 1000);
+            if (remaining > 0) {
+                setCountdown(remaining);
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        if (countdown <= 0) return;
+
+        const timer = setInterval(() => {
+            setCountdown((prev) => {
+                if (prev <= 1) {
+                    clearInterval(timer);
+                    localStorage.removeItem("resendCooldownEnd");
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [countdown]);
 
     const router = useRouter();
     const searchParams = useSearchParams();
     const isRegistered = searchParams.get("registered") === "true";
+
+    // Pre-fill email from search params if available
+    useEffect(() => {
+        const emailParam = searchParams.get("email");
+        if (emailParam) {
+            setEmail(emailParam);
+        }
+    }, [searchParams]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -59,7 +96,10 @@ function LoginContent() {
     };
 
     const handleResend = async () => {
-        if (!email) return;
+        if (!email) {
+            setResendMessage({ type: "error", text: "Please enter your email address first." });
+            return;
+        }
         setResendLoading(true);
         setResendMessage({ type: "", text: "" });
 
@@ -69,6 +109,10 @@ function LoginContent() {
                 setResendMessage({ type: "error", text: result.error });
             } else {
                 setResendMessage({ type: "success", text: "Verification email sent! Please check your inbox." });
+                // Start 60s cooldown
+                const cooldownSeconds = 60;
+                setCountdown(cooldownSeconds);
+                localStorage.setItem("resendCooldownEnd", (Date.now() + cooldownSeconds * 1000).toString());
             }
         } catch {
             setResendMessage({ type: "error", text: "Failed to resend. Please try again." });
@@ -159,10 +203,11 @@ function LoginContent() {
                                 <button
                                     type="button"
                                     onClick={handleResend}
-                                    disabled={resendLoading || checkLoading}
+                                    disabled={resendLoading || checkLoading || countdown > 0}
                                     className="text-[10px] font-bold uppercase tracking-widest bg-amber-500 text-white px-3 py-2 rounded-lg shadow hover:bg-amber-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                 >
-                                    Resend Email
+                                    {resendLoading && <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} className="h-3 w-3 border-2 border-white/30 border-t-white rounded-full" />}
+                                    {countdown > 0 ? `Resend In ${countdown}s` : "Resend Email"}
                                 </button>
 
                                 {isUnverified && (
