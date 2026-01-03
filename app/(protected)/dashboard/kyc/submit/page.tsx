@@ -15,10 +15,9 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
-import { submitKYC } from "@/actions/kyc";
+import { submitKYC, getKYCStatus } from "@/actions/kyc";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
 import { Loading } from "@/components/ui/Loading";
 
 const STEPS = ["ID Type", "Details", "Upload Photos", "Complete"];
@@ -50,17 +49,13 @@ export default function KYCSubmitPage() {
             if (!session?.user?.id) return;
 
             try {
-                const { data: user, error } = await supabase
-                    .from('users')
-                    .select('kyc_status')
-                    .eq('id', session.user.id)
-                    .single();
+                const result = await getKYCStatus();
 
-                if (error) throw error;
+                if (result.error) throw new Error(result.error);
 
-                if (user?.kyc_status === 'APPROVED' || user?.kyc_status === 'PENDING') {
+                if (result.status === 'APPROVED' || result.status === 'PENDING') {
                     router.push('/dashboard');
-                    toast.info(`Your KYC is already ${user.kyc_status.toLowerCase()}.`);
+                    toast.info(`Your KYC is already ${result.status.toLowerCase()}.`);
                     return;
                 }
             } catch (error) {

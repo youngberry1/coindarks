@@ -106,3 +106,28 @@ export async function submitKYC(formData: FormData) {
         return { error: message };
     }
 }
+
+export async function getKYCStatus() {
+    const session = await auth();
+    if (!session?.user?.id) return { error: "Unauthorized" };
+
+    try {
+        const { data: user, error } = await supabaseAdmin
+            .from('users')
+            .select('kyc_status')
+            .eq('id', session.user.id)
+            .single();
+
+        if (error) {
+            if (error.code === 'PGRST116') {
+                return { status: 'UNVERIFIED' };
+            }
+            throw error;
+        }
+
+        return { status: user?.kyc_status || 'UNVERIFIED' };
+    } catch (error) {
+        console.error("Error fetching KYC status:", error);
+        return { error: "Failed to fetch KYC status" };
+    }
+}

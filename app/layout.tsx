@@ -16,6 +16,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL?.startsWith('http')
+      ? process.env.NEXT_PUBLIC_APP_URL
+      : `http://${process.env.NEXT_PUBLIC_APP_URL || 'localhost:3000'}`
+  ),
   title: "CoinDarks | Secure Crypto-Fiat Exchange Ghana & Nigeria",
   description: "Experience the fastest and most secure way to exchange Crypto to Fiat in Ghana and Nigeria. Premium rates, instant transactions.",
   appleWebApp: {
