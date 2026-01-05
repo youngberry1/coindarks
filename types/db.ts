@@ -1,5 +1,5 @@
-export type UserRole = "USER" | "ADMIN" | "FINANCE" | "SUPPORT";
-export type UserStatus = "ACTIVE" | "SUSPENDED" | "BANNED";
+export type UserRole = "USER" | "ADMIN";
+export type UserStatus = "ACTIVE" | "BANNED";
 
 export type AnnouncementSeverity = "INFO" | "WARNING" | "URGENT";
 

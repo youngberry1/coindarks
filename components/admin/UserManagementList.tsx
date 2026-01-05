@@ -313,13 +313,13 @@ export function UserManagementList({ users }: UserManagementListProps) {
                 onClose={() => setIsBanModalOpen(false)}
                 onConfirm={handleToggleStatus}
                 isLoading={isLoading}
-                title={selectedUser?.status === 'BANNED' ? "Revoke Access Ban?" : "Confirm Account Suspension"}
+                title={selectedUser?.status === 'BANNED' ? "Revoke Access Ban?" : "Confirm Account Ban"}
                 description={
                     selectedUser?.status === 'BANNED'
                         ? `Are you sure you want to reactivate ${selectedUser?.email}'s account? They will be able to log in again.`
                         : `Are you sure you want to ban ${selectedUser?.email}? They will be immediately logged out and unable to access their account.`
                 }
-                confirmText={selectedUser?.status === 'BANNED' ? "Reactivate User" : "Suspend Account"}
+                confirmText={selectedUser?.status === 'BANNED' ? "Reactivate User" : "Confirm Ban"}
                 variant={selectedUser?.status === 'BANNED' ? "success" : "destructive"}
             />
 

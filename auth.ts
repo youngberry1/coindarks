@@ -35,8 +35,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                         }
 
                         // Check status
-                        if (user.status === "SUSPENDED" || user.status === "BANNED") {
-                            console.log(`[AUTH CHECK] ❌ User is ${user.status}.`);
+                        if (user.status === "BANNED") {
+                            console.log(`[AUTH CHECK] ❌ User is BANNED.`);
                             return null;
                         }
 

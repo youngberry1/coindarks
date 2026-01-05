@@ -28,7 +28,7 @@ export const authConfig = {
                     .eq('id', token.id)
                     .maybeSingle();
 
-                if (!user || user.status === "SUSPENDED" || user.status === "BANNED") {
+                if (!user || user.status === "BANNED") {
                     // Sign out the user by returning an empty session object
                     // This forces middleware and hooks to treat the user as unauthenticated
                     return {} as any; // eslint-disable-line @typescript-eslint/no-explicit-any
