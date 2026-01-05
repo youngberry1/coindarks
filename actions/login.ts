@@ -14,6 +14,7 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
     }
 
     const { email, password } = validatedFields.data;
+    const normalizedEmail = email.toLowerCase().trim();
 
     // Pre-verification check: Check if user exists and is verified
     // Use supabaseAdmin to bypass RLS for this internal check
@@ -21,7 +22,7 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
         const { data: user } = await supabaseAdmin
             .from('users')
             .select('email, email_verified')
-            .eq('email', email)
+            .eq('email', normalizedEmail)
             .maybeSingle();
 
         if (user && !user.email_verified) {

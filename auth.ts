@@ -19,14 +19,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
                 if (parsedCredentials.success) {
                     const { email, password } = parsedCredentials.data;
+                    const normalizedEmail = email.toLowerCase().trim();
 
-                    console.log(`[AUTH CHECK] Attempting login for: ${email}`);
+                    console.log(`[AUTH CHECK] Attempting login for: ${normalizedEmail}`);
 
                     try {
                         const { data: user } = await supabaseAdmin
                             .from('users')
                             .select('*')
-                            .eq('email', email)
+                            .eq('email', normalizedEmail)
                             .maybeSingle();
 
                         if (!user) {

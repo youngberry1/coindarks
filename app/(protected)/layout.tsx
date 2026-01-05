@@ -11,32 +11,32 @@ export default async function ProtectedLayout({
     children: React.ReactNode;
 }) {
     const session = await auth();
+    const sessionUser = session?.user;
 
-    if (!session) {
+    if (!session || !sessionUser) {
         redirect("/login");
     }
 
-    // Fetch latest KYC status and profile image
-    const { data: user } = await supabaseAdmin
+    const { data: userData } = await supabaseAdmin
         .from('users')
         .select('kyc_status, profile_image')
-        .eq('id', session.user.id)
+        .eq('id', sessionUser.id)
         .single();
 
-    const isAdmin = session.user.role === "ADMIN";
+    const isAdmin = sessionUser.role === "ADMIN";
 
     // Fetch recent orders for support context
     const { data: recentOrders } = await supabaseAdmin
         .from('orders')
         .select('id, order_number, asset, amount_crypto')
-        .eq('user_id', session.user.id)
+        .eq('user_id', sessionUser.id)
         .order('created_at', { ascending: false })
         .limit(5);
 
     const sidebarUser = {
-        ...session.user,
-        kyc_status: user?.kyc_status || 'UNSUBMITTED',
-        profile_image: user?.profile_image
+        ...sessionUser,
+        kyc_status: userData?.kyc_status || 'UNSUBMITTED',
+        profile_image: userData?.profile_image
     };
 
     return (

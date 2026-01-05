@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 
 export const generateVerificationToken = async (email: string) => {
+    const normalizedEmail = email.toLowerCase().trim();
     const token = uuidv4();
     const expires = new Date(new Date().getTime() + 3600 * 1000); // 1 hour
 
@@ -9,7 +10,7 @@ export const generateVerificationToken = async (email: string) => {
     const { data: existingToken } = await supabaseAdmin
         .from('verification_tokens')
         .select('*')
-        .eq('email', email)
+        .eq('email', normalizedEmail)
         .maybeSingle();
 
     if (existingToken) {
@@ -22,7 +23,7 @@ export const generateVerificationToken = async (email: string) => {
     const { data: verificationToken, error } = await supabaseAdmin
         .from('verification_tokens')
         .insert({
-            email,
+            email: normalizedEmail,
             token,
             expires: expires.toISOString(),
         })
@@ -38,13 +39,14 @@ export const generateVerificationToken = async (email: string) => {
 };
 
 export const generatePasswordResetToken = async (email: string) => {
+    const normalizedEmail = email.toLowerCase().trim();
     const token = uuidv4();
     const expires = new Date(new Date().getTime() + 3600 * 1000); // 1 hour
 
     const { data: existingToken } = await supabaseAdmin
         .from('password_reset_tokens')
         .select('*')
-        .eq('email', email)
+        .eq('email', normalizedEmail)
         .maybeSingle();
 
     if (existingToken) {
@@ -57,7 +59,7 @@ export const generatePasswordResetToken = async (email: string) => {
     const { data: passwordResetToken, error } = await supabaseAdmin
         .from('password_reset_tokens')
         .insert({
-            email,
+            email: normalizedEmail,
             token,
             expires: expires.toISOString(),
         })

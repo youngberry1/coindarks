@@ -21,20 +21,27 @@ export async function register(formData: z.infer<typeof RegisterSchema>) {
         }
 
         const { email, password, firstName, middleName, lastName } = validatedFields.data;
+        const normalizedEmail = email.toLowerCase().trim();
 
         // Determine role based on bootstrap registry
-        const role: UserRole = STAFF_EMAILS[email.toLowerCase()] || "USER";
+        const role: UserRole = STAFF_EMAILS[normalizedEmail] || "USER";
 
         // Check if user already exists
-        const { data: existingUser } = await supabaseAdmin
+        const { data: existingUser, error: fetchError } = await supabaseAdmin
             .from('users')
             .select('email, email_verified')
-            .eq('email', email)
+            .eq('email', normalizedEmail)
             .maybeSingle();
+
+        if (fetchError) {
+            console.error("Database error checking existing user:", fetchError);
+            // If it's a multiple rows error (PG code 23505 equivalents or similar in JS), handle it
+            return { error: { email: ["Multiple accounts found with this email. Please contact support."] } };
+        }
 
         if (existingUser) {
             if (!existingUser.email_verified) {
-                const verificationToken = await generateVerificationToken(email);
+                const verificationToken = await generateVerificationToken(normalizedEmail);
                 await sendVerificationEmail(verificationToken.email, verificationToken.token);
                 return { success: "A new verification email has been sent to your inbox (check spam folder). Please verify your email to log in." };
             }
@@ -44,7 +51,7 @@ export async function register(formData: z.infer<typeof RegisterSchema>) {
         const hashedPassword = await bcrypt.hash(password, 12);
 
         const { error: createError } = await supabaseAdmin.from('users').insert({
-            email,
+            email: normalizedEmail,
             first_name: firstName,
             middle_name: middleName,
             last_name: lastName,
@@ -62,7 +69,7 @@ export async function register(formData: z.infer<typeof RegisterSchema>) {
             return { error: { message: "Failed to create user account" } };
         }
 
-        const verificationToken = await generateVerificationToken(email);
+        const verificationToken = await generateVerificationToken(normalizedEmail);
         await sendVerificationEmail(verificationToken.email, verificationToken.token);
 
         return { success: true };
