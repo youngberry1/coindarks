@@ -56,7 +56,15 @@ export default function RegisterPage() {
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+
+        // Prevent numbers in name fields
+        if (["firstName", "lastName", "middleName"].includes(name)) {
+            const cleanValue = value.replace(/[0-9]/g, "");
+            setFormData(prev => ({ ...prev, [name]: cleanValue }));
+        } else {
+            setFormData(prev => ({ ...prev, [name]: value }));
+        }
     };
 
     return (

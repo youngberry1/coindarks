@@ -10,13 +10,17 @@ export const LoginSchema = z.object({
 });
 
 export const RegisterSchema = z.object({
-    firstName: z.string().min(2, {
-        message: "First name is required",
-    }),
-    middleName: z.string().optional(),
-    lastName: z.string().min(2, {
-        message: "Last name is required",
-    }),
+    firstName: z.string()
+        .min(2, { message: "First name is required" })
+        .regex(/^[a-zA-Z\s'-]+$/, { message: "First name cannot contain numbers or special characters" }),
+    middleName: z.string()
+        .optional()
+        .refine(val => !val || /^[a-zA-Z\s'-]+$/.test(val), {
+            message: "Middle name cannot contain numbers or special characters"
+        }),
+    lastName: z.string()
+        .min(2, { message: "Last name is required" })
+        .regex(/^[a-zA-Z\s'-]+$/, { message: "Last name cannot contain numbers or special characters" }),
     email: z.string().email({
         message: "Email is required",
     }),
