@@ -23,7 +23,7 @@ import { Loading } from "@/components/ui/Loading";
 const STEPS = ["ID Type", "Details", "Upload Photos", "Complete"];
 
 export default function KYCSubmitPage() {
-    const { data: session } = useSession();
+    const { data: session, status } = useSession();
     const router = useRouter();
     const [isCheckingStatus, setIsCheckingStatus] = useState(true);
     const [currentStep, setCurrentStep] = useState(0);
@@ -46,8 +46,6 @@ export default function KYCSubmitPage() {
 
     useEffect(() => {
         const checkStatus = async () => {
-            if (!session?.user?.id) return;
-
             try {
                 const result = await getKYCStatus();
 
@@ -65,12 +63,25 @@ export default function KYCSubmitPage() {
             }
         };
 
-        if (session?.user?.role === "ADMIN") {
-            router.push("/admin/kyc");
-        } else if (session?.user?.id) {
-            checkStatus();
+        if (status === "loading") return;
+
+        if (status === "unauthenticated") {
+            router.push("/login");
+            return;
         }
-    }, [session, router]);
+
+        if (status === "authenticated") {
+            if (session?.user?.role === "ADMIN") {
+                router.push("/admin/kyc");
+            } else if (session?.user?.id) {
+                checkStatus();
+            } else {
+                // If authenticated but no ID yet, we might still be initializing
+                // but let's not block forever if we can avoid it
+                setIsCheckingStatus(false);
+            }
+        }
+    }, [session, status, router]);
 
     const handleNext = () => setCurrentStep(prev => Math.min(prev + 1, STEPS.length - 1));
     const handleBack = () => setCurrentStep(prev => Math.max(prev - 1, 0));
