@@ -221,7 +221,7 @@ export function KYCReviewList({ submissions }: KYCReviewListProps) {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={() => setZoomImage(null)}
-                        className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-2xl flex items-center justify-center p-4 md:p-12 cursor-zoom-out"
+                        className="fixed inset-0 z-100 bg-black/95 backdrop-blur-2xl flex items-center justify-center p-4 md:p-12 cursor-zoom-out"
                     >
                         <motion.div
                             initial={{ scale: 0.9, opacity: 0 }}

@@ -1,5 +1,6 @@
 import type { NextAuthConfig } from "next-auth";
 import { UserRole, UserStatus } from "@/types/db";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 
 export const authConfig = {
     pages: {
@@ -18,13 +19,27 @@ export const authConfig = {
             return token;
         },
         async session({ session, token }) {
-            if (session.user) {
-                session.user.id = token.id as string;
+            if (session.user && token.id) {
+                // Re-verify the user exists and is active in the database
+                // This prevents deleted or suspended users from staying logged in
+                const { data: user } = await supabaseAdmin
+                    .from('users')
+                    .select('id, status, role, email_verified')
+                    .eq('id', token.id)
+                    .maybeSingle();
+
+                if (!user || user.status === "SUSPENDED" || user.status === "BANNED") {
+                    // Sign out the user by returning an empty session object
+                    // This forces middleware and hooks to treat the user as unauthenticated
+                    return {} as any; // eslint-disable-line @typescript-eslint/no-explicit-any
+                }
+
+                session.user.id = user.id;
                 session.user.email = token.email as string;
                 session.user.name = token.name as string;
-                session.user.role = token.role as UserRole;
-                session.user.status = token.status as UserStatus;
-                session.user.emailVerified = token.emailVerified as Date | null;
+                session.user.role = user.role as UserRole;
+                session.user.status = user.status as UserStatus;
+                session.user.emailVerified = user.email_verified;
             }
             return session;
         },
