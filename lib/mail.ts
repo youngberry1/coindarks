@@ -4,7 +4,10 @@ import { PasswordResetEmail } from "@/emails/PasswordResetEmail";
 import { PasswordChangeConfirmationEmail } from "@/emails/PasswordChangeConfirmationEmail";
 import { render } from "@react-email/render";
 
-const domain = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+let domain = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+if (!domain.startsWith("http://") && !domain.startsWith("https://")) {
+    domain = domain.includes("localhost") ? `http://${domain}` : `https://${domain}`;
+}
 
 const getResend = () => {
     if (!process.env.RESEND_API_KEY) {
@@ -130,7 +133,15 @@ export const sendKYCSubmissionEmail = async (email: string, fullName: string) =>
                 <li>Unlock premium features and enhanced security</li>
             </ul>
             <p>You can check your KYC status anytime in your dashboard.</p>
-            <a href="${domain}/dashboard/settings?tab=verification" class="button">Check KYC Status</a>
+            <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;line-height:100%; margin: 20px 0;">
+                <tr>
+                    <td align="center" bgcolor="#3b82f6" role="presentation" style="border:none;border-radius:6px;cursor:auto;background:#3b82f6;" valign="middle">
+                        <a href="${domain}/dashboard/settings?tab=verification" style="display:inline-block;background:#3b82f6;color:#ffffff;font-family:Arial,sans-serif;font-size:16px;font-weight:bold;line-height:120%;margin:0;text-decoration:none;padding:12px 30px;border-radius:6px;" target="_blank">
+                            Check KYC Status
+                        </a>
+                    </td>
+                </tr>
+            </table>
             <p>If you have any questions, our support team is available 24/7.</p>
             <p>Best regards,<br><strong>The CoinDarks Team</strong></p>
         </div>
@@ -193,7 +204,15 @@ export const sendKYCApprovalEmail = async (email: string, fullName: string) => {
                 <li><strong>Secure Trading:</strong> Your account is fully protected</li>
             </ul>
             <p>Your account is now fully verified and ready for trading!</p>
-            <a href="${domain}/dashboard" class="button">Start Trading Now</a>
+            <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;line-height:100%; margin: 20px 0;">
+                <tr>
+                    <td align="center" bgcolor="#10b981" role="presentation" style="border:none;border-radius:6px;cursor:auto;background:#10b981;" valign="middle">
+                        <a href="${domain}/dashboard" style="display:inline-block;background:#10b981;color:#ffffff;font-family:Arial,sans-serif;font-size:16px;font-weight:bold;line-height:120%;margin:0;text-decoration:none;padding:12px 30px;border-radius:6px;" target="_blank">
+                            Start Trading Now
+                        </a>
+                    </td>
+                </tr>
+            </table>
             <p>Thank you for choosing CoinDarks for your crypto-to-fiat needs.</p>
             <p>Best regards,<br><strong>The CoinDarks Team</strong></p>
         </div>
@@ -260,7 +279,15 @@ export const sendKYCRejectionEmail = async (email: string, fullName: string, rea
                 <li>Resubmit your KYC verification</li>
             </ul>
             <p>Don't worry - you can resubmit your KYC anytime with updated documents.</p>
-            <a href="${domain}/dashboard/kyc/submit" class="button">Resubmit KYC</a>
+            <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;line-height:100%; margin: 20px 0;">
+                <tr>
+                    <td align="center" bgcolor="#3b82f6" role="presentation" style="border:none;border-radius:6px;cursor:auto;background:#3b82f6;" valign="middle">
+                        <a href="${domain}/dashboard/kyc/submit" style="display:inline-block;background:#3b82f6;color:#ffffff;font-family:Arial,sans-serif;font-size:16px;font-weight:bold;line-height:120%;margin:0;text-decoration:none;padding:12px 30px;border-radius:6px;" target="_blank">
+                            Resubmit KYC
+                        </a>
+                    </td>
+                </tr>
+            </table>
             <p>If you have questions or need help, please contact our support team.</p>
             <p>Best regards,<br><strong>The CoinDarks Team</strong></p>
         </div>
@@ -326,7 +353,15 @@ export const sendSupportReplyEmail = async (
                 ${message.replace(/\n/g, '<br/>')}
             </blockquote>
             <p>You can view the full conversation and reply by logging into your dashboard.</p>
-            <a href="${domain}/dashboard/support/${ticketId}" class="button">View Ticket</a>
+            <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;line-height:100%; margin: 20px 0;">
+                <tr>
+                    <td align="center" bgcolor="#3b82f6" role="presentation" style="border:none;border-radius:6px;cursor:auto;background:#3b82f6;" valign="middle">
+                        <a href="${domain}/dashboard/support/${ticketId}" style="display:inline-block;background:#3b82f6;color:#ffffff;font-family:Arial,sans-serif;font-size:16px;font-weight:bold;line-height:120%;margin:0;text-decoration:none;padding:12px 30px;border-radius:6px;" target="_blank">
+                            View Ticket
+                        </a>
+                    </td>
+                </tr>
+            </table>
             <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;"/>
             <p>Best regards,<br><strong>CoinDarks Support Team</strong></p>
         </div>
@@ -401,7 +436,15 @@ export const sendTicketCreatedEmail = async (
 
             <p>Our support team will review your request and get back to you as soon as possible. You can view the status of your ticket or add more information by visiting your dashboard.</p>
             
-            <a href="${domain}/dashboard/support/${ticketId}" class="button">View Ticket</a>
+            <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;line-height:100%; margin: 20px 0;">
+                <tr>
+                    <td align="center" bgcolor="#3b82f6" role="presentation" style="border:none;border-radius:6px;cursor:auto;background:#3b82f6;" valign="middle">
+                        <a href="${domain}/dashboard/support/${ticketId}" style="display:inline-block;background:#3b82f6;color:#ffffff;font-family:Arial,sans-serif;font-size:16px;font-weight:bold;line-height:120%;margin:0;text-decoration:none;padding:12px 30px;border-radius:6px;" target="_blank">
+                            View Ticket
+                        </a>
+                    </td>
+                </tr>
+            </table>
             
             <p>Thank you for contacting CoinDarks Support.</p>
             <p>Best regards,<br><strong>CoinDarks Support Team</strong></p>
@@ -464,7 +507,15 @@ export const sendTicketClosedEmail = async (
             <p>This ticket has been removed from your active dashboard list.</p>
             <p>If you need further assistance, please create a new ticket.</p>
             
-            <a href="${domain}/dashboard/support" class="button">Go to Dashboard</a>
+            <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;line-height:100%; margin: 20px 0;">
+                <tr>
+                    <td align="center" bgcolor="#3b82f6" role="presentation" style="border:none;border-radius:6px;cursor:auto;background:#3b82f6;" valign="middle">
+                        <a href="${domain}/dashboard/support" style="display:inline-block;background:#3b82f6;color:#ffffff;font-family:Arial,sans-serif;font-size:16px;font-weight:bold;line-height:120%;margin:0;text-decoration:none;padding:12px 30px;border-radius:6px;" target="_blank">
+                            Go to Dashboard
+                        </a>
+                    </td>
+                </tr>
+            </table>
             
             <p>Thank you for using CoinDarks.</p>
             <p>Best regards,<br><strong>CoinDarks Support Team</strong></p>
@@ -666,7 +717,15 @@ export const sendOrderStatusEmail = async (
                 </table>
             </div>
 
-            <a href="${domain}/dashboard/orders" class="button">View Order Details</a>
+            <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;line-height:100%; margin: 20px 0; width: 100%;">
+                <tr>
+                    <td align="center" bgcolor="${template.color}" role="presentation" style="border:none;border-radius:12px;cursor:auto;background:${template.color};" valign="middle">
+                        <a href="${domain}/dashboard/orders" style="display:inline-block;background:${template.color};color:#ffffff;font-family:Arial,sans-serif;font-size:16px;font-weight:bold;line-height:120%;margin:0;text-decoration:none;padding:16px 32px;border-radius:12px;width: 100%; box-sizing: border-box;" target="_blank">
+                            View Order Details
+                        </a>
+                    </td>
+                </tr>
+            </table>
         </div>
         <div class="footer">
             <p>© ${new Date().getFullYear()} CoinDarks. All rights reserved.</p>

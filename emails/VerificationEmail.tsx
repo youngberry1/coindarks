@@ -36,6 +36,8 @@ export const VerificationEmail = ({
                             style={button}
                             href={validationLink || "#"}
                             target="_blank"
+                            pX={32}
+                            pY={16}
                         >
                             Verify your email address
                         </Button>
@@ -136,7 +138,6 @@ const button = {
     textDecoration: "none",
     textAlign: "center" as const,
     display: "inline-block",
-    padding: "16px 32px",
     lineHeight: "100%",
     cursor: "pointer",
 };

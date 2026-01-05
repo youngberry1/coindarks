@@ -38,7 +38,7 @@ export async function register(formData: z.infer<typeof RegisterSchema>) {
             if (!existingUser.email_verified) {
                 const verificationToken = await generateVerificationToken(email);
                 await sendVerificationEmail(verificationToken.email, verificationToken.token);
-                return { success: "A new verification email has been sent to your inbox. Please verify your email to log in." };
+                return { success: "A new verification email has been sent to your inbox (check spam folder). Please verify your email to log in." };
             }
             return { error: { email: ["User with this email already exists"] } };
         }

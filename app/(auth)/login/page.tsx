@@ -108,7 +108,7 @@ function LoginContent() {
             if (result.error) {
                 setResendMessage({ type: "error", text: result.error });
             } else {
-                setResendMessage({ type: "success", text: "Verification email sent! Please check your inbox." });
+                setResendMessage({ type: "success", text: "Verification email sent! Please check your inbox and spam folder." });
                 // Start 60s cooldown
                 const cooldownSeconds = 60;
                 setCountdown(cooldownSeconds);
@@ -193,8 +193,8 @@ function LoginContent() {
                                 )}
                                 <p className="leading-relaxed">
                                     {isUnverified
-                                        ? "Your email is not verified yet. Please check your inbox or use the options below."
-                                        : "Registration successful! Please check your email for verification before logging in."
+                                        ? "Your email is not verified yet. Please check your inbox and spam folder."
+                                        : "Registration successful! Please check your email (and spam folder) for verification before logging in."
                                     }
                                 </p>
                             </div>
