@@ -221,19 +221,28 @@ export function KYCReviewList({ submissions }: KYCReviewListProps) {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={() => setZoomImage(null)}
-                        className="fixed inset-0 z-100 bg-black/90 backdrop-blur-xl flex items-center justify-center p-8 cursor-pointer"
+                        className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-2xl flex items-center justify-center p-4 md:p-12 cursor-zoom-out"
                     >
                         <motion.div
                             initial={{ scale: 0.9, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.9, opacity: 0 }}
-                            className="relative max-w-5xl w-full aspect-auto rounded-3xl overflow-hidden shadow-2xl"
+                            className="relative w-full h-full flex items-center justify-center"
                             onClick={(e) => e.stopPropagation()}
                         >
-                            <Image src={zoomImage!} fill className="object-contain" alt="Zoomed" unoptimized />
+                            <div className="relative w-full h-full">
+                                <Image
+                                    src={zoomImage!}
+                                    fill
+                                    className="object-contain"
+                                    alt="Zoomed Document"
+                                    unoptimized
+                                    priority
+                                />
+                            </div>
                             <button
                                 onClick={() => setZoomImage(null)}
-                                className="absolute top-6 right-6 p-3 rounded-full bg-white/10 text-white hover:bg-white/20 hover:scale-110 transition-all border border-white/20 z-20"
+                                className="absolute top-0 right-0 md:-top-4 md:-right-4 p-3 rounded-full bg-white/10 text-white hover:bg-white/20 hover:scale-110 transition-all border border-white/20 z-50 backdrop-blur-md"
                             >
                                 <X className="h-6 w-6" />
                             </button>
