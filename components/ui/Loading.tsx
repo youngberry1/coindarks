@@ -18,126 +18,183 @@ export function Loading({
     return (
         <div className={cn(
             "flex flex-col items-center justify-center relative overflow-hidden",
-            fullScreen ? "fixed inset-0 z-100 bg-background/80 backdrop-blur-2xl" : "p-12 w-full h-full",
+            fullScreen ? "fixed inset-0 z-9999 bg-background/95 backdrop-blur-3xl" : "p-12 w-full min-h-[400px] rounded-[40px] bg-background/40 border border-white/5 shadow-2xl overflow-hidden",
             className
         )}>
-            {/* Dynamic Background Elements */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            {/* --- Premium Background System --- */}
+            <div className="absolute inset-0 pointer-events-none scale-110">
+                {/* Adaptive Mesh Gradient */}
                 <motion.div
                     animate={{
+                        rotate: [0, 360],
                         scale: [1, 1.2, 1],
-                        opacity: [0.1, 0.2, 0.1],
                     }}
-                    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-                    className="absolute -top-1/4 -left-1/4 w-[150%] h-[150%] bg-[radial-gradient(circle_at_center,var(--color-primary)_0%,transparent_70%)] blur-[120px] opacity-10"
+                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                    className="absolute -top-[20%] -left-[20%] w-[140%] h-[140%] opacity-[0.08] dark:opacity-[0.12]"
+                    style={{
+                        background: `radial-gradient(circle at center, var(--color-primary) 0%, var(--color-secondary) 30%, transparent 70%)`,
+                        filter: "blur(120px)",
+                    }}
                 />
-                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-150 contrast-150 mix-blend-overlay" />
+
+                {/* Secondary Ripple Layer */}
+                <motion.div
+                    animate={{
+                        rotate: [360, 0],
+                        scale: [1.2, 1, 1.2],
+                    }}
+                    transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                    className="absolute -bottom-[20%] -right-[20%] w-[130%] h-[130%] opacity-[0.05] dark:opacity-[0.08]"
+                    style={{
+                        background: `radial-gradient(circle at center, var(--color-accent) 0%, var(--color-primary) 40%, transparent 60%)`,
+                        filter: "blur(100px)",
+                    }}
+                />
+
+                {/* Cyber Noise Texture */}
+                <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] grayscale brightness-150 contrast-150 mix-blend-overlay"
+                    style={{ backgroundImage: `url("https://grainy-gradients.vercel.app/noise.svg")` }}
+                />
+
+                {/* Animated Scanline Effect */}
+                <motion.div
+                    animate={{ y: ["-100%", "100%"] }}
+                    transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                    className="absolute inset-0 bg-linear-to-b from-transparent via-primary/5 to-transparent h-1/4 w-full opacity-20"
+                />
             </div>
 
-            <div className="relative flex flex-col items-center gap-12 max-w-md w-full px-6">
-                {/* The Mind-Blowing Core Loader */}
-                <div className="relative w-48 h-48 flex items-center justify-center">
-                    {/* Outer Rotating Ring - Large */}
+            <div className="relative flex flex-col items-center gap-16 max-w-lg w-full px-8 z-10">
+                {/* --- The Quantum Core Loader --- */}
+                <div className="relative w-64 h-64 flex items-center justify-center">
+
+                    {/* Inner Quantum Orb */}
                     <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                        className="absolute inset-0 rounded-full border border-dashed border-primary/20"
+                        animate={{
+                            scale: [1, 1.15, 1],
+                            opacity: [0.5, 0.8, 0.5],
+                            boxShadow: [
+                                "0 0 20px var(--color-primary)",
+                                "0 0 60px var(--color-primary)",
+                                "0 0 20px var(--color-primary)"
+                            ]
+                        }}
+                        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                        className="absolute w-32 h-32 rounded-full bg-linear-to-tr from-primary/20 to-secondary/20 backdrop-blur-xl border border-white/10"
                     />
 
-                    {/* Middle Hexagon Ring - Cyber Style */}
-                    <motion.div
-                        animate={{ rotate: -360 }}
-                        transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                        className="absolute inset-4 rounded-[40px] border-2 border-primary/10 flex items-center justify-center"
-                    >
-                        <div className="absolute inset-0 bg-primary/5 blur-xl rounded-full animate-pulse-slow" />
-                    </motion.div>
+                    {/* Concentric Rotating Rings */}
+                    {[80, 110, 140].map((radius, i) => (
+                        <motion.div
+                            key={i}
+                            animate={{ rotate: i % 2 === 0 ? 360 : -360 }}
+                            transition={{
+                                duration: 10 + i * 5,
+                                repeat: Infinity,
+                                ease: "linear"
+                            }}
+                            className="absolute rounded-full border border-dashed border-primary/20 shadow-[0_0_15px_rgba(59,130,246,0.1)]"
+                            style={{ width: radius * 2, height: radius * 2 }}
+                        />
+                    ))}
 
-                    {/* Floating Geometric Shards */}
-                    {[...Array(6)].map((_, i) => (
+                    {/* Orbital Particles (Nanolights) */}
+                    {[...Array(8)].map((_, i) => (
                         <motion.div
                             key={i}
                             animate={{
                                 rotate: [0, 360],
-                                x: [0, Math.cos(i * 60 * Math.PI / 180) * 80, 0],
-                                y: [0, Math.sin(i * 60 * Math.PI / 180) * 80, 0],
-                                scale: [1, 1.5, 1],
-                                opacity: [0.3, 0.6, 0.3]
+                                scale: [1, 1.3, 1],
                             }}
                             transition={{
-                                duration: 4 + i,
+                                duration: 6 + i,
                                 repeat: Infinity,
-                                ease: "easeInOut",
-                                delay: i * 0.2
+                                ease: "linear",
+                                delay: i * 0.4
                             }}
-                            className="absolute w-2 h-2 rounded-full bg-primary shadow-[0_0_15px_var(--color-primary)]"
-                        />
+                            className="absolute h-full w-0.5"
+                            style={{ transform: `rotate(${i * 45}deg)` }}
+                        >
+                            <motion.div
+                                animate={{
+                                    y: [-30, 30, -30],
+                                    opacity: [0.3, 1, 0.3],
+                                    boxShadow: [
+                                        "0 0 10px var(--color-primary)",
+                                        "0 0 20px var(--color-secondary)",
+                                        "0 0 10px var(--color-primary)"
+                                    ]
+                                }}
+                                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                                className="w-1.5 h-1.5 rounded-full bg-white"
+                            />
+                        </motion.div>
                     ))}
 
                     {/* The Logo Core */}
-                    <motion.div
-                        animate={{
-                            scale: [0.95, 1.05, 0.95],
-                            boxShadow: [
-                                "0 0 20px rgba(59, 130, 246, 0.2)",
-                                "0 0 50px rgba(59, 130, 246, 0.4)",
-                                "0 0 20px rgba(59, 130, 246, 0.2)"
-                            ]
-                        }}
-                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                        className="z-10 bg-background/50 backdrop-blur-md rounded-2xl p-4 border border-white/10"
-                    >
-                        <Logo variant="compact" className="scale-125" />
-                    </motion.div>
+                    <div className="z-50 flex items-center justify-center">
+                        <motion.div
+                            animate={{
+                                y: [-5, 5, -5],
+                                rotateZ: [-2, 2, -2]
+                            }}
+                            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                        >
+                            <Logo variant="compact" className="scale-150 drop-shadow-[0_0_25px_rgba(255,255,255,0.3)]" />
+                        </motion.div>
+                    </div>
 
-                    {/* Orbital Particle System */}
-                    <div className="absolute inset-0 animate-spin-slow">
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-secondary blur-sm opacity-50 shadow-[0_0_20px_var(--color-secondary)]" />
+                    {/* Pulsing Light Rays */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-30">
+                        <div className="w-full h-1 bg-linear-to-r from-transparent via-primary to-transparent blur-xl animate-pulse" />
+                        <div className="w-1 h-full bg-linear-to-b from-transparent via-secondary to-transparent blur-xl animate-pulse" />
                     </div>
                 </div>
 
-                {/* Message and Progress */}
-                <div className="flex flex-col items-center gap-6 text-center">
-                    <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="space-y-4"
-                    >
-                        <h3 className="text-xl md:text-2xl font-black italic tracking-tighter bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
-                            {message}
-                        </h3>
-                        <div className="flex items-center justify-center gap-1.5 h-1">
-                            {[...Array(5)].map((_, i) => (
-                                <motion.div
-                                    key={i}
-                                    animate={{
-                                        backgroundColor: ["#3b82f6", "#8b5cf6", "#3b82f6"],
-                                        height: ["4px", "8px", "4px"],
-                                        opacity: [0.5, 1, 0.5]
-                                    }}
-                                    transition={{
-                                        duration: 1.5,
-                                        repeat: Infinity,
-                                        delay: i * 0.15,
-                                        ease: "easeInOut"
-                                    }}
-                                    className="w-12 h-1 rounded-full"
-                                />
+                {/* --- Message and Dynamic Feedback --- */}
+                <div className="flex flex-col items-center gap-8 text-center">
+                    <div className="space-y-4">
+                        <motion.h3
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="text-2xl md:text-3xl font-black tracking-tight"
+                        >
+                            <span className="bg-linear-to-r from-primary via-secondary to-accent bg-clip-text text-transparent bg-size-[200%_auto] animate-gradient-x italic">
+                                {message}
+                            </span>
+                        </motion.h3>
+
+                        {/* Premium Progress Bar (Infinity Style) */}
+                        <div className="relative w-48 h-1 bg-white/5 rounded-full overflow-hidden mx-auto">
+                            <motion.div
+                                animate={{ x: ["-100%", "100%"] }}
+                                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                                className="absolute inset-0 w-1/2 bg-linear-to-r from-transparent via-primary to-transparent rounded-full shadow-[0_0_15px_var(--color-primary)]"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-2 items-center">
+                        <p className="text-[10px] font-black uppercase tracking-[0.5em] text-foreground/30 animate-pulse">
+                            Quantum Encrypted Session
+                        </p>
+                        {/* Decorative Icons */}
+                        <div className="flex gap-2 opacity-20">
+                            {[...Array(3)].map((_, i) => (
+                                <div key={i} className="w-1 h-1 rounded-full bg-foreground" />
                             ))}
                         </div>
-                    </motion.div>
-
-                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/20">
-                        Secure Digital Infrastructure
-                    </p>
+                    </div>
                 </div>
             </div>
 
-            {/* Cyber Grid Overlay */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-size-[40px_40px] mask-[radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+            {/* --- Geometric Distortion Grid --- */}
+            <div className="absolute inset-0 opacity-[0.07] pointer-events-none"
+                style={{
+                    backgroundImage: `radial-gradient(var(--color-primary) 0.5px, transparent 0.5px)`,
+                    backgroundSize: '32px 32px'
+                }}
+            />
         </div>
     );
 }
-
-// Add these to globals.css if not present, but for now using inline utilities or framer
-// .animate-spin-slow { animation: spin 8s linear infinite; }
