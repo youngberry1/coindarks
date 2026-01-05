@@ -3,7 +3,8 @@ import { authConfig } from "./auth.config";
 
 export const { auth } = NextAuth(authConfig);
 
-export default auth((req) => {
+// Next.js 16 proxy convention
+export const proxy = auth((req) => {
     const { nextUrl } = req;
     const isLoggedIn = !!req.auth?.user;
 
@@ -34,6 +35,8 @@ export default auth((req) => {
 
     return;
 });
+
+export default proxy;
 
 export const config = {
     matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
