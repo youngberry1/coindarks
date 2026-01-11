@@ -1,9 +1,10 @@
 "use server";
 
-import { supabaseAdmin } from "@/lib/kyc-storage";
+import { supabaseAdmin, deleteKYCDocument } from "@/lib/kyc-storage";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
 import { sendKYCApprovalEmail, sendKYCRejectionEmail, sendDirectEmail } from "@/lib/mail";
+
 
 export async function sendDirectUserEmail(userId: string, subject: string, message: string, fromEmail?: string) {
     const session = await auth();
@@ -87,6 +88,33 @@ export async function processKYC(submissionId: string, action: 'APPROVE' | 'REJE
             await sendKYCApprovalEmail(user.email, fullName);
         } else {
             console.log("Rejecting KYC for user:", user.id, "Reason:", reason);
+
+            // DELETE FILES FROM STORAGE
+            try {
+                console.log("Deleting rejected KYC documents from storage...");
+
+                // Delete Front ID
+                if (submission.document_front) {
+                    await deleteKYCDocument(submission.document_front);
+                    console.log("Deleted Front ID:", submission.document_front);
+                }
+
+                // Delete Selfie
+                if (submission.selfie) {
+                    await deleteKYCDocument(submission.selfie);
+                    console.log("Deleted Selfie:", submission.selfie);
+                }
+
+                // Delete Back ID (if exists)
+                if (submission.document_back) {
+                    await deleteKYCDocument(submission.document_back);
+                    console.log("Deleted Back ID:", submission.document_back);
+                }
+            } catch (cleanupError) {
+                // Log but don't block rejection
+                console.error("Error deleting KYC documents:", cleanupError);
+            }
+
             // Update submission status
             const { error: subError } = await supabaseAdmin.from('kyc_submissions').update({
                 status: 'REJECTED',

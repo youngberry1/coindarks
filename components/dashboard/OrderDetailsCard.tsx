@@ -20,12 +20,13 @@ interface OrderDetailsCardProps {
         created_at: string;
         receiving_address?: string; // User's address
     };
-    depositAddress?: string; // Admin's address to pay to (for BUY) or send to (for SELL)
+    paymentMethods?: Array<{ type: string; address: string; label?: string }>; // Multiple payment options
     isAdmin?: boolean;
 }
 
-export function OrderDetailsCard({ order, depositAddress }: OrderDetailsCardProps) {
+export function OrderDetailsCard({ order, paymentMethods = [] }: OrderDetailsCardProps) {
     const [showContactSupport, setShowContactSupport] = useState(false);
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(0);
 
     const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text);
@@ -120,7 +121,7 @@ export function OrderDetailsCard({ order, depositAddress }: OrderDetailsCardProp
                 </div>
 
                 {/* Payment Instructions (Only if Pending) */}
-                {isPending && depositAddress ? (
+                {isPending && paymentMethods.length > 0 ? (
                     <>
                         <div className="space-y-2">
                             <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-500">Action Required</p>
@@ -148,20 +149,73 @@ export function OrderDetailsCard({ order, depositAddress }: OrderDetailsCardProp
                                 </div>
                             )}
 
-                            <p className="text-xs font-bold pt-2">{order.type === 'BUY' ? 'Payment Account Details:' : 'Send Wallet Address:'}</p>
+                            <p className="text-xs font-bold pt-2">{order.type === 'BUY' ? 'Payment Options:' : 'Send Wallet Address:'}</p>
                         </div>
 
-                        <button
-                            type="button"
-                            className="flex items-center gap-3 p-4 bg-black/40 rounded-2xl border border-white/5 group cursor-pointer w-full"
-                            onClick={() => copyToClipboard(depositAddress)}
-                            aria-label="Copy deposit address"
-                        >
-                            <p className="font-mono text-xs break-all text-foreground/80 flex-1 text-left">{depositAddress}</p>
-                            <Copy className="h-4 w-4 text-foreground/20 group-hover:text-primary transition-colors" />
-                        </button>
+                        {/* Payment Method Tabs (for multiple options) */}
+                        {paymentMethods.length > 1 && order.type === 'BUY' ? (
+                            <div className="space-y-3">
+                                {/* Tabs */}
+                                <div className="flex gap-2 p-1 bg-black/20 rounded-xl border border-white/5">
+                                    {paymentMethods.map((method, index) => (
+                                        <button
+                                            key={index}
+                                            onClick={() => setSelectedPaymentMethod(index)}
+                                            className={cn(
+                                                "flex-1 py-2.5 px-4 rounded-lg text-xs font-bold uppercase tracking-wider transition-all",
+                                                selectedPaymentMethod === index
+                                                    ? "bg-primary text-white shadow-lg"
+                                                    : "text-foreground/40 hover:text-foreground hover:bg-white/5"
+                                            )}
+                                        >
+                                            {method.type === 'BANK' ? '🏦 Bank Transfer' : '📱 Mobile Money'}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                {/* Selected Payment Method Details */}
+                                <div className="space-y-2">
+                                    {paymentMethods[selectedPaymentMethod].label && (
+                                        <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest">
+                                            {paymentMethods[selectedPaymentMethod].label}
+                                        </p>
+                                    )}
+                                    <button
+                                        type="button"
+                                        className="flex items-center gap-3 p-4 bg-black/40 rounded-2xl border border-white/5 group cursor-pointer w-full"
+                                        onClick={() => copyToClipboard(paymentMethods[selectedPaymentMethod].address)}
+                                        aria-label="Copy payment details"
+                                    >
+                                        <p className="font-mono text-xs break-all text-foreground/80 flex-1 text-left">
+                                            {paymentMethods[selectedPaymentMethod].address}
+                                        </p>
+                                        <Copy className="h-4 w-4 text-foreground/20 group-hover:text-primary transition-colors" />
+                                    </button>
+                                </div>
+                            </div>
+                        ) : paymentMethods.length === 1 ? (
+                            /* Single Payment Method */
+                            <div className="space-y-2">
+                                {paymentMethods[0].label && (
+                                    <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest">
+                                        {paymentMethods[0].label}
+                                    </p>
+                                )}
+                                <button
+                                    type="button"
+                                    className="flex items-center gap-3 p-4 bg-black/40 rounded-2xl border border-white/5 group cursor-pointer w-full"
+                                    onClick={() => copyToClipboard(paymentMethods[0].address)}
+                                    aria-label="Copy payment details"
+                                >
+                                    <p className="font-mono text-xs break-all text-foreground/80 flex-1 text-left">
+                                        {paymentMethods[0].address}
+                                    </p>
+                                    <Copy className="h-4 w-4 text-foreground/20 group-hover:text-primary transition-colors" />
+                                </button>
+                            </div>
+                        ) : null}
                     </>
-                ) : isPending && !depositAddress ? (
+                ) : isPending && paymentMethods.length === 0 ? (
                     <div className="space-y-2">
                         <p className="text-sm text-foreground/80 leading-relaxed font-medium">
                             Payment Instructions Sent to <span className="text-primary">your email</span>

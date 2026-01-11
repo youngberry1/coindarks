@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
     Plus,
     Trash2,
@@ -30,6 +31,7 @@ const PROVIDERS = {
 };
 
 export function PaymentMethodManager({ initialMethods }: PaymentMethodManagerProps) {
+    const router = useRouter();
     const [methods, setMethods] = useState<PaymentMethod[]>(initialMethods);
     const [isAdding, setIsAdding] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
@@ -70,17 +72,8 @@ export function PaymentMethodManager({ initialMethods }: PaymentMethodManagerPro
             success: (data) => {
                 if (data.error) throw new Error(data.error);
 
-                // Optimistic Update (since we revalidatePath on server, we could verify id)
-                // But for now let's just create a temp one or refresh page logic
-                // Actually addPaymentMethod revalidates path, so page refresh or fetch update needed if simple
-                // Since this is client component accessing props from server, we might need router.refresh() 
-                // Or simply append to state optimistically.
-                const newMethod: PaymentMethod = {
-                    id: Math.random().toString(), // Temp ID until refresh
-                    ...form,
-                    is_default: false
-                };
-                setMethods(prev => [newMethod, ...prev]);
+                // Refresh router to get updated data from server
+                router.refresh();
 
                 setIsAdding(false);
                 setForm({

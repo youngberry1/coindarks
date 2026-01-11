@@ -18,7 +18,8 @@ import {
     LogOut,
     Menu,
     ChevronRight,
-    Megaphone
+    Megaphone,
+    BookOpen
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { Logo } from "@/components/ui/Logo";
@@ -58,6 +59,7 @@ export function DashboardSidebar({ user }: SidebarProps) {
         { name: "All Orders", href: "/admin/orders", icon: Package },
         { name: "User Base", href: "/admin/users", icon: Users },
         { name: "Support", href: "/admin/support", icon: Mail },
+        { name: "Documentation", href: "/admin/docs", icon: BookOpen },
         { name: "Announcements", href: "/admin/announcements", icon: Megaphone },
         { name: "System Settings", href: "/admin/settings", icon: Settings },
     ];

@@ -44,5 +44,8 @@ export const authConfig = {
             return session;
         },
     },
-    providers: [], // Add providers with an empty array for now, they will be filled in auth.ts
+    // Providers array is intentionally empty here
+    // The actual Credentials provider is defined in auth.ts
+    // This split config pattern allows middleware to import this file without heavy dependencies
+    providers: [],
 } satisfies NextAuthConfig;

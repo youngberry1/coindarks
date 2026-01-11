@@ -1,9 +1,11 @@
 import { Metadata } from "next";
 import { getAdminWallets } from "@/actions/admin-wallets";
 import { getExchangeRates } from "@/actions/rates";
-import { AdminWalletManager } from "@/components/admin/AdminWalletManager";
-import { ExchangeRateManager } from "@/components/admin/ExchangeRateManager";
 import { Settings } from "lucide-react";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+import { supabaseAdmin } from "@/lib/supabase-admin";
+import { AdminSettingsTabs } from "@/components/admin/settings/AdminSettingsTabs";
 
 export const metadata: Metadata = {
     title: "System Settings | CoinDarks Admin",
@@ -11,8 +13,18 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminSettingsPage() {
+    const session = await auth();
+    if (!session) redirect("/login");
+
     const wallets = await getAdminWallets();
     const rates = await getExchangeRates();
+
+    // Fetch full admin user data
+    const { data: userData } = await supabaseAdmin
+        .from('users')
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
 
     return (
         <div className="space-y-8">
@@ -21,22 +33,16 @@ export default async function AdminSettingsPage() {
                     <Settings className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                    <h1 className="text-3xl font-black uppercase tracking-tight">System Settings</h1>
-                    <p className="text-foreground/40 font-medium">Configure exchange parameters and deposit addresses.</p>
+                    <h1 className="text-3xl font-black uppercase tracking-tight">Admin Settings</h1>
+                    <p className="text-foreground/40 font-medium">Manage system parameters and your account.</p>
                 </div>
             </div>
 
-            <div className="grid gap-8 lg:grid-cols-1">
-                {/* Wallets Section */}
-                <section>
-                    <AdminWalletManager initialWallets={wallets} />
-                </section>
-
-                {/* Rates Section */}
-                <section>
-                    <ExchangeRateManager initialRates={rates} />
-                </section>
-            </div>
+            <AdminSettingsTabs
+                user={userData}
+                wallets={wallets}
+                rates={rates}
+            />
         </div>
     );
 }

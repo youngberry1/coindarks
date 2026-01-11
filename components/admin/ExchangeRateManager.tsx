@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { updateRateConfig, createRatePair, deleteRatePair, ExchangeRate } from "@/actions/rates";
 import { toast } from "sonner";
-import { Plus, RefreshCw, Calculator, DollarSign, Activity, Trash2, Loader2, Info, ArrowRightLeft } from "lucide-react";
+import { Plus, RefreshCw, Calculator, DollarSign, Activity, Trash2, Loader2, Info, ArrowRightLeft, Hand } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import {
@@ -190,12 +190,24 @@ export function ExchangeRateManager({ initialRates }: ExchangeRateManagerProps) 
                                 <button
                                     onClick={() => handleUpdate(rate.pair, { is_automated: !rate.is_automated })}
                                     className={cn(
-                                        "p-2 rounded-lg transition-colors",
-                                        rate.is_automated ? "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20" : "bg-white/5 text-foreground/40 hover:text-foreground"
+                                        "px-3 py-1.5 rounded-lg transition-all flex items-center gap-2 text-xs font-bold border",
+                                        rate.is_automated
+                                            ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/20"
+                                            : "bg-amber-500/10 text-amber-500 border-amber-500/20 hover:bg-amber-500/20"
                                     )}
                                     title="Toggle Automation"
                                 >
-                                    <Activity className="h-4 w-4" />
+                                    {rate.is_automated ? (
+                                        <>
+                                            <Activity className="h-3.5 w-3.5" />
+                                            <span>Auto Updates On</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Hand className="h-3.5 w-3.5" />
+                                            <span>Manual Mode</span>
+                                        </>
+                                    )}
                                 </button>
                                 <button
                                     onClick={() => setPairToDelete(rate.pair)}

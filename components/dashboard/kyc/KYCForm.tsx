@@ -135,7 +135,7 @@ export function KYCForm() {
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {
                                     [
-                                        { id: "PASSPORT", name: "International Passport", desc: "Digital or Physical" },
+                                        { id: "PASSPORT", name: "International Passport", desc: "Front Page Required" },
                                         { id: "LICENSE", name: "Driver's License", desc: "Front & Back required" },
                                         { id: "NATIONAL_ID", name: "National ID Card", desc: "Front & Back required" },
                                     ].map((type) => (
@@ -213,29 +213,33 @@ export function KYCForm() {
                         >
                             <div className="text-center">
                                 <h1 className="text-2xl font-black mb-3">Upload Documents</h1>
-                                <p className="text-sm text-foreground/50 font-medium max-w-md mx-auto">Upload clear photos of your ID and a selfie holding the ID.</p>
+                                <p className="text-sm text-foreground/50 font-medium max-w-md mx-auto">
+                                    Upload clear photos of your {formData.documentType === 'PASSPORT' ? 'Passport' : 'ID'} and a selfie holding the {formData.documentType === 'PASSPORT' ? 'Passport' : 'ID'}.
+                                </p>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <ImageUpload
-                                    label="Front of ID"
+                                    label={formData.documentType === 'PASSPORT' ? "Front of Passport" : "Front of ID"}
                                     preview={previews.front}
                                     onDrop={(files) => onDrop('front', files)}
                                     onRejected={(rejections) => onDropRejected('front', rejections)}
                                     onRemove={() => removeImage('front')}
                                 />
 
-                                <ImageUpload
-                                    label="Back of ID"
-                                    preview={previews.back}
-                                    onDrop={(files) => onDrop('back', files)}
-                                    onRejected={(rejections) => onDropRejected('back', rejections)}
-                                    onRemove={() => removeImage('back')}
-                                />
-
-                                <div className="md:col-span-2 max-w-md mx-auto w-full">
+                                {formData.documentType !== "PASSPORT" && (
                                     <ImageUpload
-                                        label="Selfie with ID"
+                                        label="Back of ID"
+                                        preview={previews.back}
+                                        onDrop={(files) => onDrop('back', files)}
+                                        onRejected={(rejections) => onDropRejected('back', rejections)}
+                                        onRemove={() => removeImage('back')}
+                                    />
+                                )}
+
+                                <div className={`w-full ${formData.documentType === 'PASSPORT' ? '' : 'md:col-span-2 max-w-md mx-auto'}`}>
+                                    <ImageUpload
+                                        label={formData.documentType === 'PASSPORT' ? "Selfie with Passport" : "Selfie with ID"}
                                         preview={previews.selfie}
                                         onDrop={(files) => onDrop('selfie', files)}
                                         onRejected={(rejections) => onDropRejected('selfie', rejections)}
@@ -249,7 +253,12 @@ export function KYCForm() {
                                     Go Back
                                 </button>
                                 <button
-                                    disabled={isLoading || !formData.frontImage || !formData.backImage || !formData.selfieImage}
+                                    disabled={
+                                        isLoading ||
+                                        !formData.frontImage ||
+                                        (!formData.backImage && formData.documentType !== "PASSPORT") ||
+                                        !formData.selfieImage
+                                    }
                                     onClick={handleSubmit}
                                     className="w-full sm:flex-1 py-5 rounded-2xl bg-primary text-white font-bold shadow-xl shadow-primary/20 hover:scale-[1.02] disabled:opacity-50 disabled:grayscale transition-all flex items-center justify-center gap-3"
                                 >

@@ -117,7 +117,7 @@ export function KYCReviewList({ submissions }: KYCReviewListProps) {
                                     </button>
                                 </div>
                             </div>
-                            {sub.document_type !== 'PASSPORT' && (
+                            {sub.backUrl && (
                                 <div className="space-y-2">
                                     <p className="text-[10px] font-black text-foreground/30 uppercase tracking-widest ml-1">Back of ID</p>
                                     <div className="relative aspect-square rounded-2xl overflow-hidden border border-white/5 group/img">

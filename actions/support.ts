@@ -303,7 +303,7 @@ export async function replyToTicketUser(data: {
             })
             .eq('id', data.ticketId);
 
-        revalidatePath(`/dashboard/support/${data.ticketId}`); // TODO: Check actual route
+        revalidatePath(`/dashboard/support/${data.ticketId}`);
         return { success: true };
 
     } catch (error) {

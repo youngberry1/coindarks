@@ -55,15 +55,53 @@ export default async function UserProfilePage({ params }: UserProfilePageProps) 
         { data: orders }
     ] = await Promise.all([
         supabaseAdmin.from('users').select('*').eq('id', id).single(),
-        supabaseAdmin.from('kyc_submissions').select('*').eq('user_id', id).single(),
+        supabaseAdmin.from('kyc_submissions').select('*').eq('user_id', id).order('submitted_at', { ascending: false }).limit(1).maybeSingle(),
         supabaseAdmin.from('orders').select('*').eq('user_id', id).order('created_at', { ascending: false }).limit(10)
     ]);
 
+    // SMART MERGE: Check storage and compare with DB record to find the latest submission
+    let kycData = kyc;
+
+    if (user) {
+        const { data: files } = await supabaseAdmin.storage
+            .from('kyc-documents')
+            .list(user.id);
+
+        if (files && files.length > 0) {
+            // Identify latest files in storage
+            const frontFile = files.find(f => f.name.startsWith('id_front'));
+            const backFile = files.find(f => f.name.startsWith('id_back'));
+            const selfieFile = files.find(f => f.name.startsWith('selfie'));
+
+            if (frontFile || selfieFile) {
+                // Determine timestamp of storage files
+                const storageDate = new Date(frontFile?.created_at || selfieFile?.created_at || 0);
+                const dbDate = kyc?.submitted_at ? new Date(kyc.submitted_at) : new Date(0);
+
+                // If storage files are newer than DB record (or DB record is missing), use storage files
+                // This handles failed DB inserts or re-uploads
+                if (storageDate > dbDate) {
+                    kycData = {
+                        id: 'recovered-from-storage',
+                        user_id: user.id,
+                        status: user.kyc_status || 'PENDING',
+                        submitted_at: storageDate.toISOString(),
+                        document_type: frontFile ? (frontFile.name.includes('passport') ? 'PASSPORT' : 'UNKNOWN_ID') : 'UNKNOWN',
+                        document_number: 'N/A ( recovered )',
+                        document_front: frontFile ? `${user.id}/${frontFile.name}` : null,
+                        document_back: backFile ? `${user.id}/${backFile.name}` : null,
+                        selfie: selfieFile ? `${user.id}/${selfieFile.name}` : null,
+                    };
+                }
+            }
+        }
+    }
+
     // Generate signed URLs for KYC documents if they exist
     const [frontUrl, backUrl, selfieUrl] = await Promise.all([
-        kyc?.document_front ? supabaseAdmin.storage.from('kyc-documents').createSignedUrl(kyc.document_front, 3600).then(({ data }) => data?.signedUrl) : null,
-        kyc?.document_back ? supabaseAdmin.storage.from('kyc-documents').createSignedUrl(kyc.document_back, 3600).then(({ data }) => data?.signedUrl) : null,
-        kyc?.selfie ? supabaseAdmin.storage.from('kyc-documents').createSignedUrl(kyc.selfie, 3600).then(({ data }) => data?.signedUrl) : null
+        kycData?.document_front ? supabaseAdmin.storage.from('kyc-documents').createSignedUrl(kycData.document_front, 3600).then(({ data }) => data?.signedUrl) : null,
+        kycData?.document_back ? supabaseAdmin.storage.from('kyc-documents').createSignedUrl(kycData.document_back, 3600).then(({ data }) => data?.signedUrl) : null,
+        kycData?.selfie ? supabaseAdmin.storage.from('kyc-documents').createSignedUrl(kycData.selfie, 3600).then(({ data }) => data?.signedUrl) : null
     ]);
 
     if (!user) {

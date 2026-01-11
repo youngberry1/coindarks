@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Lock, CheckCircle2, AlertCircle, ShieldCheck } from "lucide-react";
+import { Lock, CheckCircle2, AlertCircle, ShieldCheck, Eye, EyeOff } from "lucide-react";
 import { PasswordStrength } from "@/components/auth/PasswordStrength";
 import { updatePassword } from "@/actions/settings";
 import { Loading } from "@/components/ui/Loading";
@@ -11,27 +11,50 @@ export function SecuritySettings() {
     const [currentPassword, setCurrentPassword] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+
+    // Visibility states
+    const [showCurrent, setShowCurrent] = useState(false);
+    const [showNew, setShowNew] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
+
     const [isLoading, setIsLoading] = useState(false);
     const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
     const [message, setMessage] = useState("");
+    const [fieldErrors, setFieldErrors] = useState<{ current?: string; new?: string; confirm?: string }>({});
 
     // Clear status when user starts typing again
     useEffect(() => {
-        if (status !== "idle") {
+        if (status !== "idle" || Object.keys(fieldErrors).length > 0) {
             setStatus("idle");
             setMessage("");
+            setFieldErrors({});
         }
-    }, [currentPassword, password, confirmPassword, status]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentPassword, password, confirmPassword]);
 
     const handleUpdate = async () => {
-        if (!currentPassword || !password || !confirmPassword) {
-            setStatus("error");
-            setMessage("Please fill in all fields");
-            return;
+        setFieldErrors({});
+        let hasError = false;
+        const newErrors: { current?: string; new?: string; confirm?: string } = {};
+
+        if (!currentPassword) {
+            newErrors.current = "Current password is required";
+            hasError = true;
         }
-        if (password !== confirmPassword) {
-            setStatus("error");
-            setMessage("Passwords do not match");
+        if (!password) {
+            newErrors.new = "New password is required";
+            hasError = true;
+        }
+        if (!confirmPassword) {
+            newErrors.confirm = "Please confirm your new password";
+            hasError = true;
+        } else if (password !== confirmPassword) {
+            newErrors.confirm = "Passwords do not match";
+            hasError = true;
+        }
+
+        if (hasError) {
+            setFieldErrors(newErrors);
             return;
         }
 
@@ -53,8 +76,12 @@ export function SecuritySettings() {
                     if (status === "success") setStatus("idle");
                 }, 5000);
             } else {
-                setStatus("error");
-                setMessage(result.error || "Failed to update password");
+                if (result.error === "Current password is incorrect") {
+                    setFieldErrors({ current: "The password you entered is incorrect." });
+                } else {
+                    setStatus("error");
+                    setMessage(result.error || "Failed to update password");
+                }
             }
         } catch (err: unknown) {
             console.error("Password update error:", err);
@@ -63,6 +90,10 @@ export function SecuritySettings() {
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const toggleVisibility = (setter: React.Dispatch<React.SetStateAction<boolean>>) => {
+        setter(prev => !prev);
     };
 
     return (
@@ -93,33 +124,89 @@ export function SecuritySettings() {
 
                     <div className="space-y-1.5">
                         <label className="text-[10px] font-black text-foreground/40 uppercase tracking-widest ml-1">Current Password</label>
-                        <input
-                            type="password"
-                            placeholder="••••••••"
-                            value={currentPassword}
-                            onChange={(e) => setCurrentPassword(e.target.value)}
-                            className="w-full rounded-2xl border border-border bg-card-bg/20 px-5 py-4 font-bold placeholder:text-foreground/20 focus:border-primary focus:outline-none transition-all"
-                        />
+                        <div className="relative">
+                            <input
+                                type={showCurrent ? "text" : "password"}
+                                placeholder="••••••••"
+                                value={currentPassword}
+                                onChange={(e) => setCurrentPassword(e.target.value)}
+                                className={`w-full rounded-2xl border bg-card-bg/20 pl-5 pr-12 py-4 font-bold placeholder:text-foreground/20 focus:outline-none transition-all ${fieldErrors.current
+                                    ? "border-red-500/50 focus:border-red-500 bg-red-500/5 text-red-500"
+                                    : "border-border focus:border-primary"
+                                    }`}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => toggleVisibility(setShowCurrent)}
+                                className={`absolute right-4 top-1/2 -translate-y-1/2 transition-colors ${fieldErrors.current ? "text-red-400 hover:text-red-500" : "text-foreground/40 hover:text-foreground"}`}
+                            >
+                                {showCurrent ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                            </button>
+                        </div>
+                        {fieldErrors.current && (
+                            <div className="flex items-center gap-1.5 mt-1.5 ml-1 animate-in slide-in-from-top-1 text-red-500">
+                                <AlertCircle className="h-3 w-3" />
+                                <span className="text-xs font-bold">{fieldErrors.current}</span>
+                            </div>
+                        )}
                     </div>
+
                     <div className="space-y-1.5">
                         <label className="text-[10px] font-black text-foreground/40 uppercase tracking-widest ml-1">New Password</label>
-                        <input
-                            type="password"
-                            placeholder="••••••••"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="w-full rounded-2xl border border-border bg-card-bg/20 px-5 py-4 font-bold placeholder:text-foreground/20 focus:border-primary focus:outline-none transition-all"
-                        />
+                        <div className="relative">
+                            <input
+                                type={showNew ? "text" : "password"}
+                                placeholder="••••••••"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className={`w-full rounded-2xl border bg-card-bg/20 pl-5 pr-12 py-4 font-bold placeholder:text-foreground/20 focus:outline-none transition-all ${fieldErrors.new
+                                    ? "border-red-500/50 focus:border-red-500 bg-red-500/5 text-red-500"
+                                    : "border-border focus:border-primary"
+                                    }`}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => toggleVisibility(setShowNew)}
+                                className={`absolute right-4 top-1/2 -translate-y-1/2 transition-colors ${fieldErrors.new ? "text-red-400 hover:text-red-500" : "text-foreground/40 hover:text-foreground"}`}
+                            >
+                                {showNew ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                            </button>
+                        </div>
+                        {fieldErrors.new && (
+                            <div className="flex items-center gap-1.5 mt-1.5 ml-1 animate-in slide-in-from-top-1 text-red-500">
+                                <AlertCircle className="h-3 w-3" />
+                                <span className="text-xs font-bold">{fieldErrors.new}</span>
+                            </div>
+                        )}
                     </div>
+
                     <div className="space-y-1.5">
                         <label className="text-[10px] font-black text-foreground/40 uppercase tracking-widest ml-1">Confirm New Password</label>
-                        <input
-                            type="password"
-                            placeholder="••••••••"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            className="w-full rounded-2xl border border-border bg-card-bg/20 px-5 py-4 font-bold placeholder:text-foreground/20 focus:border-primary focus:outline-none transition-all"
-                        />
+                        <div className="relative">
+                            <input
+                                type={showConfirm ? "text" : "password"}
+                                placeholder="••••••••"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                className={`w-full rounded-2xl border bg-card-bg/20 pl-5 pr-12 py-4 font-bold placeholder:text-foreground/20 focus:outline-none transition-all ${fieldErrors.confirm
+                                    ? "border-red-500/50 focus:border-red-500 bg-red-500/5 text-red-500"
+                                    : "border-border focus:border-primary"
+                                    }`}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => toggleVisibility(setShowConfirm)}
+                                className={`absolute right-4 top-1/2 -translate-y-1/2 transition-colors ${fieldErrors.confirm ? "text-red-400 hover:text-red-500" : "text-foreground/40 hover:text-foreground"}`}
+                            >
+                                {showConfirm ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                            </button>
+                        </div>
+                        {fieldErrors.confirm && (
+                            <div className="flex items-center gap-1.5 mt-1.5 ml-1 animate-in slide-in-from-top-1 text-red-500">
+                                <AlertCircle className="h-3 w-3" />
+                                <span className="text-xs font-bold">{fieldErrors.confirm}</span>
+                            </div>
+                        )}
                     </div>
 
                     <div className="pt-2">

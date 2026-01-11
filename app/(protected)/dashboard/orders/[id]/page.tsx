@@ -38,21 +38,54 @@ export default async function OrderDetailsPage({ params }: PageProps) {
         return notFound();
     }
 
-    // Determine the admin wallet address to show (if pending)
-    let depositAddress = undefined;
+    // Fetch payment methods for pending orders
+    let paymentMethods: Array<{ type: string; address: string; label?: string }> = [];
 
-    if (order.status === 'PENDING') {
-        const targetCurrency = order.type === 'BUY' ? order.fiat_currency : order.asset;
+    if (order.status === 'PENDING' && order.type === 'BUY') {
+        const targetCurrency = order.fiat_currency;
 
+        // Fetch all active wallets for this currency
+        const { data: wallets } = await supabaseAdmin
+            .from('admin_wallets')
+            .select('chain, address, label')
+            .eq('currency', targetCurrency)
+            .eq('is_active', true);
+
+        if (wallets && wallets.length > 0) {
+            // For GHS: Show both Bank and Mobile Money
+            // For NGN: Show only Bank
+            if (targetCurrency === 'GHS') {
+                paymentMethods = wallets.map(w => ({
+                    type: w.chain,
+                    address: w.address,
+                    label: w.label
+                }));
+            } else if (targetCurrency === 'NGN') {
+                // Only show bank accounts for NGN
+                paymentMethods = wallets
+                    .filter(w => w.chain === 'BANK')
+                    .map(w => ({
+                        type: w.chain,
+                        address: w.address,
+                        label: w.label
+                    }));
+            }
+        }
+    } else if (order.status === 'PENDING' && order.type === 'SELL') {
+        // For SELL orders, get crypto wallet address
         const { data: wallet } = await supabaseAdmin
             .from('admin_wallets')
-            .select('address')
-            .eq('currency', targetCurrency)
+            .select('address, label')
+            .eq('currency', order.asset)
             .eq('is_active', true)
             .single();
 
         if (wallet) {
-            depositAddress = wallet.address;
+            paymentMethods = [{
+                type: 'CRYPTO',
+                address: wallet.address,
+                label: wallet.label
+            }];
         }
     }
 
@@ -68,7 +101,7 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                 </div>
             </div>
 
-            <OrderDetailsCard order={order} depositAddress={depositAddress} />
+            <OrderDetailsCard order={order} paymentMethods={paymentMethods} />
         </div>
     );
 }

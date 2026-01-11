@@ -20,11 +20,7 @@ const getResend = () => {
 export const sendVerificationEmail = async (email: string, token: string) => {
     const confirmLink = `${domain}/verify?token=${token}`;
 
-    // In dev, we still log for convenience
-    console.log("-----------------------------------------");
-    console.log(`VERIFICATION EMAIL SENT TO: ${email}`);
-    console.log(`LINK: ${confirmLink}`);
-    console.log("-----------------------------------------");
+
 
     const resend = getResend();
     if (!resend) return;
@@ -38,7 +34,7 @@ export const sendVerificationEmail = async (email: string, token: string) => {
             subject: "Verify your email - CoinDarks",
             html: emailHtml,
         });
-        console.log("Email sent via Resend!");
+
     } catch (error) {
         console.error("Failed to send email via Resend:", error);
     }
@@ -47,10 +43,7 @@ export const sendVerificationEmail = async (email: string, token: string) => {
 export const sendPasswordResetEmail = async (email: string, token: string) => {
     const resetLink = `${domain}/new-password?token=${token}`;
 
-    console.log("-----------------------------------------");
-    console.log(`RESET PASSWORD EMAIL SENT TO: ${email}`);
-    console.log(`LINK: ${resetLink}`);
-    console.log("-----------------------------------------");
+
 
     const resend = getResend();
     if (!resend) return;
@@ -70,9 +63,7 @@ export const sendPasswordResetEmail = async (email: string, token: string) => {
 }
 
 export const sendPasswordChangeConfirmationEmail = async (email: string) => {
-    console.log("-----------------------------------------");
-    console.log(`PASSWORD CHANGE CONFIRMATION SENT TO: ${email}`);
-    console.log("-----------------------------------------");
+
 
     const resend = getResend();
     if (!resend) return;
@@ -96,9 +87,7 @@ export const sendPasswordChangeConfirmationEmail = async (email: string) => {
 // ============================================
 
 export const sendKYCSubmissionEmail = async (email: string, fullName: string) => {
-    console.log("-----------------------------------------");
-    console.log(`KYC SUBMISSION EMAIL SENT TO: ${email}`);
-    console.log("-----------------------------------------");
+
 
     const resend = getResend();
     if (!resend) return;
@@ -165,9 +154,7 @@ export const sendKYCSubmissionEmail = async (email: string, fullName: string) =>
 }
 
 export const sendKYCApprovalEmail = async (email: string, fullName: string) => {
-    console.log("-----------------------------------------");
-    console.log(`KYC APPROVAL EMAIL SENT TO: ${email}`);
-    console.log("-----------------------------------------");
+
 
     const resend = getResend();
     if (!resend) return;
@@ -236,10 +223,7 @@ export const sendKYCApprovalEmail = async (email: string, fullName: string) => {
 }
 
 export const sendKYCRejectionEmail = async (email: string, fullName: string, reason: string) => {
-    console.log("-----------------------------------------");
-    console.log(`KYC REJECTION EMAIL SENT TO: ${email}`);
-    console.log(`REASON: ${reason}`);
-    console.log("-----------------------------------------");
+
 
     const resend = getResend();
     if (!resend) return;
@@ -318,10 +302,7 @@ export const sendSupportReplyEmail = async (
     message: string,
     fromEmail: string
 ) => {
-    console.log("-----------------------------------------");
-    console.log(`SUPPORT REPLY EMAIL SENT TO: ${email}`);
-    console.log(`FROM: ${fromEmail}`);
-    console.log("-----------------------------------------");
+
 
     const resend = getResend();
     if (!resend) return;
@@ -379,7 +360,7 @@ export const sendSupportReplyEmail = async (
             subject: `Re: Ticket #${ticketId} - Response from Support`,
             html: emailHtml,
         });
-        console.log("Support email sent via Resend!");
+
     } catch (error) {
         console.error("Failed to send support reply email via Resend:", error);
     }
@@ -392,10 +373,7 @@ export const sendTicketCreatedEmail = async (
     subject: string,
     message: string
 ) => {
-    console.log("-----------------------------------------");
-    console.log(`TICKET CREATED EMAIL SENT TO: ${email}`);
-    console.log(`TICKET ID: ${ticketId}`);
-    console.log("-----------------------------------------");
+
 
     const resend = getResend();
     if (!resend) return;
@@ -463,7 +441,7 @@ export const sendTicketCreatedEmail = async (
             subject: `[Received] Ticket #${ticketId} - ${subject}`,
             html: emailHtml,
         });
-        console.log("Ticket created email sent via Resend!");
+
     } catch (error) {
         console.error("Failed to send ticket created email via Resend:", error);
     }
@@ -474,10 +452,7 @@ export const sendTicketClosedEmail = async (
     fullName: string,
     ticketId: string
 ) => {
-    console.log("-----------------------------------------");
-    console.log(`TICKET CLOSED EMAIL SENT TO: ${email}`);
-    console.log(`TICKET ID: ${ticketId}`);
-    console.log("-----------------------------------------");
+
 
     const resend = getResend();
     if (!resend) return;
@@ -534,7 +509,7 @@ export const sendTicketClosedEmail = async (
             subject: `[Closed] Ticket #${ticketId}`,
             html: emailHtml,
         });
-        console.log("Ticket closed email sent via Resend!");
+
     } catch (error) {
         console.error("Failed to send ticket closed email via Resend:", error);
     }
@@ -547,11 +522,7 @@ export const sendDirectEmail = async (
     message: string,
     fromEmail?: string
 ) => {
-    console.log("-----------------------------------------");
-    console.log(`DIRECT ADMIN EMAIL SENT TO: ${email}`);
-    console.log(`FROM: ${fromEmail || process.env.EMAIL_FROM}`);
-    console.log(`SUBJECT: ${subject}`);
-    console.log("-----------------------------------------");
+
 
     const resend = getResend();
     if (!resend) return;
@@ -609,7 +580,7 @@ export const sendDirectEmail = async (
             subject: subject,
             html: emailHtml,
         });
-        console.log("Direct admin email sent via Resend!");
+
     } catch (error) {
         console.error("Failed to send direct admin email via Resend:", error);
     }
@@ -624,9 +595,7 @@ export const sendOrderStatusEmail = async (
     amount: string,
     fiatAmount: string
 ) => {
-    console.log("-----------------------------------------");
-    console.log(`ORDER STATUS EMAIL (${status}) SENT TO: ${email}`);
-    console.log("-----------------------------------------");
+
 
     const resend = getResend();
     if (!resend) return;
@@ -741,7 +710,7 @@ export const sendOrderStatusEmail = async (
             subject: template.subject,
             html: emailHtml,
         });
-        console.log(`Order status email (${status}) sent via Resend!`);
+
     } catch (error) {
         console.error("Failed to send order status email:", error);
     }

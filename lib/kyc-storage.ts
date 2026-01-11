@@ -134,7 +134,6 @@ export async function uploadKYCDocument(
     documentType: 'id_front' | 'id_back' | 'selfie'
 ): Promise<UploadResult> {
     try {
-        console.log('[KYC Upload] Starting upload. Service Key Present:', !!supabaseServiceKey);
         // Validate file
         const validation = await validateFile(file);
         if (!validation.valid) {
