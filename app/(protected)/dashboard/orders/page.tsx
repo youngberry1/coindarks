@@ -55,7 +55,8 @@ export default async function UserOrdersPage({
         .eq('id', session.user.id)
         .single();
 
-    const isKycApproved = user?.kyc_status === 'APPROVED';
+    const isAdmin = session.user.role === 'ADMIN';
+    const isKycApproved = user?.kyc_status === 'APPROVED' || isAdmin;
 
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">

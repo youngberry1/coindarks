@@ -9,23 +9,26 @@ import {
     Globe,
     ExternalLink,
     RefreshCcw,
-    ArrowRight,
-    ShieldCheck
+    ShieldCheck,
+    Sparkles,
+    Activity,
+    MessageSquare,
+    ChevronRight
 } from "lucide-react";
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import TradeableAssets from '@/components/dashboard/TradeableAssets';
 import { getCryptos } from '@/actions/crypto';
 import { getUserTickets } from "@/actions/support";
-
-export const metadata: Metadata = {
-    title: "Dashboard | CoinDarks",
-    description: "Manage your crypto trades and view real-time market activity.",
-};
-
 import { AnnouncementBanner } from "@/components/dashboard/AnnouncementBanner";
 import { getActiveAnnouncements } from "@/actions/announcements";
 import { Announcement } from "@/types/db";
+import { cn } from "@/lib/utils";
+
+export const metadata: Metadata = {
+    title: "Dashboard | CoinDarks",
+    description: "Manage your crypto assets and transactions in one place.",
+};
 
 export default async function DashboardPage() {
     const session = await auth();
@@ -71,65 +74,44 @@ export default async function DashboardPage() {
     const { data: rawAnnouncements = [] } = await getActiveAnnouncements();
     const announcements = (rawAnnouncements || []) as Announcement[];
 
-    // Refactored AnnouncementBanner component (moved here for demonstration based on user's instruction,
-    // but ideally this component would be in its own file: components/dashboard/AnnouncementBanner.tsx)
-    // The user's instruction implies this refactoring should happen, and the provided snippet
-    // is the new content for the AnnouncementBanner component itself.
-    // Since the instruction asks to modify the *current* document, and the snippet is a component definition,
-    // I'm placing it here. However, in a real-world scenario, this would be in its own file.
-    // The original import `import { AnnouncementBanner } from "@/components/dashboard/AnnouncementBanner";`
-    // would then import this refactored component from its dedicated file.
-    // For the purpose of fulfilling the instruction as literally as possible within the given document,
-    // I'm assuming the user wants this definition to be present in this file,
-    // and the original import statement would then be redundant or point to this definition.
-    // Given the context of "refactor AnnouncementBanner", it's more likely the user wants the *content*
-    // of the AnnouncementBanner component to be updated, and the `DashboardPage` file itself
-    // only needs `useState` and `useEffect` imports if it were to define the component directly,
-    // or if it were to use these hooks for something else.
-    // Since the instruction is to "Refactor AnnouncementBanner", and the snippet *is* the refactored component,
-    // I will assume the user wants to see the *effect* of this refactoring in the context of the `DashboardPage` file.
-    // The most faithful interpretation is that the user wants the `AnnouncementBanner` component's *logic* to be updated.
-    // As I only have this file, I will add the `useState` and `useEffect` imports,
-    // and then assume the `AnnouncementBanner` component (which is imported) will internally use this logic.
-    // The provided snippet `cexport function AnnouncementBanner(...)` is syntactically incorrect as `cexport` is not a keyword.
-    // Assuming it was meant to be `export function AnnouncementBanner(...)` and that this definition
-    // *replaces* the content of the imported component, not that it's defined *inside* DashboardPage.
-    // However, the instruction explicitly says "Add missing Announcement import to DashboardPage. Refactor AnnouncementBanner to use state for dismissed IDs to avoid lint issues."
-    // And then provides a code edit that *looks like* a component definition.
-    // The most reasonable interpretation is that the `useState` and `useEffect` imports are needed in *this* file
-    // because the `AnnouncementBanner` component (which is imported) will now use them, and the user might be
-    // consolidating imports. The "refactor AnnouncementBanner" part refers to the *logic* of that component,
-    // which is not directly in this file.
-    // I will add `useState` and `useEffect` imports as they are used in the provided snippet,
-    // and assume the `AnnouncementBanner` component (imported) will be updated elsewhere with the provided logic.
-    // The snippet itself cannot be directly inserted into the `DashboardPage` function.
-    // The instruction is a bit ambiguous here. I will prioritize adding the imports that the new logic requires.
-
     return (
-        <div className="space-y-10 md:space-y-14 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="space-y-12 sm:space-y-20 animate-in fade-in slide-in-from-bottom-6 duration-1000">
             {/* Announcement Banner */}
             <AnnouncementBanner announcements={announcements} />
 
             {/* Header / Greeting */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div>
-                    <h1 className="text-3xl font-black tracking-tight mb-2">
-                        Welcome back, <span className="text-gradient">{firstName}!</span>
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10">
+                <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                        <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/40">Secure Session : Active</span>
+                    </div>
+                    <h1 className="text-5xl sm:text-7xl font-black tracking-tight leading-none uppercase">
+                        Welcome, <br />
+                        <span className="text-gradient leading-relaxed">{firstName}.</span>
                     </h1>
-                    <p className="text-foreground/70 font-medium">
-                        {isAdmin ? "Platform oversight and management dashboard." : "What would you like to trade today?"}
+                    <p className="text-xl text-foreground/50 font-medium max-w-2xl leading-relaxed">
+                        {isAdmin
+                            ? "Overview of platform operations and system management."
+                            : "Your central hub for fast crypto exchanges and account management."}
                     </p>
                 </div>
 
                 {!isAdmin && (
-                    <div className="flex items-center gap-3">
-                        <Link href="/dashboard/exchange?type=buy" className="group relative px-6 py-3 rounded-2xl bg-primary text-white flex items-center gap-2 overflow-hidden shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all text-sm uppercase tracking-widest font-black">
-                            <ArrowDownLeft className="h-4 w-4" />
-                            <span>Buy Crypto</span>
+                    <div className="flex flex-col sm:flex-row items-center gap-6">
+                        <Link href="/dashboard/exchange?type=buy" className="w-full sm:w-auto group relative">
+                            <div className="absolute inset-0 bg-primary/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-[28px]" />
+                            <div className="relative h-18 px-10 rounded-[28px] bg-primary text-white flex items-center justify-center gap-4 shadow-2xl shadow-primary/30 active:scale-95 transition-all text-xs uppercase tracking-[0.2em] font-black">
+                                <ArrowDownLeft className="h-5 w-5" />
+                                <span>Buy Crypto</span>
+                            </div>
                         </Link>
-                        <Link href="/dashboard/exchange?type=sell" className="group relative px-6 py-3 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-2 overflow-hidden hover:bg-white/10 transition-all text-sm uppercase tracking-widest font-black">
-                            <ArrowUpRight className="h-4 w-4 text-primary" />
-                            <span>Sell Crypto</span>
+                        <Link href="/dashboard/exchange?type=sell" className="w-full sm:w-auto group relative">
+                            <div className="relative h-18 px-10 rounded-[28px] glass border border-white/5 flex items-center justify-center gap-4 hover:bg-white/5 hover:border-white/10 active:scale-95 transition-all text-xs uppercase tracking-[0.2em] font-black overflow-hidden group">
+                                <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                                <ArrowUpRight className="h-5 w-5 text-primary" />
+                                <span>Sell Crypto</span>
+                            </div>
                         </Link>
                     </div>
                 )}
@@ -137,118 +119,144 @@ export default async function DashboardPage() {
 
             {/* KYC Alert - Hidden for Admins */}
             {!isAdmin && kycStatus !== 'APPROVED' && (
-                <div className={`relative overflow-hidden p-6 rounded-[32px] border group ${kycStatus === 'REJECTED' ? 'border-red-500/20 bg-red-500/5' :
-                    kycStatus === 'PENDING' ? 'border-amber-500/20 bg-amber-500/5' :
-                        'border-amber-500/20 bg-amber-500/5'
-                    }`}>
-                    <div className={`absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity ${kycStatus === 'REJECTED' ? 'text-red-500' : 'text-amber-500'
-                        }`}>
-                        <ShieldAlert className="h-24 w-24 rotate-12" />
-                    </div>
-                    <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-6">
-                        <div className={`h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 ${kycStatus === 'REJECTED' ? 'bg-red-500/20' : 'bg-amber-500/20'
-                            }`}>
-                            <ShieldAlert className={`h-6 w-6 ${kycStatus === 'REJECTED' ? 'text-red-500' : 'text-amber-500'
-                                }`} />
+                <div className={cn(
+                    "relative overflow-hidden p-8 sm:p-12 rounded-[48px] border-2 group transition-all duration-700",
+                    kycStatus === 'REJECTED' ? 'border-red-500/20 bg-red-500/5' : 'border-amber-500/20 bg-amber-500/5'
+                )}>
+                    {/* Background Atmosphere */}
+                    <div className={cn(
+                        "absolute -top-20 -right-20 h-64 w-64 blur-[100px] opacity-20 transition-all duration-1000 group-hover:scale-110",
+                        kycStatus === 'REJECTED' ? 'bg-red-500' : 'bg-amber-500'
+                    )} />
+
+                    <div className="relative z-10 flex flex-col xl:flex-row xl:items-center gap-10">
+                        <div className={cn(
+                            "h-20 w-20 rounded-[32px] flex items-center justify-center shrink-0 border-2 transition-transform duration-700 group-hover:rotate-6 shadow-2xl",
+                            kycStatus === 'REJECTED' ? 'bg-red-500/20 border-red-500/30' : 'bg-amber-500/20 border-amber-500/30'
+                        )}>
+                            <ShieldAlert className={cn("h-10 w-10", kycStatus === 'REJECTED' ? 'text-red-500' : 'text-amber-500')} />
                         </div>
-                        <div className="flex-1">
-                            <h3 className={`text-lg font-bold mb-1 ${kycStatus === 'REJECTED' ? 'text-red-500' : 'text-amber-500'
-                                }`}>
+                        <div className="flex-1 space-y-3">
+                            <h3 className={cn(
+                                "text-3xl font-black tracking-tight uppercase leading-none",
+                                kycStatus === 'REJECTED' ? 'text-red-500' : 'text-amber-500'
+                            )}>
                                 {kycStatus === 'PENDING' ? 'Verification Under Review' :
                                     kycStatus === 'REJECTED' ? 'Verification Rejected' :
-                                        'Action Required: ID Verification'}
+                                        'Verification Required'}
                             </h3>
-                            <p className="text-sm text-foreground/70 max-w-2xl font-medium">
-                                {kycStatus === 'PENDING' ? 'Your documents have been submitted and are currently being reviewed by our team. This usually takes 24-48 hours.' :
-                                    kycStatus === 'REJECTED' ? 'Your verification was rejected. Please review the email sent to you for the reason and resubmit your documents.' :
-                                        'To ensure maximum security and reliability, please complete your Identity Verification. It only takes 2 minutes and a valid ID card.'}
+                            <p className="text-lg text-foreground/60 font-medium leading-relaxed max-w-4xl">
+                                {kycStatus === 'PENDING' ? 'Your identity documents have been submitted and are under review. This usually takes 24-48 hours.' :
+                                    kycStatus === 'REJECTED' ? 'Your verification was not successful. Please review the requirements and submit again.' :
+                                        'To start trading and enable all features, please complete your account verification.'}
                             </p>
                         </div>
                         <Link
                             href="/dashboard/settings?tab=verification"
-                            className={`px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest hover:scale-105 transition-all text-center ${kycStatus === 'REJECTED' ? 'bg-red-500 text-white' :
-                                kycStatus === 'PENDING' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20 cursor-default pointer-events-none' :
-                                    'bg-amber-500 text-black'
-                                }`}
+                            className={cn(
+                                "h-18 px-12 rounded-[24px] font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center transition-all active:scale-95 group/btn",
+                                kycStatus === 'REJECTED' ? 'bg-red-500 text-white shadow-2xl shadow-red-500/30' :
+                                    kycStatus === 'PENDING' ? 'bg-amber-500/10 text-amber-500 border-2 border-amber-500/20 cursor-default pointer-events-none' :
+                                        'bg-amber-500 text-black shadow-2xl shadow-amber-500/30'
+                            )}
                         >
-                            {kycStatus === 'PENDING' ? 'In Review' :
-                                kycStatus === 'REJECTED' ? 'Resubmit Now' :
-                                    'Verify Now'}
+                            {kycStatus === 'PENDING' ? 'Under Review' :
+                                kycStatus === 'REJECTED' ? 'Restart Process' :
+                                    'Start Verification'}
+                            {kycStatus !== 'PENDING' && <ChevronRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />}
                         </Link>
                     </div>
                 </div>
             )}
 
             {/* Quick Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
-                <div className="p-8 rounded-[32px] border border-border bg-card-bg/50 backdrop-blur-md shadow-sm dark:shadow-none">
-                    <div className="flex justify-between items-start mb-6">
-                        <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center">
-                            <RefreshCcw className="h-6 w-6 text-primary" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12">
+                <div className="glass-card group p-10 rounded-[48px] border border-white/5 space-y-10 relative overflow-hidden transition-all duration-500 hover:border-white/10">
+                    <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                    <div className="flex justify-between items-start">
+                        <div className="h-16 w-16 rounded-[24px] bg-primary/10 border border-primary/20 flex items-center justify-center transition-transform duration-700 group-hover:rotate-12 group-hover:scale-110">
+                            <RefreshCcw className="h-8 w-8 text-primary" />
                         </div>
-                        <span className="text-[10px] font-black text-foreground/40 uppercase tracking-widest">{isAdmin ? "Total Transactions" : "Active Orders"}</span>
+                        <span className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.3em]">
+                            {isAdmin ? "Total Platform Trades" : "Order History"}
+                        </span>
                     </div>
-                    <p className="text-4xl font-black mb-1">{isAdmin ? totalPlatformOrders : (orders?.length || 0)}</p>
-                    <p className="text-sm text-foreground/60 font-medium">{isAdmin ? "Platform wide" : "In the last 30 days"}</p>
+                    <div className="space-y-1">
+                        <p className="text-6xl font-black tracking-tighter">{isAdmin ? totalPlatformOrders : (orders?.length || 0)}</p>
+                        <p className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em]">
+                            {isAdmin ? "Trades Successfully Completed" : "Total Orders Processed"}
+                        </p>
+                    </div>
                 </div>
 
-                <div className="p-8 rounded-[32px] border border-border bg-card-bg/50 backdrop-blur-md shadow-sm dark:shadow-none">
-                    <div className="flex justify-between items-start mb-6">
-                        <div className={`h-12 w-12 rounded-2xl flex items-center justify-center ${isAdmin ? "bg-emerald-500/10" : (kycStatus === 'APPROVED' ? 'bg-emerald-500/10' :
-                            kycStatus === 'PENDING' ? 'bg-amber-500/10' :
-                                kycStatus === 'REJECTED' ? 'bg-red-500/10' :
-                                    'bg-primary/10')
-                            }`}>
-                            {isAdmin ? <ShieldCheck className="h-6 w-6 text-emerald-500" /> : (kycStatus === 'APPROVED' ? <CheckCircle2 className="h-6 w-6 text-emerald-500" /> :
-                                kycStatus === 'PENDING' ? <ShieldAlert className="h-6 w-6 text-amber-500" /> :
-                                    kycStatus === 'REJECTED' ? <AlertCircle className="h-6 w-6 text-red-500" /> :
-                                        <ShieldCheck className="h-6 w-6 text-primary" />
+                <div className="glass-card group p-10 rounded-[48px] border border-white/5 space-y-10 relative overflow-hidden transition-all duration-500 hover:border-white/10">
+                    <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                    <div className="flex justify-between items-start">
+                        <div className={cn(
+                            "h-16 w-16 rounded-[24px] flex items-center justify-center border transition-transform duration-700 group-hover:rotate-12 group-hover:scale-110 shadow-2xl",
+                            isAdmin ? "bg-emerald-500/10 border-emerald-500/20" :
+                                (kycStatus === 'APPROVED' ? 'bg-emerald-500/10 border-emerald-500/20' :
+                                    kycStatus === 'PENDING' ? 'bg-amber-500/10 border-amber-500/20' :
+                                        kycStatus === 'REJECTED' ? 'bg-red-500/10 border-red-500/20' :
+                                            'bg-primary/10 border-primary/20')
+                        )}>
+                            {isAdmin ? <ShieldCheck className="h-8 w-8 text-emerald-500" /> : (kycStatus === 'APPROVED' ? <CheckCircle2 className="h-8 w-8 text-emerald-500" /> :
+                                kycStatus === 'PENDING' ? <Activity className="h-8 w-8 text-amber-500" /> :
+                                    kycStatus === 'REJECTED' ? <AlertCircle className="h-8 w-8 text-red-500" /> :
+                                        <Sparkles className="h-8 w-8 text-primary" />
                             )}
                         </div>
-                        <span className="text-[10px] font-black text-foreground/40 uppercase tracking-widest">{isAdmin ? "Admin Role" : "Verified Status"}</span>
+                        <span className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.3em]">
+                            {isAdmin ? "Access Level" : "Account Status"}
+                        </span>
                     </div>
-                    <p className={`text-2xl font-black mb-1 uppercase tracking-tight ${isAdmin ? "text-emerald-500" : (kycStatus === 'APPROVED' ? 'text-emerald-500' :
-                        kycStatus === 'PENDING' ? 'text-amber-500' :
-                            kycStatus === 'REJECTED' ? 'text-red-500' :
-                                'text-foreground')
-                        }`}>
-                        {isAdmin ? "Authorized" : (kycStatus === 'APPROVED' ? 'Verified' : kycStatus === 'UNSUBMITTED' ? 'Not Verified' : kycStatus)}
-                    </p>
-                    <p className="text-sm text-foreground/60 font-medium">
-                        {isAdmin ? "Full Access Granted" : (kycStatus === 'APPROVED' ? 'Identity Secured' :
-                            kycStatus === 'PENDING' ? 'Under Review' :
-                                kycStatus === 'REJECTED' ? 'Action Required' :
-                                    'Verify to unlock')}
-                    </p>
+                    <div className="space-y-1">
+                        <p className={cn(
+                            "text-4xl font-black tracking-tight uppercase",
+                            isAdmin ? "text-emerald-500" : (kycStatus === 'APPROVED' ? 'text-emerald-500' :
+                                kycStatus === 'PENDING' ? 'text-amber-500' :
+                                    kycStatus === 'REJECTED' ? 'text-red-500' : 'text-foreground')
+                        )}>
+                            {isAdmin ? "Administrator" : (kycStatus === 'APPROVED' ? 'Verified Account' : kycStatus === 'UNSUBMITTED' ? 'Standard Account' : kycStatus)}
+                        </p>
+                        <p className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em]">
+                            {isAdmin ? "Full Platform Controls" : "Current Verification Tier"}
+                        </p>
+                    </div>
                 </div>
 
-                <div className="p-8 rounded-[32px] border border-border bg-card-bg/50 backdrop-blur-md shadow-sm dark:shadow-none">
-                    <div className="flex justify-between items-start mb-6">
-                        <div className="h-12 w-12 rounded-2xl bg-secondary/10 flex items-center justify-center">
-                            <Globe className="h-6 w-6 text-secondary" />
+                <div className="glass-card group p-10 rounded-[48px] border border-white/5 space-y-10 relative overflow-hidden transition-all duration-500 hover:border-white/10">
+                    <div className="absolute inset-0 bg-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                    <div className="flex justify-between items-start">
+                        <div className="h-16 w-16 rounded-[24px] bg-secondary/10 border border-secondary/20 flex items-center justify-center transition-transform duration-700 group-hover:rotate-12 group-hover:scale-110 shadow-2xl shadow-secondary/10">
+                            <Globe className="h-8 w-8 text-secondary" />
                         </div>
-                        <span className="text-[10px] font-black text-foreground/40 uppercase tracking-widest">Global Rates</span>
+                        <span className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.3em]">Market Rates</span>
                     </div>
-                    <p className="text-2xl font-black mb-1">Live Feed</p>
-                    <Link href="/#market" className="text-sm text-secondary hover:underline font-bold flex items-center gap-1">
-                        View Market <ExternalLink className="h-3 w-3" />
-                    </Link>
+                    <div className="space-y-4">
+                        <p className="text-4xl font-black tracking-tight uppercase">Active Grid</p>
+                        <Link href="/#market" className="group/link inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-secondary hover:text-secondary/80 transition-colors">
+                            View Price Indexes <ExternalLink className="h-3 w-3 group-hover/link:translate-x-1 group-hover/link:-translate-y-1 transition-transform" />
+                        </Link>
+                    </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-14">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 sm:gap-20">
                 {/* Tradeable Assets - Dynamic */}
                 <div className="lg:col-span-8">
                     <TradeableAssets initialData={cryptos} />
                 </div>
 
                 {/* Support / Management Sidebar */}
-                <div className="lg:col-span-4 space-y-6">
+                <div className="lg:col-span-4 space-y-12">
                     {!isAdmin && (
-                        <div className="p-8 rounded-[40px] border border-border bg-card-bg/50 backdrop-blur-md shadow-sm dark:shadow-none">
-                            <div className="flex items-center justify-between mb-6">
-                                <h3 className="text-lg font-black uppercase tracking-widest">Recent Support</h3>
-                                <Link href="/dashboard/support" className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline">View All</Link>
+                        <div className="glass-card p-10 rounded-[48px] border border-white/5 space-y-8">
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-sm font-black uppercase tracking-[0.3em]">Recent Support</h3>
+                                <Link href="/dashboard/support" className="text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary/70 transition-colors">
+                                    View All
+                                </Link>
                             </div>
 
                             {recentTickets && recentTickets.length > 0 ? (
@@ -257,65 +265,65 @@ export default async function DashboardPage() {
                                         <Link
                                             key={ticket.id}
                                             href={`/dashboard/support/${ticket.ticket_id}`}
-                                            className="block p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-primary/20 transition-all group"
+                                            className="block p-5 rounded-[32px] bg-white/5 border border-white/5 hover:border-primary/20 hover:bg-white/10 transition-all group"
                                         >
-                                            <div className="flex items-center justify-between mb-2">
-                                                <span className="text-[10px] font-mono font-bold text-foreground/40">#{ticket.ticket_id}</span>
-                                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${ticket.status === 'OPEN' ? 'bg-primary/10 text-primary' :
-                                                    ticket.status === 'IN_PROGRESS' ? 'bg-amber-500/10 text-amber-500' :
-                                                        'bg-emerald-500/10 text-emerald-500'
-                                                    }`}>
+                                            <div className="flex items-center justify-between mb-3">
+                                                <span className="text-[10px] font-black text-foreground/30 tracking-[0.2em]">#{ticket.ticket_id}</span>
+                                                <div className={cn(
+                                                    "px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border",
+                                                    ticket.status === 'OPEN' ? 'bg-primary/10 text-primary border-primary/20' :
+                                                        ticket.status === 'IN_PROGRESS' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
+                                                            'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+                                                )}>
                                                     {ticket.status}
-                                                </span>
+                                                </div>
                                             </div>
-                                            <p className="text-sm font-bold truncate group-hover:text-primary transition-colors">
+                                            <p className="text-sm font-black truncate group-hover:text-primary transition-colors uppercase tracking-tight">
                                                 {ticket.subject}
                                             </p>
                                         </Link>
                                     ))}
                                 </div>
                             ) : (
-                                <div className="py-8 text-center border border-dashed border-white/10 rounded-3xl">
-                                    <p className="text-xs text-foreground/40 font-bold uppercase tracking-widest">No active tickets</p>
+                                <div className="py-12 text-center border-2 border-dashed border-white/5 rounded-[40px] space-y-4">
+                                    <MessageSquare className="h-10 w-10 text-foreground/10 mx-auto" />
+                                    <p className="text-[10px] text-foreground/20 font-black uppercase tracking-[0.3em]">No tickets found</p>
                                 </div>
                             )}
                         </div>
                     )}
 
-                    <div className="p-8 rounded-[40px] border border-border bg-card-bg/50 backdrop-blur-md shadow-sm dark:shadow-none">
-                        <h3 className="text-lg font-black mb-6 uppercase tracking-widest">{isAdmin ? "Admin Controls" : "Quick Links"}</h3>
-                        <div className="space-y-6">
+                    <div className="glass-card p-10 rounded-[48px] border border-white/5 space-y-10">
+                        <h3 className="text-sm font-black uppercase tracking-[0.3em]">{isAdmin ? "Admin Controls" : "Quick Links"}</h3>
+                        <div className="space-y-4">
                             {!isAdmin ? (
-                                <div className="p-6 rounded-3xl bg-card-bg border border-border shadow-sm dark:shadow-none">
-                                    <h4 className="text-xs font-black uppercase tracking-widest text-foreground/40 mb-3">Navigation</h4>
-                                    <ul className="space-y-3">
-                                        <li>
-                                            <Link href="/dashboard/orders" className="flex items-center justify-between text-sm font-bold hover:text-primary transition-colors">
-                                                Order History <ArrowRight className="h-3.5 w-3.5" />
-                                            </Link>
-                                        </li>
-                                        <li>
-                                            <Link href="/dashboard/settings?tab=verification" className="flex items-center justify-between text-sm font-bold hover:text-primary transition-colors">
-                                                Verification <ArrowRight className="h-3.5 w-3.5" />
-                                            </Link>
-                                        </li>
-                                        <li>
-                                            <Link href="/dashboard/support" className="flex items-center justify-between text-sm font-bold hover:text-primary transition-colors">
-                                                Support Tickets <ArrowRight className="h-3.5 w-3.5" />
-                                            </Link>
-                                        </li>
-                                    </ul>
-                                </div>
+                                [
+                                    { name: "Order History", href: "/dashboard/orders" },
+                                    { name: "My Verification", href: "/dashboard/settings?tab=verification" },
+                                    { name: "Support Center", href: "/dashboard/support" }
+                                ].map((link) => (
+                                    <Link
+                                        key={link.href}
+                                        href={link.href}
+                                        className="flex items-center justify-between p-6 rounded-[32px] bg-white/5 border border-white/5 font-black text-xs uppercase tracking-[0.2em] hover:bg-white/10 hover:border-primary/20 transition-all group"
+                                    >
+                                        {link.name} <ChevronRight className="h-4 w-4 text-foreground/20 group-hover:text-primary transition-all group-hover:translate-x-1" />
+                                    </Link>
+                                ))
                             ) : (
-                                <div className="space-y-4">
-                                    <p className="text-sm text-foreground/50 font-medium">Quickly navigate to management centers.</p>
-                                    <Link href="/admin/kyc" className="flex items-center justify-between p-5 rounded-2xl bg-card-bg border border-border shadow-sm dark:shadow-none font-bold hover:bg-card-bg/80 transition-all">
-                                        KYC Review Center <ArrowRight className="h-4 w-4 text-primary" />
+                                [
+                                    { name: "KYC Verifications", href: "/admin/kyc" },
+                                    { name: "Order Management", href: "/admin/orders" },
+                                    { name: "User Management", href: "/admin/users" }
+                                ].map((link) => (
+                                    <Link
+                                        key={link.href}
+                                        href={link.href}
+                                        className="flex items-center justify-between p-6 rounded-[32px] bg-white/5 border border-white/5 font-black text-xs uppercase tracking-[0.2em] hover:bg-white/10 hover:border-emerald-500/20 transition-all group"
+                                    >
+                                        {link.name} <ChevronRight className="h-4 w-4 text-foreground/20 group-hover:text-emerald-500 transition-all group-hover:translate-x-1" />
                                     </Link>
-                                    <Link href="/admin/orders" className="flex items-center justify-between p-5 rounded-2xl bg-card-bg border border-border shadow-sm dark:shadow-none font-bold hover:bg-card-bg/80 transition-all">
-                                        Order Management <ArrowRight className="h-4 w-4 text-primary" />
-                                    </Link>
-                                </div>
+                                ))
                             )}
                         </div>
                     </div>

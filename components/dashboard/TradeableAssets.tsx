@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { getCryptos, Cryptocurrency } from '@/actions/crypto';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-
+import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { cn } from '@/lib/utils';
+import { Zap, Sparkles, TrendingUp } from 'lucide-react';
 
 interface TradeableAssetsProps {
     initialData?: Cryptocurrency[];
@@ -13,63 +13,106 @@ interface TradeableAssetsProps {
 
 export default function TradeableAssets({ initialData = [] }: TradeableAssetsProps) {
     const [cryptos, setCryptos] = useState<Cryptocurrency[]>(initialData);
+    const [, setIsLoading] = useState(initialData.length === 0);
 
     useEffect(() => {
         if (initialData.length === 0) {
-            getCryptos(true).then(setCryptos);
+            getCryptos(true).then((data) => {
+                setCryptos(data);
+                setIsLoading(false);
+            });
         }
     }, [initialData]);
 
     return (
-        <div className="w-full">
-            <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold tracking-tight">TRADEABLE ASSETS</h2>
-                <Badge variant="outline" className="gap-2 bg-background/50">
-                    <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                    </span>
-                    Live availability
-                </Badge>
+        <div className="w-full space-y-8">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                <div className="space-y-1">
+                    <h2 className="text-2xl font-black tracking-tight flex items-center gap-3 uppercase">
+                        Active <span className="text-gradient">Assets.</span>
+                    </h2>
+                    <p className="text-xs text-foreground/40 font-black uppercase tracking-[0.2em]">Operational Liquidity Nodes</p>
+                </div>
+
+                <div className="px-4 py-2 rounded-2xl glass border border-white/5 flex items-center gap-3">
+                    <div className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </div>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500/80">Live Inventory Sync</span>
+                </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {cryptos.map((crypto) => {
-                    // Use CDN matching the package version/style
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {cryptos.map((crypto, idx) => {
                     const iconUrl = `https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/${crypto.symbol.toLowerCase()}.svg`;
+                    const inStock = crypto.stock_status === 'IN STOCK';
 
                     return (
-                        <Card key={crypto.id} className="bg-black/40 border-white/10 p-6 flex flex-col items-center justify-center hover:bg-black/60 transition-colors group">
-                            <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3 shadow-[0_0_15px_rgba(0,0,0,0.5)] group-hover:shadow-[0_0_20px_rgba(59,130,246,0.2)] transition-shadow">
-                                <Image
-                                    src={crypto.icon_url?.startsWith('http') ? crypto.icon_url : iconUrl}
-                                    alt={crypto.symbol}
-                                    width={48}
-                                    height={48}
-                                    className="rounded-full"
-                                    onError={(e) => {
-                                        // Fallback to text if image fails
-                                        e.currentTarget.style.display = 'none';
-                                        e.currentTarget.parentElement!.innerText = crypto.symbol[0];
-                                        e.currentTarget.parentElement!.className += ' bg-[#111] border border-white/5 text-blue-500 font-bold';
-                                    }}
-                                />
+                        <motion.div
+                            key={crypto.id}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: idx * 0.05 }}
+                            className="group relative"
+                        >
+                            <div className="absolute inset-0 bg-linear-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-[40px] blur-xl" />
+
+                            <div className="relative glass-card border border-white/5 p-8 rounded-[40px] transition-all duration-500 hover:border-white/10 hover:-translate-y-1 overflow-hidden">
+                                {/* Decor */}
+                                <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-700">
+                                    <TrendingUp className="h-32 w-32 rotate-12" />
+                                </div>
+
+                                <div className="relative z-10 space-y-8">
+                                    <div className="flex items-center justify-between">
+                                        <div className="h-16 w-16 rounded-[24px] bg-white/5 p-3 flex items-center justify-center border border-white/5 shadow-2xl transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
+                                            <Image
+                                                src={crypto.icon_url?.startsWith('http') ? crypto.icon_url : iconUrl}
+                                                alt={crypto.symbol}
+                                                width={64}
+                                                height={64}
+                                                className="rounded-xl"
+                                                onError={(e) => {
+                                                    e.currentTarget.style.display = 'none';
+                                                    e.currentTarget.parentElement!.innerText = crypto.symbol[0];
+                                                    e.currentTarget.parentElement!.className += ' text-primary font-black text-2xl';
+                                                }}
+                                            />
+                                        </div>
+                                        <div className={cn(
+                                            "px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border",
+                                            inStock ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" : "bg-red-500/10 text-red-500 border-red-500/20"
+                                        )}>
+                                            {inStock ? 'Ready' : 'Depleted'}
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        <h3 className="text-2xl font-black tracking-tight uppercase">{crypto.name}</h3>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-foreground/30">{crypto.symbol}</span>
+                                            <div className="h-1 w-1 rounded-full bg-white/10" />
+                                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/60 flex items-center gap-1">
+                                                Active Chain <Zap className="h-3 w-3" />
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div className="pt-4 flex items-center justify-between border-t border-white/5">
+                                        <div className="space-y-0.5">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-foreground/20">Market Status</p>
+                                            <p className={cn("text-xs font-black uppercase tracking-wider", inStock ? "text-emerald-500" : "text-red-500")}>
+                                                {crypto.stock_status}
+                                            </p>
+                                        </div>
+                                        <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                                            <Sparkles className="h-4 w-4 text-primary" />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-
-                            <span className="font-bold text-lg mb-2">{crypto.symbol}</span>
-
-                            <Badge
-                                variant="outline"
-                                className={`
-                 ${crypto.stock_status === 'IN STOCK'
-                                        ? 'text-green-500 border-green-500/20 bg-green-500/10'
-                                        : 'text-red-500 border-red-500/20 bg-red-500/10'}
-                 text-[10px] px-2 py-0.5 h-auto tracking-wider
-               `}
-                            >
-                                • {crypto.stock_status}
-                            </Badge>
-                        </Card>
+                        </motion.div>
                     );
                 })}
             </div>

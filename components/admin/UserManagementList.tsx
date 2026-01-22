@@ -3,7 +3,6 @@
 import { useState } from "react";
 import {
     ShieldCheck,
-    ShieldAlert,
     Ban,
     User as UserIcon,
     Mail,
@@ -11,7 +10,8 @@ import {
     Shield,
     Copy,
     MoreHorizontal,
-    Eye
+    Eye,
+    Activity
 } from "lucide-react";
 import Image from "next/image";
 import { toggleUserStatus } from "@/actions/admin";
@@ -27,6 +27,8 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DirectEmailModal } from "./DirectEmailModal";
+import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface User {
     id: string;
@@ -78,159 +80,190 @@ export function UserManagementList({ users }: UserManagementListProps) {
     };
 
     return (
-        <div className="space-y-6">
-            <div className="relative group max-w-md">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/20 group-focus-within:text-primary transition-colors" />
-                <input
-                    placeholder="Search users..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    aria-label="Search users by name or email"
-                    className="w-full pl-11 pr-6 py-3 rounded-2xl bg-white/5 border border-white/10 focus:border-primary focus:outline-none transition-all font-bold text-sm"
-                />
+        <div className="space-y-10">
+            {/* Search Matrix */}
+            <div className="flex flex-col sm:flex-row items-center gap-6">
+                <div className="relative group flex-1 w-full max-w-2xl">
+                    <div className="absolute inset-0 bg-primary/5 blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 rounded-[32px]" />
+                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-foreground/20 group-focus-within:text-primary transition-all duration-500" />
+                    <input
+                        placeholder="IDENTIFY NODE BY NAME OR EMAIL RECALL..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full pl-16 pr-8 h-18 rounded-[32px] glass border border-white/5 focus:border-primary/30 focus:outline-none transition-all font-black text-xs uppercase tracking-[0.2em] relative z-10"
+                    />
+                </div>
+
+                <div className="h-18 px-8 rounded-[32px] glass border border-white/5 flex items-center gap-4 text-foreground/20 shrink-0">
+                    <Activity className="h-5 w-5 text-primary" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] tabular-nums whitespace-nowrap">
+                        {filteredUsers.length} Units Resolved
+                    </span>
+                </div>
             </div>
 
-            {/* Desktop Table View */}
-            <div className="hidden md:block overflow-hidden rounded-[32px] border border-white/5 bg-card-bg/50 backdrop-blur-md">
+            {/* Desktop Table Registry */}
+            <div className="hidden md:block overflow-hidden rounded-[48px] border border-white/5 glass shadow-2xl">
                 <table className="w-full text-left border-collapse">
                     <thead>
-                        <tr className="border-b border-white/5 bg-white/5">
-                            <th className="px-8 py-6 text-[10px] font-black text-foreground/40 uppercase tracking-widest">User</th>
-                            <th className="px-8 py-6 text-[10px] font-black text-foreground/40 uppercase tracking-widest">KYC Status</th>
-                            <th className="px-8 py-6 text-[10px] font-black text-foreground/40 uppercase tracking-widest">Role</th>
-                            <th className="px-8 py-6 text-[10px] font-black text-foreground/40 uppercase tracking-widest">Joined</th>
-                            <th className="px-8 py-6 text-[10px] font-black text-foreground/40 uppercase tracking-widest text-right">Actions</th>
+                        <tr className="border-b border-white/5 bg-white/2">
+                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Master Identity</th>
+                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Registry Status</th>
+                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Authorization</th>
+                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Registry Date</th>
+                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em] text-right">Sequence</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/5 font-bold">
-                        {filteredUsers.map((user) => (
-                            <tr key={user.id} className="hover:bg-white/5 transition-colors group">
-                                <td className="px-8 py-6">
-                                    <div className="flex items-center gap-4">
-                                        <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0 transition-transform group-hover:scale-110 relative overflow-hidden">
-                                            {user.profile_image ? (
-                                                <Image
-                                                    src={user.profile_image}
-                                                    alt={user.first_name}
-                                                    fill
-                                                    className="object-cover"
-                                                    unoptimized
-                                                />
-                                            ) : (
-                                                <UserIcon className="h-5 w-5" />
-                                            )}
+                    <tbody className="divide-y divide-white/5">
+                        <AnimatePresence mode="popLayout">
+                            {filteredUsers.map((user) => (
+                                <motion.tr
+                                    key={user.id}
+                                    layout
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0, scale: 0.98 }}
+                                    className="hover:bg-white/3 transition-all duration-300 group"
+                                >
+                                    <td className="px-10 py-8">
+                                        <div className="flex items-center gap-5">
+                                            <div className="h-14 w-14 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center text-primary shrink-0 transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 relative overflow-hidden shadow-2xl">
+                                                {user.profile_image ? (
+                                                    <Image
+                                                        src={user.profile_image}
+                                                        alt={user.first_name}
+                                                        fill
+                                                        className="object-cover"
+                                                        unoptimized
+                                                    />
+                                                ) : (
+                                                    <span className="font-black text-xl">{user.first_name?.[0]}</span>
+                                                )}
+                                            </div>
+                                            <div className="min-w-0">
+                                                <p className="text-base font-black tracking-tight group-hover:text-primary transition-colors uppercase leading-none mb-1.5">{user.first_name} {user.last_name}</p>
+                                                <p className="text-[10px] text-foreground/30 flex items-center gap-2 font-black uppercase tracking-widest">
+                                                    <Mail className="h-3 w-3" /> {user.email}
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <p className="text-sm truncate">{user.first_name} {user.last_name}</p>
-                                            <p className="text-[11px] text-foreground/40 flex items-center gap-1 font-medium">
-                                                <Mail className="h-3 w-3" /> {user.email}
-                                            </p>
+                                    </td>
+                                    <td className="px-10 py-8">
+                                        <div className={cn(
+                                            "inline-flex items-center gap-2.5 px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border transition-all duration-500",
+                                            user.kyc_status === 'APPROVED' ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20 group-hover:bg-emerald-500/20" :
+                                                user.kyc_status === 'PENDING' ? "bg-amber-500/10 text-amber-500 border-amber-500/20 group-hover:bg-amber-500/20" :
+                                                    "bg-white/5 text-foreground/20 border-white/5"
+                                        )}>
+                                            {user.kyc_status === 'APPROVED' && <ShieldCheck className="h-3.5 w-3.5" />}
+                                            {user.kyc_status === 'PENDING' && <Activity className="h-3.5 w-3.5 animate-pulse" />}
+                                            {user.kyc_status === 'UNSUBMITTED' ? 'Awaiting Data' : user.kyc_status}
                                         </div>
-                                    </div>
-                                </td>
-                                <td className="px-8 py-6">
-                                    <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ${user.kyc_status === 'APPROVED' ? "bg-emerald-500/10 text-emerald-500" :
-                                        user.kyc_status === 'PENDING' ? "bg-amber-500/10 text-amber-500" :
-                                            "bg-white/5 text-foreground/30"
-                                        }`}>
-                                        {user.kyc_status === 'APPROVED' && <ShieldCheck className="h-3 w-3" />}
-                                        {user.kyc_status === 'PENDING' && <ShieldAlert className="h-3 w-3 animate-pulse" />}
-                                        {user.kyc_status}
-                                    </div>
-                                </td>
-                                <td className="px-8 py-6">
-                                    <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ${user.role === 'ADMIN' ? "bg-primary/20 text-primary border border-primary/20" : "bg-white/5 text-foreground/40"
-                                        }`}>
-                                        {user.role === 'ADMIN' && <Shield className="h-3 w-3" />}
-                                        {user.role}
-                                    </div>
-                                </td>
-                                <td className="px-8 py-6 text-sm text-foreground/40 font-medium whitespace-nowrap">
-                                    {new Date(user.created_at).toLocaleDateString()}
-                                </td>
-                                <td className="px-8 py-6 text-right">
-                                    <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button
-                                            onClick={() => {
-                                                setSelectedUser(user);
-                                                setIsBanModalOpen(true);
-                                            }}
-                                            className={`p-2.5 rounded-xl transition-all ${user.status === 'BANNED'
-                                                ? "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white"
-                                                : "bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white"
-                                                }`}
-                                            title={user.status === 'BANNED' ? "Revoke Ban" : "Ban User"}
-                                        >
-                                            <Ban className="h-4 w-4" aria-hidden="true" />
-                                        </button>
+                                    </td>
+                                    <td className="px-10 py-8">
+                                        <div className={cn(
+                                            "inline-flex items-center gap-2.5 px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border",
+                                            user.role === 'ADMIN' ? "bg-primary/20 text-primary border-primary/30" : "glass border-white/5 text-foreground/30"
+                                        )}>
+                                            {user.role === 'ADMIN' ? <Shield className="h-3.5 w-3.5" /> : <UserIcon className="h-3.5 w-3.5" />}
+                                            {user.role}
+                                        </div>
+                                    </td>
+                                    <td className="px-10 py-8 text-sm text-foreground/30 font-black tabular-nums tracking-widest whitespace-nowrap uppercase">
+                                        {new Date(user.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                                    </td>
+                                    <td className="px-10 py-8 text-right">
+                                        <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-4 group-hover:translate-x-0">
+                                            <button
+                                                onClick={() => {
+                                                    setSelectedUser(user);
+                                                    setIsBanModalOpen(true);
+                                                }}
+                                                className={cn(
+                                                    "h-12 w-12 rounded-2xl flex items-center justify-center transition-all duration-500 active:scale-95",
+                                                    user.status === 'BANNED'
+                                                        ? "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white border border-emerald-500/20"
+                                                        : "bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white border border-red-500/20"
+                                                )}
+                                                title={user.status === 'BANNED' ? "Revoke Access Ban" : "Authorize Node Ban"}
+                                            >
+                                                <Ban className="h-5 w-5" />
+                                            </button>
 
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <button
-                                                    className="p-2.5 rounded-xl bg-white/5 text-foreground/40 hover:bg-white/10 transition-all focus:outline-none"
-                                                    aria-label="User actions"
-                                                >
-                                                    <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
-                                                </button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end" className="w-[160px]">
-                                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                                <DropdownMenuItem asChild>
-                                                    <Link href={`/admin/users/${user.id}`} className="cursor-pointer">
-                                                        <Eye className="mr-2 h-4 w-4" />
-                                                        View Profile
-                                                    </Link>
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem
-                                                    onClick={() => {
-                                                        navigator.clipboard.writeText(user.id);
-                                                        toast.success("User ID copied to clipboard");
-                                                    }}
-                                                >
-                                                    <Copy className="mr-2 h-4 w-4" />
-                                                    Copy ID
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem
-                                                    onClick={() => {
-                                                        setEmailTarget({
-                                                            id: user.id,
-                                                            name: `${user.first_name} ${user.last_name}`,
-                                                            email: user.email
-                                                        });
-                                                        setIsEmailModalOpen(true);
-                                                    }}
-                                                >
-                                                    <Mail className="mr-2 h-4 w-4" />
-                                                    Email User
-                                                </DropdownMenuItem>
-                                                <DropdownMenuSeparator />
-                                                <DropdownMenuItem
-                                                    className={user.status === 'BANNED' ? "text-emerald-500" : "text-red-500"}
-                                                    onClick={() => {
-                                                        setSelectedUser(user);
-                                                        setIsBanModalOpen(true);
-                                                    }}
-                                                >
-                                                    <Ban className="mr-2 h-4 w-4" />
-                                                    {user.status === 'BANNED' ? "Activate" : "Ban User"}
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <button
+                                                        className="h-12 w-12 rounded-2xl bg-white/5 border border-white/5 text-foreground/40 hover:bg-white/10 hover:border-white/10 transition-all active:scale-95 flex items-center justify-center"
+                                                    >
+                                                        <MoreHorizontal className="h-5 w-5" />
+                                                    </button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end" className="w-[200px] p-2 rounded-3xl glass backdrop-blur-3xl border-white/10">
+                                                    <DropdownMenuLabel className="px-3 pb-2 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40">Node Control</DropdownMenuLabel>
+                                                    <DropdownMenuItem asChild className="rounded-2xl h-12 mb-1 px-3 current-shadow focus:bg-primary transition-colors cursor-pointer">
+                                                        <Link href={`/admin/users/${user.id}`} className="flex items-center w-full">
+                                                            <Eye className="mr-3 h-4 w-4" />
+                                                            <span className="font-black text-xs uppercase tracking-tight">Audit Profile</span>
+                                                        </Link>
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem
+                                                        className="rounded-2xl h-12 mb-1 px-3 focus:bg-white/10 transition-colors cursor-pointer"
+                                                        onClick={() => {
+                                                            navigator.clipboard.writeText(user.id);
+                                                            toast.success("Registry ID Captured");
+                                                        }}
+                                                    >
+                                                        <Copy className="mr-3 h-4 w-4" />
+                                                        <span className="font-black text-xs uppercase tracking-tight">Capture ID</span>
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem
+                                                        className="rounded-2xl h-12 mb-1 px-3 focus:bg-primary transition-colors cursor-pointer"
+                                                        onClick={() => {
+                                                            setEmailTarget({
+                                                                id: user.id,
+                                                                name: `${user.first_name} ${user.last_name}`,
+                                                                email: user.email
+                                                            });
+                                                            setIsEmailModalOpen(true);
+                                                        }}
+                                                    >
+                                                        <Mail className="mr-3 h-4 w-4" />
+                                                        <span className="font-black text-xs uppercase tracking-tight">Relay Email</span>
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuSeparator className="bg-white/5 my-2" />
+                                                    <DropdownMenuItem
+                                                        className={cn(
+                                                            "rounded-2xl h-12 px-3 transition-colors cursor-pointer font-black text-xs uppercase tracking-tight",
+                                                            user.status === 'BANNED' ? "text-emerald-500 focus:bg-emerald-500/20" : "text-red-500 focus:bg-red-500/20"
+                                                        )}
+                                                        onClick={() => {
+                                                            setSelectedUser(user);
+                                                            setIsBanModalOpen(true);
+                                                        }}
+                                                    >
+                                                        <Ban className="mr-3 h-4 w-4" />
+                                                        {user.status === 'BANNED' ? "Authorize Node" : "De-authorize Node"}
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </div>
+                                    </td>
+                                </motion.tr>
+                            ))}
+                        </AnimatePresence>
                     </tbody>
                 </table>
             </div>
 
-            {/* Mobile Card Layout */}
-            <div className="md:hidden space-y-4">
+            {/* Mobile Registry Grid */}
+            <div className="md:hidden space-y-6">
                 {filteredUsers.map((user) => (
-                    <div key={user.id} className="p-6 rounded-[28px] border border-white/5 bg-card-bg/50 backdrop-blur-md space-y-4">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0 relative overflow-hidden">
+                    <div key={user.id} className="p-8 rounded-[40px] border border-white/5 glass space-y-8 relative overflow-hidden group">
+                        <div className="absolute inset-0 bg-primary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                        <div className="relative z-10 flex items-center justify-between">
+                            <div className="flex items-center gap-5">
+                                <div className="h-16 w-16 rounded-[24px] bg-white/5 border border-white/5 flex items-center justify-center text-primary shrink-0 relative overflow-hidden shadow-2xl">
                                     {user.profile_image ? (
                                         <Image
                                             src={user.profile_image}
@@ -240,68 +273,77 @@ export function UserManagementList({ users }: UserManagementListProps) {
                                             unoptimized
                                         />
                                     ) : (
-                                        <UserIcon className="h-5 w-5" />
+                                        <span className="font-black text-2xl">{user.first_name?.[0]}</span>
                                     )}
                                 </div>
-                                <div className="min-w-0">
-                                    <p className="text-sm font-bold truncate">{user.first_name} {user.last_name}</p>
-                                    <p className="text-[10px] text-foreground/40 font-medium truncate">{user.email}</p>
+                                <div className="min-w-0 space-y-1">
+                                    <p className="text-lg font-black tracking-tight uppercase leading-none">{user.first_name} {user.last_name}</p>
+                                    <p className="text-[10px] text-foreground/30 font-black uppercase tracking-[0.2em] truncate">{user.email}</p>
                                 </div>
                             </div>
+
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <button className="p-2.5 rounded-xl bg-white/5 text-foreground/40 hover:bg-white/10 transition-all focus:outline-none">
-                                        <MoreHorizontal className="h-4 w-4" />
+                                    <button className="h-12 w-12 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center active:scale-95 transition-all">
+                                        <MoreHorizontal className="h-5 w-5 opacity-40" />
                                     </button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="w-[160px]">
+                                <DropdownMenuContent align="end" className="w-[180px] p-2 glass backdrop-blur-3xl border-white/10 rounded-2xl">
                                     <DropdownMenuItem asChild>
-                                        <Link href={`/admin/users/${user.id}`}>
-                                            <Eye className="mr-2 h-4 w-4" /> View Profile
+                                        <Link href={`/admin/users/${user.id}`} className="cursor-pointer">
+                                            <Eye className="mr-3 h-4 w-4" />
+                                            <span className="font-black text-[10px] uppercase tracking-widest">Audit Profile</span>
                                         </Link>
                                     </DropdownMenuItem>
                                     <DropdownMenuItem onClick={() => {
                                         navigator.clipboard.writeText(user.id);
-                                        toast.success("User ID copied");
+                                        toast.success("ID Captured");
                                     }}>
-                                        <Copy className="mr-2 h-4 w-4" /> Copy ID
+                                        <Copy className="mr-3 h-4 w-4" />
+                                        <span className="font-black text-[10px] uppercase tracking-widest">Capture ID</span>
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4 py-4 border-y border-white/5">
-                            <div>
-                                <p className="text-[10px] text-foreground/40 font-black uppercase tracking-widest mb-1.5">KYC Status</p>
-                                <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest ${user.kyc_status === 'APPROVED' ? "bg-emerald-500/10 text-emerald-500" :
-                                    user.kyc_status === 'PENDING' ? "bg-amber-500/10 text-amber-500" :
-                                        "bg-white/5 text-foreground/30"
-                                    }`}>
+                        <div className="relative z-10 grid grid-cols-2 gap-6 p-6 rounded-[32px] bg-white/3 border border-white/5">
+                            <div className="space-y-2">
+                                <p className="text-[9px] text-foreground/30 font-black uppercase tracking-[0.2em]">Compliance</p>
+                                <div className={cn(
+                                    "inline-flex items-center px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] border shadow-2xl",
+                                    user.kyc_status === 'APPROVED' ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/10" :
+                                        user.kyc_status === 'PENDING' ? "bg-amber-500/10 text-amber-500 border-amber-500/10" :
+                                            "bg-white/5 text-foreground/20 border-white/5"
+                                )}>
                                     {user.kyc_status}
                                 </div>
                             </div>
-                            <div>
-                                <p className="text-[10px] text-foreground/40 font-black uppercase tracking-widest mb-1.5">Role</p>
-                                <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest ${user.role === 'ADMIN' ? "bg-primary/20 text-primary border border-primary/20" : "bg-white/5 text-foreground/40"
-                                    }`}>
+                            <div className="space-y-2">
+                                <p className="text-[9px] text-foreground/30 font-black uppercase tracking-[0.2em]">Authorization</p>
+                                <div className={cn(
+                                    "inline-flex items-center px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] border shadow-2xl",
+                                    user.role === 'ADMIN' ? "bg-primary/20 text-primary border-primary/20" : "bg-white/5 text-foreground/30"
+                                )}>
                                     {user.role}
                                 </div>
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-between">
-                            <p className="text-[10px] text-foreground/40 font-medium">Joined {new Date(user.created_at).toLocaleDateString()}</p>
+                        <div className="relative z-10 flex items-center justify-between">
+                            <p className="text-[10px] text-foreground/20 font-black uppercase tracking-[0.2em]">Joined {new Date(user.created_at).toLocaleDateString()}</p>
                             <button
                                 onClick={() => {
                                     setSelectedUser(user);
                                     setIsBanModalOpen(true);
                                 }}
-                                className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${user.status === 'BANNED'
-                                    ? "bg-emerald-500/10 text-emerald-500"
-                                    : "bg-red-500/10 text-red-500"
-                                    }`}
+                                className={cn(
+                                    "h-12 px-6 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border transition-all duration-300",
+                                    user.status === 'BANNED'
+                                        ? "bg-emerald-500 text-white border-emerald-500/30"
+                                        : "bg-red-500/10 text-red-500 border-red-500/20"
+                                )}
                             >
-                                {user.status === 'BANNED' ? "Activate" : "Ban User"}
+                                {user.status === 'BANNED' ? "Authorize" : "Ban Node"}
                             </button>
                         </div>
                     </div>
@@ -313,13 +355,13 @@ export function UserManagementList({ users }: UserManagementListProps) {
                 onClose={() => setIsBanModalOpen(false)}
                 onConfirm={handleToggleStatus}
                 isLoading={isLoading}
-                title={selectedUser?.status === 'BANNED' ? "Revoke Access Ban?" : "Confirm Account Ban"}
+                title={selectedUser?.status === 'BANNED' ? "Authorize Registry Node?" : "Terminate Node Access?"}
                 description={
                     selectedUser?.status === 'BANNED'
-                        ? `Are you sure you want to reactivate ${selectedUser?.email}'s account? They will be able to log in again.`
-                        : `Are you sure you want to ban ${selectedUser?.email}? They will be immediately logged out and unable to access their account.`
+                        ? `Are you sure you want to re-authorize ${selectedUser?.email} for institutional infrastructure access?`
+                        : `Are you sure you want to terminate ${selectedUser?.email}'s access? All active bridge cycles will be suspended immediately.`
                 }
-                confirmText={selectedUser?.status === 'BANNED' ? "Reactivate User" : "Confirm Ban"}
+                confirmText={selectedUser?.status === 'BANNED' ? "Authorize Node" : "Terminate Node"}
                 variant={selectedUser?.status === 'BANNED' ? "success" : "destructive"}
             />
 

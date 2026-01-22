@@ -66,7 +66,7 @@ export function GeneralSettings({ user }: GeneralSettingsProps) {
         }
     };
     return (
-        <div className="max-w-2xl space-y-8">
+        <div className="w-full lg:max-w-2xl space-y-8">
             <AnimatePresence>
                 {isUploading && (
                     <Loading message="Processing biometric data upload..." />
@@ -78,9 +78,9 @@ export function GeneralSettings({ user }: GeneralSettingsProps) {
                     Profile Information
                 </h3>
 
-                <div className="flex flex-col sm:flex-row items-center gap-8 mb-8">
-                    <div className="relative group">
-                        <div className="h-24 w-24 rounded-3xl bg-primary/10 flex items-center justify-center text-primary border-2 border-dashed border-primary/20 relative overflow-hidden group-hover:border-primary/40 transition-colors">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-8 mb-8">
+                    <div className="relative group shrink-0">
+                        <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-2xl sm:rounded-3xl bg-primary/10 flex items-center justify-center text-primary border-2 border-dashed border-primary/20 relative overflow-hidden group-hover:border-primary/40 transition-colors">
                             {user?.profile_image ? (
                                 <Image
                                     src={user.profile_image}
@@ -90,7 +90,7 @@ export function GeneralSettings({ user }: GeneralSettingsProps) {
                                     unoptimized
                                 />
                             ) : (
-                                <UserIcon className="h-10 w-10 text-primary/40" />
+                                <UserIcon className="h-8 w-8 sm:h-10 sm:w-10 text-primary/40" />
                             )}
 
                         </div>
@@ -104,14 +104,14 @@ export function GeneralSettings({ user }: GeneralSettingsProps) {
                         <button
                             onClick={handleUploadClick}
                             disabled={isUploading}
-                            className={`absolute -bottom-2 -right-2 p-2.5 rounded-xl bg-primary text-white shadow-lg shadow-primary/20 hover:scale-110 active:scale-95 transition-all ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            className={`absolute -bottom-1 -right-1 sm:-bottom-2 sm:-right-2 p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-primary text-white shadow-lg shadow-primary/20 hover:scale-110 active:scale-95 transition-all ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
-                            <Camera className="h-4 w-4" />
+                            <Camera className="h-3.5 sm:h-4 w-4" />
                         </button>
                     </div>
-                    <div className="flex-1 space-y-1 text-center sm:text-left">
-                        <p className="font-bold text-lg">Your Profile Photo</p>
-                        <p className="text-sm text-foreground/40 font-medium">JPG, GIF or PNG. Max size of 2MB</p>
+                    <div className="flex-1 space-y-1 text-center sm:text-left min-w-0">
+                        <p className="font-bold text-base sm:text-lg truncate sm:whitespace-normal">Your Profile Photo</p>
+                        <p className="text-[11px] sm:text-sm text-foreground/40 font-medium">JPG, GIF or PNG. Max size of 2MB</p>
                     </div>
                 </div>
 
@@ -137,7 +137,7 @@ export function GeneralSettings({ user }: GeneralSettingsProps) {
                 </div>
             </div>
 
-            <button disabled className="px-8 py-4 rounded-2xl bg-white/5 border border-white/10 text-foreground/20 font-bold cursor-not-allowed">
+            <button disabled className="w-full sm:w-auto px-8 py-4 rounded-xl sm:rounded-2xl bg-white/5 border border-white/10 text-foreground/20 font-bold cursor-not-allowed text-sm">
                 Save Changes (Disabled)
             </button>
         </div>

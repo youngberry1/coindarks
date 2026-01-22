@@ -97,18 +97,18 @@ export function SecuritySettings() {
     };
 
     return (
-        <div className="max-w-2xl space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="w-full lg:max-w-2xl space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <AnimatePresence>
                 {isLoading && (
                     <Loading message="Updating primary security keys..." />
                 )}
             </AnimatePresence>
-            <div className="p-8 rounded-[32px] border border-border bg-card-bg/50 backdrop-blur-md shadow-sm dark:shadow-none transition-all">
-                <h3 className="text-lg font-bold mb-2 flex items-center gap-2">
-                    <Lock className="h-5 w-5 text-primary" />
+            <div className="p-4 sm:p-6 md:p-8 rounded-[24px] sm:rounded-[32px] border border-border bg-card-bg/50 backdrop-blur-md shadow-sm dark:shadow-none transition-all">
+                <h3 className="text-sm sm:text-base md:text-lg font-bold mb-2 flex items-center gap-2">
+                    <Lock className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 text-primary" />
                     Change Password
                 </h3>
-                <p className="text-sm text-foreground/40 font-medium mb-8">Ensure your account is using a long, random password to stay secure.</p>
+                <p className="text-[10px] sm:text-[12px] md:text-sm text-foreground/40 font-medium mb-6 sm:mb-8">Ensure your account is using a long, random password to stay secure.</p>
 
                 <div className="space-y-6">
                     {/* Status Message Area */}
@@ -130,7 +130,7 @@ export function SecuritySettings() {
                                 placeholder="••••••••"
                                 value={currentPassword}
                                 onChange={(e) => setCurrentPassword(e.target.value)}
-                                className={`w-full rounded-2xl border bg-card-bg/20 pl-5 pr-12 py-4 font-bold placeholder:text-foreground/20 focus:outline-none transition-all ${fieldErrors.current
+                                className={`w-full rounded-xl sm:rounded-2xl border bg-card-bg/20 pl-5 pr-12 py-3.5 sm:py-4 font-bold text-sm sm:text-base placeholder:text-foreground/20 focus:outline-none transition-all ${fieldErrors.current
                                     ? "border-red-500/50 focus:border-red-500 bg-red-500/5 text-red-500"
                                     : "border-border focus:border-primary"
                                     }`}
@@ -140,7 +140,7 @@ export function SecuritySettings() {
                                 onClick={() => toggleVisibility(setShowCurrent)}
                                 className={`absolute right-4 top-1/2 -translate-y-1/2 transition-colors ${fieldErrors.current ? "text-red-400 hover:text-red-500" : "text-foreground/40 hover:text-foreground"}`}
                             >
-                                {showCurrent ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                                {showCurrent ? <EyeOff className="h-4 w-4 sm:h-5 sm:w-5" /> : <Eye className="h-4 w-4 sm:h-5 sm:w-5" />}
                             </button>
                         </div>
                         {fieldErrors.current && (
@@ -159,7 +159,7 @@ export function SecuritySettings() {
                                 placeholder="••••••••"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className={`w-full rounded-2xl border bg-card-bg/20 pl-5 pr-12 py-4 font-bold placeholder:text-foreground/20 focus:outline-none transition-all ${fieldErrors.new
+                                className={`w-full rounded-xl sm:rounded-2xl border bg-card-bg/20 pl-5 pr-12 py-3.5 sm:py-4 font-bold text-sm sm:text-base placeholder:text-foreground/20 focus:outline-none transition-all ${fieldErrors.new
                                     ? "border-red-500/50 focus:border-red-500 bg-red-500/5 text-red-500"
                                     : "border-border focus:border-primary"
                                     }`}
@@ -169,7 +169,7 @@ export function SecuritySettings() {
                                 onClick={() => toggleVisibility(setShowNew)}
                                 className={`absolute right-4 top-1/2 -translate-y-1/2 transition-colors ${fieldErrors.new ? "text-red-400 hover:text-red-500" : "text-foreground/40 hover:text-foreground"}`}
                             >
-                                {showNew ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                                {showNew ? <EyeOff className="h-4 w-4 sm:h-5 sm:w-5" /> : <Eye className="h-4 w-4 sm:h-5 sm:w-5" />}
                             </button>
                         </div>
                         {fieldErrors.new && (
@@ -188,7 +188,7 @@ export function SecuritySettings() {
                                 placeholder="••••••••"
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
-                                className={`w-full rounded-2xl border bg-card-bg/20 pl-5 pr-12 py-4 font-bold placeholder:text-foreground/20 focus:outline-none transition-all ${fieldErrors.confirm
+                                className={`w-full rounded-xl sm:rounded-2xl border bg-card-bg/20 pl-5 pr-12 py-3.5 sm:py-4 font-bold text-sm sm:text-base placeholder:text-foreground/20 focus:outline-none transition-all ${fieldErrors.confirm
                                     ? "border-red-500/50 focus:border-red-500 bg-red-500/5 text-red-500"
                                     : "border-border focus:border-primary"
                                     }`}
@@ -198,7 +198,7 @@ export function SecuritySettings() {
                                 onClick={() => toggleVisibility(setShowConfirm)}
                                 className={`absolute right-4 top-1/2 -translate-y-1/2 transition-colors ${fieldErrors.confirm ? "text-red-400 hover:text-red-500" : "text-foreground/40 hover:text-foreground"}`}
                             >
-                                {showConfirm ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                                {showConfirm ? <EyeOff className="h-4 w-4 sm:h-5 sm:w-5" /> : <Eye className="h-4 w-4 sm:h-5 sm:w-5" />}
                             </button>
                         </div>
                         {fieldErrors.confirm && (

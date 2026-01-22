@@ -1,80 +1,56 @@
 "use client";
 
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { Quote, Star } from "lucide-react";
+import { Quote, Star, MapPin } from "lucide-react";
 import { useSyncExternalStore } from "react";
 
 const testimonials = [
     {
         name: "Chidi Eze",
-        location: "Lagos, Nigeria",
+        location: "Lagos, NG",
         text: "CoinDarks has completely changed how I handle my crypto. Instant payouts to my bank every single time!",
         rating: 5,
     },
     {
         name: "Kofi Mensah",
-        location: "Accra, Ghana",
+        location: "Accra, GH",
         text: "The best rates for Cedis I've found so far in the market. Fast, secure, and very reliable for daily use.",
         rating: 5,
     },
     {
         name: "Amina Yusuf",
-        location: "Abuja, Nigeria",
+        location: "Abuja, NG",
         text: "Support is top-notch. They helped me through my first exchange in minutes. Amazing platform!",
         rating: 5,
     },
     {
         name: "Kwame Owusu",
-        location: "Kumasi, Ghana",
+        location: "Kumasi, GH",
         text: "I use it daily for my business transactions. The Mobile Money integration is absolute perfection.",
         rating: 5,
     },
     {
         name: "Blessing Okoro",
-        location: "Port Harcourt, Nigeria",
+        location: "Port Harcourt, NG",
         text: "Safety first, and CoinDarks delivers. My go-to platform for all my USDT to Naira exchanges.",
         rating: 5,
     },
     {
         name: "Abena Boateng",
-        location: "Tema, Ghana",
+        location: "Tema, GH",
         text: "Clean interface, easy to use. Highly recommended for any Ghanaian looking for a trustworthy bridge.",
         rating: 5,
     },
     {
         name: "Tunde Balogun",
-        location: "Ibadan, Nigeria",
+        location: "Ibadan, NG",
         text: "Zero stress. The escrow system gives me total peace of mind. Best exchange experience in Nigeria.",
         rating: 5,
     },
     {
         name: "Ekow Annan",
-        location: "Cape Coast, Ghana",
+        location: "Cape Coast, GH",
         text: "The speed of light! I've tried many platforms, but this is the best crypto bridge in West Africa.",
-        rating: 5,
-    },
-    {
-        name: "Zainab Bello",
-        location: "Kano, Nigeria",
-        text: "Transacting from the north is simple with their network. Very reliable and always available.",
-        rating: 5,
-    },
-    {
-        name: "Yaw Appiah",
-        location: "Sunyani, Ghana",
-        text: "Trustworthy and lightning fast. I've never had a delay with my withdrawals. Simply the best.",
-        rating: 5,
-    },
-    {
-        name: "Oluwaseun Ajayi",
-        location: "Lekki, Nigeria",
-        text: "Premium experience. The UI is better than most global apps. It truly feels like world-class software.",
-        rating: 5,
-    },
-    {
-        name: "Ama Serwaa",
-        location: "Takoradi, Ghana",
-        text: "Fastest Momo withdrawals I've ever experienced. Great job to the team behind CoinDarks!",
         rating: 5,
     },
 ];
@@ -117,44 +93,47 @@ function TestimonialCard({ testimonial }: { testimonial: typeof testimonials[0] 
             }}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
-            className="group relative h-[280px] w-[350px] shrink-0 rounded-[32px] border border-border/40 bg-card/40 backdrop-blur-xl p-8 shadow-sm transition-all hover:bg-card/60 hover:border-primary/30 hover:shadow-xl"
+            className="group relative h-[300px] w-[400px] shrink-0 rounded-[40px] glass-card border border-white/5 p-10 shadow-sm transition-all duration-500 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5 transform-gpu"
         >
             <div
                 style={{
-                    transform: "translateZ(50px)",
+                    transform: "translateZ(60px)",
                     transformStyle: "preserve-3d",
                 }}
                 className="relative z-10 h-full flex flex-col justify-between"
             >
-                <div>
-                    <div className="flex items-center justify-between mb-4">
-                        <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                            <Quote className="h-5 w-5 text-primary" />
+                <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                        <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                            <Quote className="h-6 w-6 text-primary" />
                         </div>
-                        <div className="flex gap-0.5">
+                        <div className="flex gap-1">
                             {[...Array(testimonial.rating)].map((_, i) => (
-                                <Star key={i} className="h-4 w-4 fill-primary text-primary" />
+                                <Star key={i} className="h-3.5 w-3.5 fill-primary text-primary" />
                             ))}
                         </div>
                     </div>
-                    <p className="text-foreground/70 font-medium leading-relaxed italic">
+                    <p className="text-foreground/70 text-base font-medium leading-relaxed italic">
                         &quot;{testimonial.text}&quot;
                     </p>
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <div className="h-10 w-10 rounded-full bg-linear-to-br from-primary/20 to-secondary/20 border border-white/10 flex items-center justify-center font-bold text-xs">
+                    <div className="h-12 w-12 rounded-2xl bg-linear-to-br from-primary/20 to-secondary/20 border border-white/10 flex items-center justify-center font-black text-sm uppercase">
                         {testimonial.name.split(' ').map(n => n[0]).join('')}
                     </div>
-                    <div>
-                        <h4 className="font-bold text-sm tracking-tight">{testimonial.name}</h4>
-                        <p className="text-[10px] text-foreground/40 font-black uppercase tracking-widest">{testimonial.location}</p>
+                    <div className="space-y-1">
+                        <h4 className="font-black text-sm tracking-tight">{testimonial.name}</h4>
+                        <div className="flex items-center gap-1.5 opacity-40">
+                            <MapPin className="h-3 w-3" />
+                            <p className="text-[10px] font-black uppercase tracking-widest">{testimonial.location}</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {/* Subtle Gradient Glow */}
-            <div className="absolute inset-0 rounded-[32px] bg-linear-to-br from-primary/5 via-transparent to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+            {/* Ambient Background Shimmer */}
+            <div className="absolute inset-x-0 bottom-0 h-px bg-linear-to-r from-transparent via-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         </motion.div>
     );
 }
@@ -167,97 +146,97 @@ export default function Testimonials() {
     );
 
     if (!isMounted) {
-        return <div className="py-24" />; // Placeholder to avoid jump
+        return <div className="py-32" />;
     }
 
-    const firstRow = testimonials.slice(0, 6);
-    const secondRow = testimonials.slice(6, 12);
+    const firstRow = testimonials.slice(0, 4);
+    const secondRow = testimonials.slice(4, 8);
 
     return (
-        <section id="testimonials" className="py-24 relative overflow-hidden bg-background">
-            {/* Background Decor */}
-            <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 blur-[120px] rounded-full pointer-events-none -z-10" />
-            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-secondary/5 blur-[120px] rounded-full pointer-events-none -z-10" />
+        <section id="testimonials" className="py-32 relative overflow-hidden">
+            {/* Background Atmosphere */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 blur-[160px] rounded-full -z-10" />
 
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mb-16 text-center">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mb-24 text-center space-y-6">
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6"
+                    className="inline-flex items-center gap-3 px-5 py-2 rounded-full glass border border-secondary/20 shadow-[0_0_20px_rgba(var(--secondary),0.1)]"
                 >
                     <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span>
                     </span>
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Trusted by 10k+ Africans</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-secondary">Institutional Trust</span>
                 </motion.div>
 
                 <motion.h2
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: 0.1 }}
-                    className="text-4xl font-black tracking-tight sm:text-6xl mb-6"
+                    className="text-4xl font-black tracking-tight sm:text-7xl"
                 >
-                    Stories from <span className="text-gradient">Our Community</span>
+                    Peer <span className="text-gradient">Advocacy.</span>
                 </motion.h2>
                 <motion.p
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: 0.2 }}
-                    className="text-foreground/50 max-w-2xl mx-auto text-lg font-medium"
+                    transition={{ delay: 0.1 }}
+                    className="text-foreground/50 max-w-2xl mx-auto text-lg sm:text-xl font-medium"
                 >
-                    Experience why users across Ghana and Nigeria choose CoinDarks for their daily crypto bridge. Security, speed, and absolute transparency.
+                    Join thousands of satisfied traders across Ghana and Nigeria who have made
+                    CoinDarks their primary bridge for value exchange.
                 </motion.p>
             </div>
 
-            {/* Marquee Rows */}
+            {/* Marquee System */}
             <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-                className="relative flex flex-col gap-8"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1 }}
+                className="relative space-y-12"
             >
-                {/* Row 1 - Left */}
-                <div className="flex gap-8 overflow-hidden mask-[linear-gradient(to_right,transparent,#000_5%,#000_95%,transparent)]">
+                {/* Row 1 */}
+                <div className="flex gap-12 overflow-hidden mask-[linear-gradient(to_right,transparent,#000_15%,#000_85%,transparent)]">
                     <motion.div
-                        animate={{ x: [0, -1920] }}
+                        animate={{ x: [0, -2000] }}
                         transition={{
-                            duration: 40,
+                            duration: 50,
                             repeat: Infinity,
                             ease: "linear",
                         }}
-                        className="flex gap-8 shrink-0 py-4"
+                        className="flex gap-12 shrink-0 py-8"
                     >
-                        {[...firstRow, ...firstRow].map((t, i) => (
+                        {[...firstRow, ...firstRow, ...firstRow].map((t, i) => (
                             <TestimonialCard key={i} testimonial={t} />
                         ))}
                     </motion.div>
                 </div>
 
-                {/* Row 2 - Right */}
-                <div className="flex gap-8 overflow-hidden mask-[linear-gradient(to_right,transparent,#000_5%,#000_95%,transparent)]">
+                {/* Row 2 */}
+                <div className="flex gap-12 overflow-hidden mask-[linear-gradient(to_right,transparent,#000_15%,#000_85%,transparent)]">
                     <motion.div
-                        animate={{ x: [-1920, 0] }}
+                        animate={{ x: [-2000, 0] }}
                         transition={{
-                            duration: 45,
+                            duration: 60,
                             repeat: Infinity,
                             ease: "linear",
                         }}
-                        className="flex gap-8 shrink-0 py-4"
+                        className="flex gap-12 shrink-0 py-8"
                     >
-                        {[...secondRow, ...secondRow].map((t, i) => (
+                        {[...secondRow, ...secondRow, ...secondRow].map((t, i) => (
                             <TestimonialCard key={i} testimonial={t} />
                         ))}
                     </motion.div>
                 </div>
             </motion.div>
 
-            {/* Side gradients to hide edges better */}
-            <div className="absolute inset-y-0 left-0 w-32 bg-linear-to-r from-background to-transparent z-20 pointer-events-none" />
-            <div className="absolute inset-y-0 right-0 w-32 bg-linear-to-l from-background to-transparent z-20 pointer-events-none" />
+            {/* Edge Fog */}
+            <div className="absolute inset-y-0 left-0 w-48 bg-linear-to-r from-background via-background/60 to-transparent z-20 pointer-events-none" />
+            <div className="absolute inset-y-0 right-0 w-48 bg-linear-to-l from-background via-background/60 to-transparent z-20 pointer-events-none" />
         </section>
     );
 }

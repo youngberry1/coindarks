@@ -2,7 +2,6 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { DashboardSidebar } from "@/components/layout/DashboardSidebar";
 import { SupportWidget } from "@/components/dashboard/SupportWidget";
-
 import { supabaseAdmin } from "@/lib/supabase-admin";
 
 export default async function ProtectedLayout({
@@ -40,19 +39,29 @@ export default async function ProtectedLayout({
     };
 
     return (
-        <div className="flex min-h-screen bg-background text-foreground">
+        <div className="flex min-h-screen bg-background text-foreground relative overflow-hidden">
+            {/* Atmosphere Layer */}
+            <div className="fixed inset-0 bg-mesh opacity-[0.15] -z-10" />
+            <div className="fixed top-[-10%] right-[-10%] w-[80%] h-[80%] bg-primary/5 blur-[160px] rounded-full -z-10 animate-pulse-slow" />
+            <div className="fixed bottom-[-10%] left-[-10%] w-[60%] h-[60%] bg-secondary/5 blur-[140px] rounded-full -z-10 animate-pulse-slow" />
+            <div className="fixed inset-0 bg-[url('/noise.png')] opacity-[0.03] pointer-events-none -z-10" />
+
             {/* Sidebar component */}
             <DashboardSidebar user={sidebarUser} />
 
             {/* Main content area */}
-            <main className="flex-1 lg:ml-72 relative pt-20 lg:pt-0">
-                <div className="max-w-7xl mx-auto p-4 md:p-8">
+            <main className="flex-1 lg:ml-80 relative pt-24 lg:pt-0 min-h-screen">
+                <div className="max-w-7xl mx-auto p-4 md:p-10 lg:p-14 animate-in fade-in duration-700">
                     {children}
                 </div>
             </main>
 
             {/* Global Support Widget */}
-            {!isAdmin && <SupportWidget orders={recentOrders || []} />}
+            {!isAdmin && (
+                <div className="fixed bottom-8 right-8 z-50">
+                    <SupportWidget orders={recentOrders || []} />
+                </div>
+            )}
         </div>
     );
 }

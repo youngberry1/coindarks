@@ -9,8 +9,8 @@ import {
 import { KYCReviewList } from "@/components/admin/KYCReviewList";
 
 export const metadata: Metadata = {
-    title: "KYC Review Center | CoinDarks Admin",
-    description: "Review user identity documents for verification.",
+    title: "Verification Base | CoinDarks Admin",
+    description: "Institutional identity verification and compliance review.",
 };
 
 export default async function AdminKYCPage() {
@@ -59,34 +59,58 @@ export default async function AdminKYCPage() {
     }));
 
     return (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div>
-                    <h1 className="text-3xl font-black tracking-tight mb-2">KYC Review Center</h1>
-                    <p className="text-foreground/50 font-medium">
-                        Review and verify user identity documents for platform security.
+        <div className="space-y-12 sm:space-y-20 animate-in fade-in slide-in-from-bottom-6 duration-1000">
+            {/* Header / Compliance Focus */}
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10">
+                <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                        <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/40">Compliance Node : Identity Verification</span>
+                    </div>
+                    <h1 className="text-5xl sm:text-7xl font-black tracking-tight leading-none uppercase">
+                        Verification <br />
+                        <span className="text-gradient leading-relaxed">Base.</span>
+                    </h1>
+                    <p className="text-xl text-foreground/50 font-medium max-w-2xl leading-relaxed">
+                        Institutional review of identity credentials. verify node authenticity,
+                        audit document fidelity, and authorize infrastructure access.
                     </p>
                 </div>
 
-                <div className="flex items-center gap-3 p-4 rounded-2xl bg-white/5 border border-white/10">
-                    <Clock className="h-5 w-5 text-primary" />
-                    <div>
-                        <p className="text-[10px] font-black text-foreground/40 uppercase tracking-widest leading-none mb-1">Queue Size</p>
-                        <p className="text-sm font-bold">{pendingKYC?.length || 0} Pending</p>
+                <div className="flex items-center gap-4">
+                    <div className="h-20 px-8 rounded-3xl glass border border-white/5 flex items-center gap-5 shadow-2xl">
+                        <div className="h-10 w-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+                            <Clock className="h-6 w-6" />
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em] leading-none mb-1.5">Processing Queue</p>
+                            <p className="text-xl font-black tabular-nums">{pendingKYC?.length || 0} Pending Units</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
             {(!pendingKYC || pendingKYC.length === 0) ? (
-                <div className="p-20 rounded-[40px] border border-dashed border-white/10 flex flex-col items-center text-center">
-                    <div className="h-20 w-20 rounded-full bg-emerald-500/10 flex items-center justify-center mb-6">
-                        <CheckCircle2 className="h-10 w-10 text-emerald-500" />
+                <div className="relative group">
+                    <div className="absolute inset-0 bg-primary/5 blur-3xl rounded-[64px] opacity-50 group-hover:opacity-100 transition-opacity duration-1000" />
+                    <div className="relative p-20 sm:p-32 rounded-[64px] border border-white/5 glass flex flex-col items-center text-center space-y-8">
+                        <div className="h-32 w-32 rounded-[40px] bg-primary/5 border border-primary/10 flex items-center justify-center relative">
+                            <div className="absolute inset-0 bg-primary/20 blur-2xl animate-pulse rounded-full" />
+                            <CheckCircle2 className="h-16 w-16 text-primary relative z-10" />
+                        </div>
+                        <div className="space-y-4">
+                            <h3 className="text-3xl font-black uppercase tracking-tight">Queue Synchronized</h3>
+                            <p className="text-lg text-foreground/40 max-w-sm font-medium leading-relaxed">
+                                All identity verification cycles have been successfully processed.
+                                The registry is current and verified.
+                            </p>
+                        </div>
                     </div>
-                    <h3 className="text-xl font-bold mb-2">Queue is Clear!</h3>
-                    <p className="text-foreground/40 max-w-sm mb-8">All identity verifications have been processed. Great job!</p>
                 </div>
             ) : (
-                <KYCReviewList submissions={submissionsWithUrls} />
+                <div className="space-y-10">
+                    <KYCReviewList submissions={submissionsWithUrls} />
+                </div>
             )}
         </div>
     );

@@ -3,9 +3,12 @@
 import { AdminWalletManager } from "@/components/admin/AdminWalletManager";
 import { ExchangeRateManager } from "@/components/admin/ExchangeRateManager";
 
+import { AdminWallet } from "@/actions/admin-wallets";
+import { ExchangeRate } from "@/actions/rates";
+
 interface SystemSettingsProps {
-    wallets: any[];
-    rates: any[];
+    wallets: AdminWallet[];
+    rates: ExchangeRate[];
 }
 
 export function SystemSettings({ wallets, rates }: SystemSettingsProps) {

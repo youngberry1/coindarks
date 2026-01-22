@@ -11,7 +11,10 @@ import {
     Copy,
     Landmark,
     Smartphone,
-    Plus
+    Plus,
+    RefreshCw,
+    TrendingUp,
+    Shield
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createOrder } from "@/actions/exchange";
@@ -263,38 +266,20 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
     };
 
     const handleSubmit = async () => {
-        console.log("Submit clicked. Validating...", { amountFiat, amountCrypto, receivingAddress });
         if ((!amountFiat && !amountCrypto) || !receivingAddress) {
-            console.log("Validation failed: Missing fields");
             toast.error("Please fill in all fields");
             return;
         }
 
-        // Validation logic is handled by validateAmount and error state check below.
-
-        // Let's rely on validateAmount state if possible, or re-run.
-        // We have `error` state.
         if (error) {
-            console.log("Validation failed: Error state present", error);
             toast.error(error);
             return;
         }
 
         setIsSubmitting(true);
-        console.log("Calling createOrder...");
 
         try {
-            // We send the RAW input user typed. Server recalculates everything.
             const inputVal = lastInputType === 'FIAT' ? Number(amountFiat) : Number(amountCrypto);
-
-            console.log("Calling createOrder with data:", {
-                type,
-                asset: asset.id,
-                amount_input: inputVal,
-                input_type: lastInputType,
-                fiat_currency: fiat.id,
-                receiving_address: receivingAddress
-            });
 
             const result = await createOrder({
                 type,
@@ -305,10 +290,7 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                 receiving_address: receivingAddress
             });
 
-            console.log("createOrder result:", result);
-
             if (result.success) {
-                console.log("Order success! Setting state...");
                 setOrderSuccess({
                     id: result.orderNumber!,
                     depositAddress: result.depositAddress || null,
@@ -316,14 +298,12 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                 });
                 toast.success("Order initiated!");
             } else {
-                console.error("Order failed:", result.error);
                 toast.error(result.error || "Order creation failed");
             }
         } catch (err) {
             console.error("Exception in handleSubmit:", err);
             toast.error("Failed to submit order");
         } finally {
-            console.log("Setting isSubmitting to false");
             setIsSubmitting(false);
         }
     };
@@ -340,97 +320,101 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
     if (orderSuccess) {
         return (
             <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="p-8 md:p-12 rounded-[40px] border border-white/5 bg-card-bg/50 backdrop-blur-xl text-center space-y-8"
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                className="p-10 md:p-16 rounded-[48px] border border-white/5 bg-white/2 backdrop-blur-3xl text-center space-y-12 relative overflow-hidden group"
             >
-                <div className="h-24 w-24 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-6 border-4 border-emerald-500/20 animate-pulse">
-                    <CheckCircle2 className="h-12 w-12 text-emerald-500" />
+                <div className="absolute top-0 right-0 p-12 text-emerald-500/5 -rotate-12 group-hover:rotate-0 transition-transform duration-1000">
+                    <CheckCircle2 className="h-64 w-64" />
                 </div>
 
-                <div className="space-y-2">
-                    <h2 className="text-3xl font-black">Trade Initiated!</h2>
-                    <p className="text-foreground/50 font-medium">Order <span className="text-primary font-mono font-bold">#{orderSuccess.id}</span> created.</p>
+                <div className="relative">
+                    <div className="h-28 w-28 rounded-[36px] bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-emerald-500/20 animate-pulse">
+                        <CheckCircle2 className="h-14 w-14 text-emerald-500" />
+                    </div>
+
+                    <div className="space-y-3">
+                        <h2 className="text-4xl font-black uppercase tracking-tighter">Settlement <span className="text-emerald-500">Initiated</span></h2>
+                        <p className="text-foreground/40 font-black uppercase tracking-[0.2em] text-xs">Reference Hash: <span className="text-primary font-mono select-all">#{orderSuccess.id}</span></p>
+                    </div>
                 </div>
 
-                <div className="bg-black/20 p-6 rounded-3xl border border-white/10 space-y-4 text-left max-w-md mx-auto">
-                    <div className="grid grid-cols-2 gap-4 text-sm mb-4 pb-4 border-b border-white/5">
-                        <div>
-                            <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest">Date</p>
-                            <p className="font-bold">{new Date().toLocaleDateString()}</p>
+                <div className="bg-black/40 p-10 rounded-[40px] border border-white/5 space-y-8 text-left max-w-2xl mx-auto relative group/info">
+                    <div className="absolute inset-0 bg-primary/2 opacity-0 group-hover/info:opacity-100 transition-opacity duration-700 pointer-events-none" />
+
+                    <div className="grid grid-cols-2 gap-10 text-xs mb-4 pb-8 border-b border-white/5">
+                        <div className="space-y-2">
+                            <p className="text-[10px] text-foreground/20 font-black uppercase tracking-widest">Transaction Date</p>
+                            <p className="font-bold text-base uppercase">{new Date().toLocaleDateString()} {" // "} {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                         </div>
-                        <div className="text-right">
-                            <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest">Time</p>
-                            <p className="font-bold">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                        <div className="text-right space-y-2">
+                            <p className="text-[10px] text-foreground/20 font-black uppercase tracking-widest">Trade Pair</p>
+                            <p className="font-bold text-base uppercase text-primary">{asset.id} / {fiat.id}</p>
                         </div>
-                        <div>
-                            <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest">You Pay</p>
-                            <p className="font-bold text-primary">{type === 'BUY' ? `${fiat.symbol}${orderSuccess.amounts.fiat}` : `${orderSuccess.amounts.crypto} ${asset.id}`}</p>
+                        <div className="space-y-2">
+                            <p className="text-[10px] text-foreground/20 font-black uppercase tracking-widest">Paid Amount</p>
+                            <p className="font-black text-2xl text-white tracking-tighter">{type === 'BUY' ? `${fiat.symbol}${orderSuccess.amounts.fiat.toLocaleString()}` : `${orderSuccess.amounts.crypto} ${asset.id}`}</p>
                         </div>
-                        <div className="text-right">
-                            <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest">You Get</p>
-                            <p className="font-bold text-emerald-500">{type === 'BUY' ? `${orderSuccess.amounts.crypto} ${asset.id}` : `${fiat.symbol}${orderSuccess.amounts.fiat}`}</p>
+                        <div className="text-right space-y-2">
+                            <p className="text-[10px] text-foreground/20 font-black uppercase tracking-widest">Received Amount</p>
+                            <p className="font-black text-2xl text-emerald-500 tracking-tighter">{type === 'BUY' ? `${orderSuccess.amounts.crypto} ${asset.id}` : `${fiat.symbol}${orderSuccess.amounts.fiat.toLocaleString()}`}</p>
                         </div>
                     </div>
 
                     {orderSuccess.depositAddress ? (
                         <>
-                            <div className="space-y-2">
-                                <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-500">Action Required</p>
-                                <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl space-y-1">
-                                    <p className="text-xs text-amber-500 font-bold">1. Send EXACTLY <span className="text-foreground">{type === 'BUY' ? `${fiat.symbol}${orderSuccess.amounts.fiat}` : `${orderSuccess.amounts.crypto} ${asset.id}`}</span></p>
-                                    <p className="text-[10px] text-amber-500/80 font-medium">Sending a different amount may delay your order.</p>
+                            <div className="space-y-6">
+                                <div className="flex items-center gap-3">
+                                    <div className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-ping" />
+                                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-500">Action Required</p>
                                 </div>
-                                {type === 'BUY' && (
-                                    <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl text-blue-500 space-y-1">
-                                        <p className="text-xs font-bold">2. Use Reference: <span className="text-white font-mono">{orderSuccess.id}</span></p>
-                                        <p className="text-[10px] text-blue-500/80 font-medium">Add this as the &quot;Note&quot; or &quot;Remarks&quot; in your bank app.</p>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="p-6 bg-amber-500/5 border border-amber-500/20 rounded-[28px] space-y-2">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-amber-500/50">Step 01</p>
+                                        <p className="text-xs text-foreground/80 font-bold leading-relaxed">Send EXACTLY <span className="text-white bg-amber-500/20 px-2 py-0.5 rounded-lg">{type === 'BUY' ? `${fiat.symbol}${orderSuccess.amounts.fiat.toLocaleString()}` : `${orderSuccess.amounts.crypto} ${asset.id}`}</span></p>
                                     </div>
-                                )}
-                                {type === 'SELL' && (
-                                    <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl text-blue-500 space-y-1">
-                                        <p className="text-xs font-bold">2. Use High/Priority Gas Fee</p>
-                                        <p className="text-[10px] text-blue-500/80 font-medium">Increase your network fee to ensure the transaction hits the blockchain instantly.</p>
+
+                                    <div className="p-6 bg-primary/10 border border-primary/20 rounded-[28px] space-y-2 text-primary">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-primary/50">Step 02</p>
+                                        <p className="text-xs font-bold leading-relaxed">{type === 'BUY' ? 'Attach payment ref' : 'Confirm transaction'}: <span className="text-white font-mono bg-primary/20 px-2 py-0.5 rounded-lg">{type === 'BUY' ? orderSuccess.id : 'ASAP'}</span></p>
                                     </div>
-                                )}
-                                <p className="text-xs font-bold pt-2">{type === 'BUY' ? 'Payment Account Details:' : 'Send Wallet Address:'}</p>
+                                </div>
+
+                                <div className="space-y-3">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-foreground/20 px-4">{type === 'BUY' ? 'Settlement Account' : 'Gateway address'}</p>
+                                    <button
+                                        type="button"
+                                        className="flex items-center gap-6 p-6 bg-white/3 rounded-[32px] border border-white/5 group/addr cursor-pointer w-full transition-all hover:bg-white/5 active:scale-[0.98]"
+                                        onClick={() => copyToClipboard(orderSuccess.depositAddress!)}
+                                    >
+                                        <div className="h-12 w-12 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center shrink-0 group-hover/addr:text-primary transition-colors">
+                                            <Copy className="h-5 w-5" />
+                                        </div>
+                                        <p className="font-mono text-xs break-all text-foreground/60 flex-1 text-left whitespace-pre-line leading-relaxed">{orderSuccess.depositAddress}</p>
+                                    </button>
+                                </div>
                             </div>
-                            <button
-                                type="button"
-                                className="flex items-center gap-3 p-4 bg-black/40 rounded-2xl border border-white/5 group cursor-pointer w-full"
-                                onClick={() => copyToClipboard(orderSuccess.depositAddress!)}
-                                aria-label="Copy deposit address"
-                            >
-                                <p className="font-mono text-xs break-all text-foreground/80 flex-1 text-left whitespace-pre-line">{orderSuccess.depositAddress}</p>
-                                <Copy className="h-4 w-4 text-foreground/20 group-hover:text-primary transition-colors" />
-                            </button>
                         </>
                     ) : (
-                        <div className="space-y-2">
-                            <p className="text-sm text-foreground/80 leading-relaxed font-medium">
-                                Payment Instructions Sent to <span className="text-primary">your email</span>
-                            </p>
-                            <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl flex gap-3 text-amber-500 text-xs font-bold leading-relaxed">
-                                <Info className="h-4 w-4 shrink-0 mt-0.5" />
-                                <p>Please wait up to 30 minutes for processing. If not received, contact support immediatey.</p>
+                        <div className="space-y-6">
+                            <div className="p-8 bg-amber-500/5 border border-amber-500/20 rounded-[32px] flex gap-6 items-center text-amber-500">
+                                <Info className="h-8 w-8 shrink-0 opacity-50" />
+                                <div className="space-y-1">
+                                    <p className="text-sm font-black uppercase tracking-tight">Manual Review Required</p>
+                                    <p className="text-[11px] font-bold leading-relaxed opacity-60">Complete instructions have been sent to your email. Our team is standing by.</p>
+                                </div>
                             </div>
                         </div>
                     )}
-
-                    {type === 'SELL' && (
-                        <p className="text-[10px] text-foreground/40 leading-relaxed">
-                            <Info className="h-3 w-3 inline mr-1" />
-                            Once confirmed, we release fiat to your account.
-                        </p>
-                    )}
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-                    <a href={`/dashboard/orders`} className="px-10 py-4 rounded-2xl bg-primary text-white font-bold shadow-xl shadow-primary/20 hover:scale-[1.02] transition-all">
-                        Track Order
+                <div className="flex flex-col sm:flex-row gap-5 justify-center pt-8">
+                    <a href={`/dashboard/orders`} className="px-12 py-5 rounded-[24px] bg-primary text-white font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-primary/20 hover:scale-[1.05] active:scale-95 transition-all flex items-center justify-center gap-3">
+                        Track Settlement <ArrowRight className="h-4 w-4" />
                     </a>
-                    <button onClick={() => { setOrderSuccess(null); setAmountFiat(""); setAmountCrypto(""); }} className="px-10 py-4 rounded-2xl bg-white/5 border border-white/10 font-bold hover:bg-white/10 transition-all">
-                        New Trade
+                    <button onClick={() => { setOrderSuccess(null); setAmountFiat(""); setAmountCrypto(""); }} className="px-12 py-5 rounded-[24px] bg-white/5 border border-white/10 font-black text-xs uppercase tracking-[0.2em] hover:bg-white/10 transition-all active:scale-95">
+                        New Exchange
                     </button>
                 </div>
             </motion.div>
@@ -439,93 +423,102 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
 
     // FORM VIEW
     return (
-        <div className="p-6 md:p-10 lg:p-14 rounded-[40px] border border-border bg-card-bg/50 backdrop-blur-xl shadow-sm dark:shadow-none">
+        <div className="p-8 md:p-12 lg:p-16 rounded-[64px] border border-white/5 bg-white/2 backdrop-blur-3xl relative overflow-hidden group/form shadow-2xl">
+            <div className="absolute inset-0 bg-primary/2 opacity-0 group-hover/form:opacity-100 transition-opacity duration-1000 pointer-events-none" />
+
             <AnimatePresence>
                 {isSubmitting && (
-                    <Loading message="Securing exchange rate..." />
+                    <Loading message="PROCESSING TRANSACTION..." />
                 )}
             </AnimatePresence>
 
-            <div className="flex p-1.5 rounded-2xl bg-card-bg/50 border border-border mb-8 md:mb-12 w-full sm:w-max shadow-inner dark:shadow-none">
+            {/* Type Toggle */}
+            <div className="relative p-1.5 rounded-[28px] bg-black/40 border border-white/5 mb-12 w-full sm:w-max flex">
+                <div className="absolute inset-y-1.5 transition-all duration-500 ease-out bg-primary rounded-[22px]"
+                    style={{
+                        left: type === 'BUY' ? '6px' : 'calc(50% + 1px)',
+                        width: 'calc(50% - 7px)',
+                        backgroundColor: type === 'BUY' ? 'rgb(var(--primary))' : 'rgb(244 63 94)'
+                    }}
+                />
                 <button
                     onClick={() => setType('BUY')}
                     className={cn(
-                        "flex-1 sm:flex-none px-6 md:px-10 py-3.5 rounded-xl font-black text-xs md:text-sm uppercase tracking-widest transition-all",
-                        type === 'BUY' ? "bg-primary text-white shadow-lg" : "text-foreground/40 hover:text-foreground"
+                        "relative z-10 flex-1 sm:flex-none px-12 py-4 rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-[0.3em] transition-all duration-500",
+                        type === 'BUY' ? "text-white" : "text-foreground/20 hover:text-foreground/40"
                     )}
                 >
-                    Buy
+                    Buy Crypto
                 </button>
                 <button
                     onClick={() => setType('SELL')}
                     className={cn(
-                        "flex-1 sm:flex-none px-6 md:px-10 py-3.5 rounded-xl font-black text-xs md:text-sm uppercase tracking-widest transition-all",
-                        type === 'SELL' ? "bg-rose-500 text-white shadow-lg" : "text-foreground/40 hover:text-foreground"
+                        "relative z-10 flex-1 sm:flex-none px-12 py-4 rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-[0.3em] transition-all duration-500",
+                        type === 'SELL' ? "text-white" : "text-foreground/20 hover:text-foreground/40"
                     )}
                 >
-                    Sell
+                    Sell Crypto
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-14">
-                <div className="space-y-6 md:space-y-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16">
+                <div className="space-y-8">
                     {/* INPUT BLOCK 1 */}
-                    <div className="space-y-6">
-                        <div className="p-8 md:p-10 rounded-[32px] bg-card-bg/40 border border-border focus-within:border-primary/50 focus-within:bg-card-bg/60 transition-all shadow-sm dark:shadow-none relative overflow-hidden">
-                            <div className="flex items-center justify-between mb-4 relative z-10">
-                                <p className="text-[10px] font-black text-foreground/40 uppercase tracking-widest">{type === 'BUY' ? 'You Pay' : 'You Send'}</p>
-                                <div className="flex items-center gap-2">
-                                    {type === 'BUY' ? (
-                                        <AssetSelector value={fiat.id} onChange={(val) => setFiat(FIAT.find(f => f.id === val)!)} options={FIAT} type="FIAT" />
-                                    ) : (
-                                        <AssetSelector value={asset.id} onChange={(val) => setAsset(supportedAssets.find(a => a.id === val)!)} options={supportedAssets} type="CRYPTO" />
-                                    )}
+                    <div className="space-y-4">
+                        <div className="group/input p-10 rounded-[48px] bg-white/2 border border-white/5 focus-within:border-primary/50 focus-within:bg-white/5 transition-all relative overflow-hidden">
+                            <div className="absolute inset-0 bg-primary/2 opacity-0 group-focus-within/input:opacity-100 transition-opacity pointer-events-none" />
+                            <div className="flex items-center justify-between mb-10 relative z-10">
+                                <div className="space-y-2">
+                                    <p className="text-[11px] font-black text-foreground/60 uppercase tracking-[0.4em]">You Pay</p>
+                                    <p className="text-xs font-black text-primary uppercase tracking-widest">{type === 'BUY' ? 'Payment Method' : 'Asset to Sell'}</p>
                                 </div>
+                                {type === 'BUY' ? (
+                                    <AssetSelector value={fiat.id} onChange={(val) => setFiat(FIAT.find(f => f.id === val)!)} options={FIAT} type="FIAT" />
+                                ) : (
+                                    <AssetSelector value={asset.id} onChange={(val) => setAsset(supportedAssets.find(a => a.id === val)!)} options={supportedAssets} type="CRYPTO" />
+                                )}
                             </div>
-                            <div className="flex items-end justify-between gap-4 relative z-10">
+                            <div className="relative z-10">
                                 <input
                                     id="pay-amount"
                                     type="number"
                                     value={type === 'BUY' ? amountFiat : amountCrypto}
                                     onChange={(e) => type === 'BUY' ? handleFiatChange(e.target.value) : handleCryptoChange(e.target.value)}
                                     placeholder="0.00"
-                                    aria-label={type === 'BUY' ? 'Amount to pay in fiat' : 'Amount to send in crypto'}
                                     className={cn(
-                                        "bg-transparent text-2xl md:text-4xl font-black outline-none w-full placeholder:text-foreground/10 transition-colors",
-                                        error && type === 'BUY' ? "text-rose-500" : ""
+                                        "bg-transparent text-5xl md:text-6xl font-black outline-none w-full placeholder:text-foreground/5 tracking-tighter transition-colors",
+                                        error && type === 'BUY' ? "text-rose-500/50" : "text-white"
                                     )}
                                 />
                             </div>
-                            {error && type === 'BUY' && (
-                                <motion.p
-                                    initial={{ opacity: 0, y: -10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    className="text-rose-500 text-xs font-bold mt-2 absolute bottom-2"
-                                >
-                                    {error}
-                                </motion.p>
-                            )}
                         </div>
 
-                        <div className="flex justify-center -my-9 relative z-10">
-                            <div className="h-14 w-14 rounded-2xl bg-card-bg border border-border flex items-center justify-center shadow-2xl text-primary">
-                                <ArrowDown className="h-6 w-6" />
-                            </div>
+                        <div className="flex justify-center -my-12 relative z-20">
+                            <motion.div
+                                animate={{ rotate: type === 'BUY' ? 0 : 180 }}
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                className="h-20 w-20 rounded-[32px] bg-black border-[6px] border-[#0a0a0a] flex items-center justify-center shadow-[0_0_50px_rgba(0,0,0,0.5)] text-primary group/arrow cursor-pointer transition-colors hover:text-white"
+                            >
+                                <div className="absolute inset-0 bg-primary/10 rounded-[28px] opacity-0 group-hover/arrow:opacity-100 transition-opacity" />
+                                <ArrowDown className="h-8 w-8 relative z-10 transition-transform duration-500 group-hover/arrow:translate-y-0.5" />
+                            </motion.div>
                         </div>
 
                         {/* INPUT BLOCK 2 */}
-                        <div className="p-8 md:p-10 rounded-[32px] bg-card-bg/40 border border-border focus-within:border-primary/50 focus-within:bg-card-bg/60 transition-all shadow-sm dark:shadow-none">
-                            <div className="flex items-center justify-between mb-4">
-                                <p className="text-[10px] font-black text-foreground/40 uppercase tracking-widest">{type === 'BUY' ? 'You Receive' : 'You Get Paid'}</p>
-                                <div className="flex items-center gap-2">
-                                    {type === 'BUY' ? (
-                                        <AssetSelector value={asset.id} onChange={(val) => setAsset(supportedAssets.find(a => a.id === val)!)} options={supportedAssets} type="CRYPTO" />
-                                    ) : (
-                                        <AssetSelector value={fiat.id} onChange={(val) => setFiat(FIAT.find(f => f.id === val)!)} options={FIAT} type="FIAT" />
-                                    )}
+                        <div className="p-10 rounded-[48px] bg-white/2 border border-white/5 focus-within:border-emerald-500/50 focus-within:bg-white/5 transition-all relative overflow-hidden">
+                            <div className="flex items-center justify-between mb-10">
+                                <div className="space-y-2">
+                                    <p className="text-[11px] font-black text-foreground/60 uppercase tracking-[0.4em]">You Receive</p>
+                                    <p className="text-xs font-black text-emerald-500 uppercase tracking-widest">{type === 'BUY' ? 'Asset to Buy' : 'Payout Method'}</p>
                                 </div>
+                                {type === 'BUY' ? (
+                                    <AssetSelector value={asset.id} onChange={(val) => setAsset(supportedAssets.find(a => a.id === val)!)} options={supportedAssets} type="CRYPTO" />
+                                ) : (
+                                    <AssetSelector value={fiat.id} onChange={(val) => setFiat(FIAT.find(f => f.id === val)!)} options={FIAT} type="FIAT" />
+                                )}
                             </div>
-                            <div className="flex items-end justify-between gap-4">
+                            <div>
                                 <input
                                     id="receive-amount"
                                     type="number"
@@ -533,77 +526,96 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                                     onChange={(e) => type === 'BUY' ? handleCryptoChange(e.target.value) : handleFiatChange(e.target.value)}
                                     placeholder="0.00"
                                     readOnly={true}
-                                    aria-label={type === 'BUY' ? 'Estimated crypto to receive' : 'Estimated fiat to receive'}
-                                    className="bg-transparent text-2xl md:text-3xl font-black outline-none w-full placeholder:text-foreground/10 cursor-default"
+                                    className="bg-transparent text-4xl md:text-5xl font-black outline-none w-full placeholder:text-foreground/5 text-foreground/80 tracking-tighter cursor-default"
                                 />
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div className="space-y-8 flex flex-col justify-between">
-                    <div className="space-y-6">
-                        <div className="space-y-3">
-                            <label className="text-[10px] font-black text-foreground/40 uppercase tracking-[0.2em] ml-2">
-                                {type === 'BUY' ? `${asset.id} Receiving Address` : `Your ${fiat.id} Payment Details`}
-                            </label>
-                            <div className="relative group">
-                                <Wallet className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-foreground/20 group-focus-within:text-primary transition-colors" />
+                <div className="space-y-10 flex flex-col justify-between">
+                    <div className="space-y-8">
+                        {/* Address Input Section */}
+                        <div className="space-y-4">
+                            <div className="flex items-center justify-between px-4">
+                                <label className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">
+                                    {type === 'BUY' ? 'Your Wallet Address' : 'Payment Account Details'}
+                                </label>
+                                {error && (
+                                    <motion.p
+                                        initial={{ opacity: 0, x: 20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        className="text-rose-500 text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5"
+                                    >
+                                        <AlertCircle className="h-3 w-3" /> {error}
+                                    </motion.p>
+                                )}
+                            </div>
+                            <div className="relative group/addr-input">
+                                <div className="absolute left-8 top-1/2 -translate-y-1/2 h-14 w-14 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center text-foreground/20 group-focus-within/addr-input:text-primary transition-all duration-500">
+                                    <Shield className="h-6 w-6" />
+                                </div>
                                 <input
                                     type="text"
                                     value={receivingAddress}
                                     onChange={(e) => type !== 'SELL' && setReceivingAddress(e.target.value)}
                                     readOnly={type === 'SELL'}
                                     onFocus={() => setShowWalletDropdown(true)}
-                                    // Delay blur to allow clicking items
                                     onBlur={() => setTimeout(() => setShowWalletDropdown(false), 200)}
-                                    placeholder={type === 'BUY' ? `Enter your ${asset.id} wallet...` : "Select a saved account..."}
+                                    placeholder={type === 'BUY' ? `Enter secure ${asset.id} hash...` : "Select node account..."}
                                     className={cn(
-                                        "w-full pl-16 pr-6 py-5 rounded-[24px] bg-card-bg/30 border border-border focus:border-primary focus:bg-card-bg/50 focus:outline-none transition-all font-bold text-sm shadow-inner dark:shadow-none",
-                                        type === 'SELL' ? "cursor-pointer hover:bg-card-bg/40 selection:bg-transparent" : ""
+                                        "w-full pl-28 pr-10 py-8 rounded-[36px] bg-white/2 border border-white/5 focus:border-primary/50 focus:bg-white/5 focus:outline-none transition-all font-bold text-sm leading-relaxed tracking-wider",
+                                        type === 'SELL' ? "cursor-pointer" : ""
                                     )}
                                 />
                                 <AnimatePresence>
                                     {showWalletDropdown && (
                                         <motion.div
-                                            initial={{ opacity: 0, y: -10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, y: -10 }}
-                                            className="absolute top-full left-0 right-0 mt-2 bg-black/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl z-50 overflow-hidden max-h-60 overflow-y-auto"
+                                            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                                            className="absolute top-full left-0 right-0 mt-4 bg-black/95 backdrop-blur-3xl border border-white/10 rounded-[32px] shadow-2xl z-50 overflow-hidden"
                                         >
-                                            <div className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-foreground/30 bg-white/5">
-                                                {type === 'BUY' ? 'Saved Wallets' : 'Saved Accounts'}
+                                            <div className="px-8 py-4 text-[10px] font-black uppercase tracking-[0.4em] text-foreground/20 bg-white/5 flex items-center justify-between">
+                                                <span>Saved Addresses</span>
+                                                <div className="h-1 w-8 bg-primary rounded-full" />
                                             </div>
 
-                                            {savedWallets.length > 0 ? (
-                                                savedWallets.map((w: SavedWallet) => (
-                                                    <button
-                                                        key={w.id}
-                                                        onClick={() => setReceivingAddress(w.address)}
-                                                        className="w-full text-left px-4 py-3 hover:bg-primary/20 hover:text-primary text-sm font-medium flex flex-col gap-0.5 transition-colors border-b border-white/5 last:border-0"
-                                                    >
-                                                        <div className="flex items-center gap-2">
-                                                            {w.type === 'FIAT' && (w.network === 'Mobile Money' ? <Smartphone className="h-3 w-3" /> : <Landmark className="h-3 w-3" />)}
-                                                            <span className="font-bold">{w.name || 'Unnamed'}</span>
-                                                        </div>
-                                                        <span className="text-[10px] font-mono opacity-50 truncate w-full block">{w.address}</span>
-                                                    </button>
-                                                ))
-                                            ) : (
-                                                <div className="px-5 py-8 text-center space-y-2">
-                                                    <p className="text-xs font-bold text-foreground/40 italic">No saved {type === 'BUY' ? 'wallets' : 'accounts'} found.</p>
-                                                </div>
-                                            )}
+                                            <div className="max-h-72 overflow-y-auto custom-scrollbar">
+                                                {savedWallets.length > 0 ? (
+                                                    savedWallets.map((w: SavedWallet) => (
+                                                        <button
+                                                            key={w.id}
+                                                            onClick={() => setReceivingAddress(w.address)}
+                                                            className="w-full text-left px-8 py-5 hover:bg-primary/10 group/item transition-all border-b border-white/5 last:border-0"
+                                                        >
+                                                            <div className="flex items-center justify-between mb-1">
+                                                                <div className="flex items-center gap-3">
+                                                                    <div className="h-8 w-8 rounded-lg bg-white/5 flex items-center justify-center text-foreground/20 group-hover/item:text-primary transition-colors">
+                                                                        {w.type === 'FIAT' ? (w.network === 'Mobile Money' ? <Smartphone className="h-4 w-4" /> : <Landmark className="h-4 w-4" />) : <Wallet className="h-4 w-4" />}
+                                                                    </div>
+                                                                    <span className="font-black text-xs uppercase tracking-tight group-hover/item:text-primary transition-colors">{w.name || 'Unknown Node'}</span>
+                                                                </div>
+                                                                <span className="text-[9px] font-black uppercase tracking-[0.2em] opacity-20 group-hover/item:opacity-50">{w.network}</span>
+                                                            </div>
+                                                            <span className="text-[10px] font-mono text-foreground/30 truncate block pl-11">{w.address}</span>
+                                                        </button>
+                                                    ))
+                                                ) : (
+                                                    <div className="px-10 py-12 text-center space-y-4">
+                                                        <p className="text-xs font-bold text-foreground/20 italic tracking-widest uppercase">No localized nodes detected</p>
+                                                    </div>
+                                                )}
+                                            </div>
 
-                                            {/* Add New Option */}
                                             <a
                                                 href={type === 'BUY' ? "/dashboard/wallets?tab=crypto" : "/dashboard/wallets?tab=fiat"}
-                                                className="w-full text-left px-4 py-4 bg-primary/10 hover:bg-primary/20 text-primary text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-colors sticky bottom-0 backdrop-blur-2xl border-t border-white/10"
+                                                className="w-full h-20 bg-primary/10 hover:bg-primary/20 text-primary transition-all flex items-center justify-center gap-4 border-t border-white/10"
                                             >
-                                                <div className="h-5 w-5 rounded-full border-2 border-current flex items-center justify-center">
-                                                    <Plus className="h-3 w-3 stroke-[3px]" />
+                                                <div className="h-8 w-8 rounded-xl border border-current flex items-center justify-center">
+                                                    <Plus className="h-4 w-4 stroke-[3px]" />
                                                 </div>
-                                                Add New {type === 'BUY' ? 'Wallet' : 'Account'}
+                                                <span className="font-black text-[10px] uppercase tracking-[0.3em]">Register New Node</span>
                                             </a>
                                         </motion.div>
                                     )}
@@ -611,32 +623,39 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                             </div>
                         </div>
 
-                        <div className="p-8 rounded-[32px] bg-linear-to-br from-primary/5 to-transparent border border-border space-y-6 shadow-sm dark:shadow-none">
-                            <div className="flex justify-between items-center text-sm">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-foreground/40 font-medium">Global Market Rate</span>
+                        {/* Rate Info Block */}
+                        <div className="p-10 rounded-[48px] bg-linear-to-br from-white/3 to-transparent border border-white/5 space-y-8 group/info relative overflow-hidden">
+                            <div className="absolute top-0 right-0 p-8 text-primary/5 -rotate-12 group-hover/info:rotate-0 transition-transform duration-1000">
+                                <TrendingUp className="h-32 w-32" />
+                            </div>
+
+                            <div className="flex justify-between items-center relative z-10">
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.3em]">Temporal Sync</p>
                                     <div className={cn(
-                                        "flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold border transition-all duration-500",
-                                        refreshCountdown <= 5
-                                            ? "bg-amber-500/10 border-amber-500/20 text-amber-500 animate-pulse"
-                                            : "bg-emerald-500/10 border-emerald-500/20 text-emerald-500"
+                                        "inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-700",
+                                        refreshCountdown <= 5 ? "text-amber-500 bg-amber-500/10 border border-amber-500/10" : "text-emerald-500 bg-emerald-500/10 border border-emerald-500/10"
                                     )}>
-                                        <div className={cn(
-                                            "h-1.5 w-1.5 rounded-full bg-current",
-                                            refreshCountdown <= 5 ? "animate-ping" : ""
-                                        )} />
-                                        Refreshing in {refreshCountdown}s
+                                        <RefreshCw className={cn("h-3 w-3", refreshCountdown <= 5 ? "animate-spin" : "")} />
+                                        <span>Refresh Cycle: {refreshCountdown}S</span>
                                     </div>
                                 </div>
-                                <span className="font-bold">
-                                    {!displayRate ? (
-                                        isLoading ? <span className="text-foreground/20 text-xs text-gradient animate-pulse tracking-widest uppercase">Syncing...</span> : <span className="text-rose-500 text-xs">Rate unavailable</span>
-                                    ) : `1 ${asset.id} ≈ ${fiat.symbol}${displayRate.toLocaleString()}`}
-                                </span>
+                                <div className="text-right space-y-1">
+                                    <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.3em]">Unit Matrix</p>
+                                    <p className="text-xs font-black uppercase tracking-tight text-white/80">
+                                        {!displayRate ? (
+                                            isLoading ? "Syncing..." : "Offline"
+                                        ) : `1 ${asset.id} ≈ ${fiat.symbol}${displayRate.toLocaleString()}`}
+                                    </p>
+                                </div>
                             </div>
-                            <div className="pt-6 border-t border-border flex justify-between items-center">
-                                <span className="text-xs font-black uppercase tracking-[0.2em] text-foreground/40">Estimated Total</span>
-                                <span className="text-2xl font-black text-primary">
+
+                            <div className="pt-8 border-t border-white/5 flex justify-between items-end relative z-10">
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.3em]">Total Settlement</p>
+                                    <p className="text-xs font-black text-primary/50 uppercase tracking-[0.2em]">{type === 'BUY' ? 'Inc. Network Fees' : 'Net Liquidity'}</p>
+                                </div>
+                                <span className="text-4xl font-black text-primary tracking-tighter">
                                     {fiat.symbol}{Number(amountFiat).toLocaleString() || '0.00'}
                                 </span>
                             </div>
@@ -644,22 +663,26 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                     </div>
 
                     {!isAvailable ? (
-                        <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center gap-3 text-rose-500">
-                            <AlertCircle className="h-5 w-5 shrink-0" />
-                            <p className="text-xs font-bold">{asset.id} currently unavailable.</p>
+                        <div className="p-8 rounded-[32px] bg-rose-500/5 border border-rose-500/20 flex items-center gap-6 text-rose-500 shadow-2xl">
+                            <AlertCircle className="h-8 w-8 shrink-0 opacity-50" />
+                            <div className="space-y-1">
+                                <p className="text-sm font-black uppercase tracking-tight">Zone Offline</p>
+                                <p className="text-[10px] font-bold uppercase tracking-widest opacity-60">{asset.id} liquidity pool currently depleted.</p>
+                            </div>
                         </div>
                     ) : (
                         <button
                             disabled={isSubmitting || !amountFiat || !receivingAddress || !!error}
                             onClick={handleSubmit}
                             className={cn(
-                                "w-full py-6 rounded-[24px] text-white font-black text-lg uppercase tracking-widest shadow-2xl transition-all flex items-center justify-center gap-3 group",
-                                type === 'BUY' ? "bg-primary shadow-primary/20 hover:scale-[1.02]" : "bg-rose-500 shadow-rose-500/20 hover:scale-[1.02]",
-                                (isSubmitting || !amountFiat || !receivingAddress || !!error) && "opacity-50 grayscale cursor-not-allowed scale-100"
+                                "w-full py-8 md:py-10 rounded-[36px] text-white font-black text-base md:text-xl uppercase tracking-[0.4em] shadow-2xl transition-all flex items-center justify-center gap-6 group relative overflow-hidden",
+                                type === 'BUY' ? "bg-primary shadow-primary/30" : "bg-rose-500 shadow-rose-500/30",
+                                (isSubmitting || !amountFiat || !receivingAddress || !!error) ? "opacity-20 grayscale scale-[0.98]" : "hover:scale-[1.02] hover:brightness-110 active:scale-95"
                             )}
                         >
-                            {isSubmitting ? 'Processing...' : `Confirm ${type === 'BUY' ? 'Purchase' : 'Sale'}`}
-                            {!isSubmitting && <ArrowRight className="h-6 w-6 group-hover:translate-x-1 transition-transform" />}
+                            <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-shimmer" />
+                            <span className="relative z-10">{isSubmitting ? 'Processing...' : `Confirm ${asset.id} ${type === 'BUY' ? 'Purchase' : 'Sale'}`}</span>
+                            {!isSubmitting && <ArrowRight className="h-7 w-7 relative z-10 group-hover:translate-x-2 transition-transform duration-500" />}
                         </button>
                     )}
                 </div>

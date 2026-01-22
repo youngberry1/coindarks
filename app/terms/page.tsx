@@ -3,131 +3,168 @@
 import Navbar from "@/components/layout/Navbar";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ChevronLeft, Scale, AlertCircle, RefreshCw, Zap, Gavel } from "lucide-react";
+import { ChevronLeft, AlertCircle, RefreshCw, Zap, Gavel, CheckCircle2 } from "lucide-react";
 import { Footer } from "@/components/layout/Footer";
 
 export default function TermsPage() {
     return (
-        <>
-            <header>
-                <Navbar />
-            </header>
+        <div className="min-h-screen bg-background selection:bg-primary/20">
+            <Navbar />
 
-            <main className="pt-32 pb-24 bg-background">
-                <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+            <main className="pt-40 pb-32 relative overflow-hidden">
+                {/* Atmosphere */}
+                <div className="absolute inset-0 bg-mesh opacity-20 -z-10" />
+                <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-secondary/5 blur-[160px] rounded-full -z-10 animate-pulse-slow" />
+
+                <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 relative z-10">
                     {/* Header */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="mb-12"
+                        className="space-y-8 mb-24"
                     >
                         <Link
                             href="/"
-                            className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-foreground/40 hover:text-primary transition-colors mb-8"
+                            className="inline-flex items-center gap-2 group p-1 pr-4 rounded-full glass border border-white/5 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 hover:text-primary transition-all"
                         >
-                            <ChevronLeft className="h-4 w-4" />
-                            Back to Home
+                            <div className="h-6 w-6 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
+                                <ChevronLeft className="h-3 w-3" />
+                            </div>
+                            Return home
                         </Link>
 
-                        <div className="flex items-center gap-4 mb-6">
-                            <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center">
-                                <Scale className="h-6 w-6 text-primary" />
-                            </div>
-                            <h1 className="text-4xl sm:text-5xl font-black tracking-tight">Terms of <span className="text-gradient">Service</span></h1>
+                        <div className="space-y-4">
+                            <h1 className="text-5xl sm:text-7xl font-black tracking-tight leading-none">
+                                Terms of <br />
+                                <span className="text-gradient">Service.</span>
+                            </h1>
+                            <p className="text-xl text-foreground/50 font-medium max-w-2xl">
+                                Rules and guidelines for using the CoinDarks platform to trade crypto and local currencies.
+                            </p>
                         </div>
-                        <p className="text-foreground/60 font-medium text-lg">
-                            Please read these terms carefully before using the CoinDarks platform.
-                        </p>
+
+                        <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-foreground/20">
+                            <CheckCircle2 className="h-3 w-3 text-primary" />
+                            Update: January 2026
+                        </div>
                     </motion.div>
 
-                    {/* Content */}
+                    {/* Content Section */}
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.2 }}
-                        className="prose prose-invert prose-primary max-w-none space-y-12"
+                        className="space-y-12"
                     >
-                        <section className="p-8 rounded-[40px] border border-white/5 bg-white/5 backdrop-blur-md">
-                            <h2 className="text-xl font-bold mb-6 flex items-center gap-3">
-                                <Zap className="h-5 w-5 text-primary" />
-                                1. The Exchange Service
-                            </h2>
-                            <div className="space-y-4 text-foreground/70 leading-relaxed font-medium">
+                        <section className="glass-card rounded-[48px] p-8 sm:p-14 border border-white/5 space-y-8">
+                            <div className="flex items-center gap-4 mb-4">
+                                <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                                    <Zap className="h-6 w-6 text-primary" />
+                                </div>
+                                <h2 className="text-2xl font-black tracking-tight leading-none">1. How Trades Work</h2>
+                            </div>
+                            <div className="space-y-6 text-foreground/40 font-medium text-base leading-relaxed">
                                 <p>
-                                    CoinDarks provides a platform for exchanging cryptocurrencies for fiat currency (GHS and NGN) and vice versa. By using our service, you acknowledge that:
+                                    CoinDarks provides a service for exchanging digital assets into
+                                    local money (GHS and NGN). By using our service, you agree:
                                 </p>
-                                <ul className="list-disc pl-6 space-y-2">
-                                    <li>Exchange rates are dynamic and may change rapidly due to market volatility.</li>
-                                    <li>The rate confirmed at the time of your order is the final rate applied to your transaction.</li>
-                                    <li>Transactions are final once processed and cannot be reversed.</li>
+                                <ul className="space-y-4">
+                                    {[
+                                        "Exchange rates change frequently based on market conditions.",
+                                        "The rate shown when you confirm your order is final and will not change.",
+                                        "Payments are final once processed by the banks or mobile money services."
+                                    ].map((item, idx) => (
+                                        <li key={idx} className="flex gap-4">
+                                            <div className="h-1.5 w-1.5 rounded-full bg-primary shrink-0 mt-2.5" />
+                                            <span>{item}</span>
+                                        </li>
+                                    ))}
                                 </ul>
                             </div>
                         </section>
 
-                        <section className="p-8">
-                            <h2 className="text-xl font-bold mb-6 flex items-center gap-3">
-                                <AlertCircle className="h-5 w-5 text-primary" />
-                                2. User Obligations
-                            </h2>
-                            <div className="space-y-4 text-foreground/70 leading-relaxed font-medium">
+                        <section className="p-8 sm:p-14 space-y-8">
+                            <div className="flex items-center gap-4 mb-4">
+                                <div className="h-12 w-12 rounded-2xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20">
+                                    <AlertCircle className="h-6 w-6 text-amber-500" />
+                                </div>
+                                <h2 className="text-2xl font-black tracking-tight leading-none">2. Your Responsibilities</h2>
+                            </div>
+                            <div className="space-y-6 text-foreground/40 font-medium text-base leading-relaxed">
                                 <p>As a user of CoinDarks, you agree to:</p>
-                                <ul className="list-disc pl-6 space-y-2">
-                                    <li>Provide accurate and complete information during registration and KYC verification.</li>
-                                    <li>Maintain the security of your account credentials and multi-factor authentication.</li>
-                                    <li>Only use funds that you are legally authorized to transact with.</li>
-                                    <li>Not use the platform for any illegal activities, including money laundering or terrorism financing.</li>
+                                <ul className="space-y-4">
+                                    {[
+                                        "Providing accurate and truthful information during sign-up.",
+                                        "Keeping your password and account security details safe.",
+                                        "Using only funds that belong to you and are from legal sources.",
+                                        "Following all laws and regulations regarding financial transactions."
+                                    ].map((item, idx) => (
+                                        <li key={idx} className="flex gap-4">
+                                            <div className="h-1.5 w-1.5 rounded-full bg-amber-500 shrink-0 mt-2.5" />
+                                            <span>{item}</span>
+                                        </li>
+                                    ))}
                                 </ul>
                             </div>
                         </section>
 
-                        <section className="p-8 rounded-[40px] border border-white/5 bg-white/5 backdrop-blur-md">
-                            <h2 className="text-xl font-bold mb-6 flex items-center gap-3">
-                                <RefreshCw className="h-5 w-5 text-primary" />
-                                3. Fees & Processing Times
-                            </h2>
-                            <div className="space-y-4 text-foreground/70 leading-relaxed font-medium">
+                        <section className="glass-card rounded-[48px] p-8 sm:p-14 border border-white/5 space-y-8">
+                            <div className="flex items-center gap-4 mb-4">
+                                <div className="h-12 w-12 rounded-2xl bg-secondary/10 flex items-center justify-center border border-secondary/20">
+                                    <RefreshCw className="h-6 w-6 text-secondary" />
+                                </div>
+                                <h2 className="text-2xl font-black tracking-tight leading-none">3. Payments & Fees</h2>
+                            </div>
+                            <div className="space-y-6 text-foreground/40 font-medium text-base leading-relaxed">
                                 <p>
-                                    Processing fees are included in the exchange rate shown at checkout. There are no hidden charges.
+                                    All fees are included in the exchange rate you see. There are no hidden or extra charges.
                                 </p>
                                 <p>
-                                    While we aim for instant transactions, processing times may vary based on blockchain network congestion and third-party payment provider availability (MoMo, Banking networks).
+                                    Most trades are completed in minutes, but sometimes it might take longer due to network traffic or banking delays.
                                 </p>
                             </div>
                         </section>
 
-                        <section className="p-8">
-                            <h2 className="text-xl font-bold mb-6 flex items-center gap-3">
-                                <Gavel className="h-5 w-5 text-primary" />
-                                4. Limitation of Liability
-                            </h2>
-                            <p className="text-foreground/70 leading-relaxed font-medium">
-                                CoinDarks shall not be liable for any losses resulting from market volatility, blockchain errors, user-provided incorrect wallet addresses, or localized banking system failures. Our liability is limited to the value of the specific transaction in dispute.
+                        <section className="p-8 sm:p-14 space-y-8">
+                            <div className="flex items-center gap-4 mb-4">
+                                <div className="h-12 w-12 rounded-2xl bg-red-500/10 flex items-center justify-center border border-red-500/20">
+                                    <Gavel className="h-6 w-6 text-red-500" />
+                                </div>
+                                <h2 className="text-2xl font-black tracking-tight leading-none">4. Our Responsibility</h2>
+                            </div>
+                            <p className="text-foreground/40 font-medium text-base leading-relaxed">
+                                CoinDarks is not responsible for losses caused by market changes,
+                                banking system failures, or errors in the wallet or bank details you provide.
+                                Our maximum responsibility for any trade is limited to the value of that specific trade.
                             </p>
                         </section>
 
-                        <section className="p-8 rounded-[40px] border border-white/5 bg-primary/5">
-                            <h2 className="text-xl font-bold mb-4">Acceptance of Terms</h2>
-                            <p className="text-foreground/60 font-medium mb-6">
-                                By creating an account or initiating a transaction on CoinDarks, you signify your agreement to these Terms of Service and our Privacy Policy.
-                            </p>
-                            <div className="flex gap-4">
-                                <Link href="/register">
-                                    <button className="px-8 py-4 rounded-2xl bg-primary text-white font-black text-xs uppercase tracking-widest hover:scale-105 transition-all">
-                                        Get Started
-                                    </button>
-                                </Link>
-                                <Link href="/help">
-                                    <button className="px-8 py-4 rounded-2xl bg-white/5 border border-white/10 text-foreground font-black text-xs uppercase tracking-widest hover:bg-white/10 transition-all">
-                                        Ask Questions
-                                    </button>
-                                </Link>
+                        {/* Agreement Anchor */}
+                        <div className="relative rounded-[60px] overflow-hidden bg-primary/5 p-12 sm:p-20 text-center border border-primary/10">
+                            <div className="relative z-10 space-y-8">
+                                <h3 className="text-3xl font-black tracking-tight">Acceptance.</h3>
+                                <p className="text-foreground/40 font-medium max-w-lg mx-auto text-lg">
+                                    Starting a trade means you agree to these Terms of Service and our Privacy Policy.
+                                </p>
+                                <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+                                    <Link href="/register" className="w-full sm:w-auto">
+                                        <button className="w-full h-16 px-12 rounded-[24px] bg-primary text-white font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-primary/30 hover:shadow-primary/50 transition-all active:scale-95">
+                                            Sign Up
+                                        </button>
+                                    </Link>
+                                    <Link href="/help" className="w-full sm:w-auto">
+                                        <button className="w-full h-16 px-12 rounded-[24px] glass border border-white/10 font-black text-xs uppercase tracking-[0.2em] hover:bg-white/5 transition-all text-foreground/60">
+                                            Contact Support
+                                        </button>
+                                    </Link>
+                                </div>
                             </div>
-                        </section>
+                        </div>
                     </motion.div>
                 </div>
             </main>
 
             <Footer />
-        </>
+        </div>
     );
 }

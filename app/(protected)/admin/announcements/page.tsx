@@ -41,7 +41,9 @@ export default function AdminAnnouncementsPage() {
     };
 
     useEffect(() => {
-        fetchAnnouncements();
+        Promise.resolve().then(() => {
+            fetchAnnouncements();
+        });
     }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -124,10 +126,10 @@ export default function AdminAnnouncementsPage() {
                                         type="button"
                                         onClick={() => setSeverity(s)}
                                         className={`py-3 rounded-2xl border transition-all text-[11px] font-black tracking-widest uppercase ${severity === s
-                                                ? s === 'URGENT' ? 'bg-red-500 border-red-500 text-white shadow-lg shadow-red-500/20' :
-                                                    s === 'WARNING' ? 'bg-amber-500 border-amber-500 text-white shadow-lg shadow-amber-500/20' :
-                                                        'bg-primary border-primary text-white shadow-lg shadow-primary/20'
-                                                : 'bg-background border-border hover:border-primary/30 text-foreground/60'
+                                            ? s === 'URGENT' ? 'bg-red-500 border-red-500 text-white shadow-lg shadow-red-500/20' :
+                                                s === 'WARNING' ? 'bg-amber-500 border-amber-500 text-white shadow-lg shadow-amber-500/20' :
+                                                    'bg-primary border-primary text-white shadow-lg shadow-primary/20'
+                                            : 'bg-background border-border hover:border-primary/30 text-foreground/60'
                                             }`}
                                     >
                                         {s}
@@ -170,8 +172,8 @@ export default function AdminAnnouncementsPage() {
                                     }`}
                             >
                                 <div className={`h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 ${a.severity === 'URGENT' ? 'bg-red-500/10 text-red-500' :
-                                        a.severity === 'WARNING' ? 'bg-amber-500/10 text-amber-500' :
-                                            'bg-primary/10 text-primary'
+                                    a.severity === 'WARNING' ? 'bg-amber-500/10 text-amber-500' :
+                                        'bg-primary/10 text-primary'
                                     }`}>
                                     {a.severity === 'URGENT' ? <AlertCircle className="h-6 w-6" /> :
                                         a.severity === 'WARNING' ? <AlertTriangle className="h-6 w-6" /> :
@@ -181,8 +183,8 @@ export default function AdminAnnouncementsPage() {
                                 <div className="flex-1">
                                     <div className="flex items-center gap-3 mb-1">
                                         <span className={`text-[10px] font-black uppercase tracking-widest ${a.severity === 'URGENT' ? 'text-red-500' :
-                                                a.severity === 'WARNING' ? 'text-amber-500' :
-                                                    'text-primary'
+                                            a.severity === 'WARNING' ? 'text-amber-500' :
+                                                'text-primary'
                                             }`}>
                                             {a.severity}
                                         </span>
@@ -197,8 +199,8 @@ export default function AdminAnnouncementsPage() {
                                     <button
                                         onClick={() => handleToggle(a.id, a.is_active)}
                                         className={`p-3 rounded-2xl border transition-all ${a.is_active
-                                                ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/20"
-                                                : "bg-foreground/5 border-border text-foreground/40 hover:bg-foreground/10"
+                                            ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/20"
+                                            : "bg-foreground/5 border-border text-foreground/40 hover:bg-foreground/10"
                                             }`}
                                         title={a.is_active ? "Deactivate" : "Activate"}
                                     >

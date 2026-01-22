@@ -8,16 +8,22 @@ import {
     Package,
     ArrowUpRight,
     TrendingUp,
-    AlertTriangle
+    AlertTriangle,
+    ShieldAlert,
+    ChevronRight,
+    Search,
+    Activity,
+    ArrowRight
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { getCryptos } from "@/actions/crypto";
 import { CryptoIcon } from "@/components/CryptoIcon";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-    title: "Admin Hub | CoinDarks",
-    description: "Platform oversight and management dashboard.",
+    title: "Admin Dashboard | CoinDarks",
+    description: "Manage users, transactions, and platform status.",
 };
 
 export default async function AdminDashboardPage() {
@@ -43,126 +49,247 @@ export default async function AdminDashboardPage() {
     ]);
 
     const stats = [
-        { name: "Total Users", value: totalUsers || 0, icon: Users, color: "text-blue-500", bg: "bg-blue-500/10", link: "/admin/users" },
-        { name: "Pending KYC", value: pendingKYC || 0, icon: ShieldCheck, color: "text-amber-500", bg: "bg-amber-500/10", link: "/admin/kyc" },
-        { name: "Total Orders", value: totalOrders || 0, icon: Package, color: "text-emerald-500", bg: "bg-emerald-500/10", link: "/admin/orders" },
+        { name: "Total Users", value: totalUsers || 0, icon: Users, color: "text-blue-500", bg: "bg-blue-500/10", border: "border-blue-500/20", link: "/admin/users", sub: "Total registered accounts" },
+        { name: "Pending KYC", value: pendingKYC || 0, icon: ShieldAlert, color: "text-amber-500", bg: "bg-amber-500/10", border: "border-amber-500/20", link: "/admin/kyc", sub: "Awaiting verification review" },
+        { name: "Total Orders", value: totalOrders || 0, icon: Package, color: "text-emerald-500", bg: "bg-emerald-500/10", border: "border-emerald-500/20", link: "/admin/orders", sub: "All completed transactions" },
     ];
 
     return (
-        <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            {/* Header */}
-            <div>
-                <h1 className="text-3xl font-black tracking-tight mb-2">Platform Hub</h1>
-                <p className="text-foreground/50 font-medium">Real-time status of your financial ecosystem.</p>
+        <div className="space-y-12 sm:space-y-20 animate-in fade-in slide-in-from-bottom-6 duration-1000">
+            {/* Header / Command Focus */}
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10">
+                <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                        <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/40">Secure Session : Administrator</span>
+                    </div>
+                    <h1 className="text-5xl sm:text-7xl font-black tracking-tight leading-none uppercase">
+                        Admin <br />
+                        <span className="text-gradient leading-relaxed">Dashboard.</span>
+                    </h1>
+                    <p className="text-xl text-foreground/50 font-medium max-w-2xl leading-relaxed">
+                        Centrally manage users, identity verifications, and global platform transactions across all regions.
+                    </p>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-center gap-6">
+                    <Link href="/admin/users" className="w-full sm:w-auto group relative">
+                        <div className="absolute inset-0 bg-primary/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-[28px]" />
+                        <div className="relative h-18 px-10 rounded-[28px] bg-primary text-white flex items-center justify-center gap-4 shadow-2xl shadow-primary/30 active:scale-95 transition-all text-xs uppercase tracking-[0.2em] font-black">
+                            <Search className="h-5 w-5" />
+                            <span>Manage Users</span>
+                        </div>
+                    </Link>
+                    <Link href="/admin/support" className="w-full sm:w-auto group relative">
+                        <div className="relative h-18 px-10 rounded-[28px] glass border border-white/5 flex items-center justify-center gap-4 hover:bg-white/5 hover:border-white/10 active:scale-95 transition-all text-xs uppercase tracking-[0.2em] font-black overflow-hidden group">
+                            <Activity className="h-5 w-5 text-emerald-500" />
+                            <span>System Status</span>
+                        </div>
+                    </Link>
+                </div>
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12">
                 {stats.map((stat) => (
-                    <Link key={stat.name} href={stat.link} className="group p-8 rounded-[32px] border border-white/5 bg-card-bg/50 backdrop-blur-md hover:bg-white/5 transition-all">
-                        <div className="flex justify-between items-start mb-6">
-                            <div className={`h-14 w-14 rounded-2xl ${stat.bg} flex items-center justify-center`}>
-                                <stat.icon className={`h-7 w-7 ${stat.color}`} />
+                    <Link
+                        key={stat.name}
+                        href={stat.link}
+                        className="glass-card group p-10 rounded-[48px] border border-white/5 space-y-10 relative overflow-hidden transition-all duration-500 hover:border-white/10"
+                    >
+                        <div className={cn("absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none", stat.bg)} />
+
+                        <div className="flex justify-between items-start">
+                            <div className={cn(
+                                "h-16 w-16 rounded-[24px] border flex items-center justify-center transition-transform duration-700 group-hover:rotate-12 group-hover:scale-110 shadow-2xl",
+                                stat.bg,
+                                stat.border
+                            )}>
+                                <stat.icon className={cn("h-8 w-8", stat.color)} />
                             </div>
-                            <ArrowUpRight className="h-5 w-5 text-foreground/20 group-hover:text-primary transition-colors" />
+                            <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
+                                <ArrowUpRight className="h-5 w-5 text-foreground/40" />
+                            </div>
                         </div>
-                        <p className="text-4xl font-black mb-1">{stat.value}</p>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-foreground/40">{stat.name}</p>
+
+                        <div className="space-y-2">
+                            <p className="text-6xl font-black tracking-tighter tabular-nums leading-none">{stat.value}</p>
+                            <div className="space-y-1">
+                                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-foreground/60">{stat.name}</p>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-foreground/20 leading-relaxed">{stat.sub}</p>
+                            </div>
+                        </div>
                     </Link>
                 ))}
             </div>
 
-            <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-12 sm:gap-20">
                 {/* Recent Users List */}
-                <div className="xl:col-span-8 space-y-6">
-                    <div className="flex items-center justify-between">
-                        <h2 className="text-xl font-black uppercase tracking-widest">Recent Onboarding</h2>
-                        <Link href="/admin/users" className="text-xs font-bold text-primary hover:underline uppercase tracking-widest">View All Users</Link>
+                <div className="xl:col-span-8 space-y-10">
+                    <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
+                        <div className="space-y-1">
+                            <h2 className="text-2xl font-black tracking-tight flex items-center gap-3 uppercase">
+                                Recent <span className="text-gradient">Registrations.</span>
+                            </h2>
+                            <p className="text-xs text-foreground/40 font-black uppercase tracking-[0.2em]">Latest users joined</p>
+                        </div>
+                        <Link href="/admin/users" className="group/link inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-primary hover:text-primary/70 transition-colors">
+                            All Users <ArrowRight className="h-4 w-4 group-hover/link:translate-x-2 transition-transform" />
+                        </Link>
                     </div>
 
-                    <div className="rounded-[40px] border border-white/5 bg-card-bg/30 overflow-hidden">
-                        {(recentUsers || []).map((user, idx) => (
-                            <Link
-                                key={user.id}
-                                href={`/admin/users/${user.id}`}
-                                className={`p-6 flex flex-col sm:flex-row sm:items-center justify-between hover:bg-white/10 transition-all border-b border-white/5 active:scale-[0.98] ${idx === recentUsers!.length - 1 ? "border-b-0" : ""}`}
-                            >
-                                <div className="flex items-center gap-4 mb-4 sm:mb-0">
-                                    {user.profile_image ? (
-                                        <div className="h-12 w-12 rounded-2xl overflow-hidden border border-white/10 relative shrink-0">
-                                            <Image
-                                                src={user.profile_image}
-                                                alt={`${user.first_name} ${user.last_name}`}
-                                                fill
-                                                className="object-cover"
-                                                unoptimized
-                                            />
+                    <div className="glass-card rounded-[48px] border border-white/5 overflow-hidden">
+                        {(recentUsers && recentUsers.length > 0) ? (
+                            <div className="divide-y divide-white/5">
+                                {recentUsers.map((user) => (
+                                    <Link
+                                        key={user.id}
+                                        href={`/admin/users/${user.id}`}
+                                        className="group p-8 flex flex-col sm:flex-row sm:items-center justify-between hover:bg-white/2 transition-all duration-500 active:scale-[0.99]"
+                                    >
+                                        <div className="flex items-center gap-6 mb-6 sm:mb-0">
+                                            <div className="relative">
+                                                <div className="h-16 w-16 rounded-[24px] overflow-hidden border-2 border-white/5 group-hover:border-primary/30 transition-all duration-500 shadow-2xl">
+                                                    {user.profile_image ? (
+                                                        <Image
+                                                            src={user.profile_image}
+                                                            alt={`${user.first_name} ${user.last_name}`}
+                                                            fill
+                                                            className="object-cover"
+                                                            unoptimized
+                                                        />
+                                                    ) : (
+                                                        <div className="h-full w-full bg-primary flex items-center justify-center text-white font-black text-xl">
+                                                            {user.first_name?.[0]}{user.last_name?.[0]}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div className={cn(
+                                                    "absolute -bottom-1 -right-1 h-5 w-5 rounded-lg border-2 border-background flex items-center justify-center shadow-lg",
+                                                    user.kyc_status === 'APPROVED' ? "bg-emerald-500" :
+                                                        user.kyc_status === 'PENDING' ? "bg-amber-500" :
+                                                            "bg-foreground/20"
+                                                )}>
+                                                    {user.kyc_status === 'APPROVED' ? <ShieldCheck className="h-3 w-3 text-white" /> :
+                                                        user.kyc_status === 'PENDING' ? <Activity className="h-3 w-3 text-white" /> :
+                                                            <div className="h-1 w-1 rounded-full bg-white/40" />
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div className="space-y-1">
+                                                <p className="font-black text-lg tracking-tight group-hover:text-primary transition-colors">
+                                                    {user.first_name} {user.last_name}
+                                                </p>
+                                                <div className="flex items-center gap-3">
+                                                    <p className="text-[10px] text-foreground/30 font-black tracking-widest uppercase">{user.email}</p>
+                                                    <div className="h-1 w-1 rounded-full bg-white/10" />
+                                                    <p className="text-[10px] text-foreground/20 font-black tabular-nums tracking-widest uppercase">
+                                                        {new Date(user.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                                                    </p>
+                                                </div>
+                                            </div>
                                         </div>
-                                    ) : (
-                                        <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center font-bold text-primary shrink-0 text-lg">
-                                            {user.first_name?.[0]}
+
+                                        <div className="flex items-center gap-6 ml-auto sm:ml-0">
+                                            <div className={cn(
+                                                "px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border transition-all duration-500",
+                                                user.kyc_status === 'APPROVED' ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20 group-hover:bg-emerald-500/20" :
+                                                    user.kyc_status === 'PENDING' ? "bg-amber-500/10 text-amber-500 border-amber-500/20 group-hover:bg-amber-500/20" :
+                                                        "bg-white/5 text-foreground/20 border-white/5"
+                                            )}>
+                                                {user.kyc_status === 'UNSUBMITTED' ? 'No Documents' : user.kyc_status}
+                                            </div>
+                                            <div className="h-12 w-12 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 group-hover:translate-x-2">
+                                                <ChevronRight className="h-5 w-5 text-foreground/30" />
+                                            </div>
                                         </div>
-                                    )}
-                                    <div className="min-w-0">
-                                        <p className="font-bold truncate">{user.first_name} {user.last_name}</p>
-                                        <p className="text-[10px] text-foreground/40 font-medium truncate">{user.email}</p>
-                                    </div>
+                                    </Link>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="p-20 text-center space-y-4">
+                                <div className="h-20 w-20 rounded-[32px] bg-white/5 flex items-center justify-center mx-auto border border-white/5">
+                                    <Users className="h-10 w-10 text-white/10" />
                                 </div>
-                                <div className="flex items-center justify-between sm:justify-end gap-6">
-                                    <div className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border ${user.kyc_status === 'APPROVED' ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/10" :
-                                        user.kyc_status === 'PENDING' ? "bg-amber-500/10 text-amber-500 border-amber-500/10" :
-                                            "bg-white/5 text-foreground/40 border-white/5"
-                                        }`}>
-                                        {user.kyc_status}
-                                    </div>
-                                    <p className="text-[10px] font-bold text-foreground/20 tabular-nums">
-                                        {new Date(user.created_at).toLocaleDateString()}
-                                    </p>
-                                </div>
-                            </Link>
-                        ))}
+                                <p className="text-[10px] text-foreground/20 font-black uppercase tracking-[0.4em]">No Users Found</p>
+                            </div>
+                        )}
                     </div>
                 </div>
 
                 {/* System Status Sidebar */}
-                <div className="xl:col-span-4 space-y-6">
-                    <h2 className="text-xl font-black uppercase tracking-widest">Asset Status</h2>
-                    <div className="p-8 rounded-[40px] border border-white/5 bg-card-bg/50 backdrop-blur-md space-y-8">
-                        {(inventoryStats || []).map((asset) => (
-                            <div key={asset.id} className="flex items-center justify-between">
-                                <div className="flex items-center gap-3">
-                                    <div className="h-8 w-8 rounded-full overflow-hidden bg-white/5 flex items-center justify-center font-black text-xs text-primary relative">
-                                        <CryptoIcon
-                                            symbol={asset.symbol}
-                                            iconUrl={asset.icon_url}
-                                            className="object-cover"
-                                        />
-                                        <span className="absolute inset-0 flex items-center justify-center -z-10">{asset.symbol[0]}</span>
-                                    </div>
-                                    <span className="font-bold">{asset.symbol}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className={`h-2 w-2 rounded-full ${asset.is_active ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-red-500"}`} />
-                                    <span className={`text-[10px] font-black uppercase tracking-widest ${asset.is_active ? "text-emerald-500" : "text-red-500"}`}>
-                                        {asset.is_active ? "Active" : "Disabled"}
-                                    </span>
-                                </div>
-                            </div>
-                        ))}
-                        <Link href="/admin/inventory" className="flex items-center justify-center w-full py-4 rounded-2xl bg-white/5 border border-white/10 font-black text-[10px] uppercase tracking-[0.2em] hover:bg-white/10 transition-all">
-                            Manage Inventory <TrendingUp className="ml-2 h-4 w-4 text-primary" />
-                        </Link>
-                    </div>
+                <div className="xl:col-span-4 space-y-12">
+                    <div className="space-y-8">
+                        <div className="space-y-1">
+                            <h2 className="text-xl font-black tracking-tight uppercase">System <span className="text-gradient">Status.</span></h2>
+                            <p className="text-xs text-foreground/40 font-black uppercase tracking-[0.2em]">Asset Availability</p>
+                        </div>
 
-                    <div className="p-6 rounded-[32px] bg-red-500/5 border border-red-500/10 flex items-start gap-4">
-                        <AlertTriangle className="h-5 w-5 text-red-500 shrink-0" />
-                        <div>
-                            <p className="text-[10px] font-black text-red-500 uppercase tracking-widest mb-1">Attention Required</p>
-                            <p className="text-xs text-foreground/40 font-medium leading-relaxed">
-                                {pendingKYC || 0} users are waiting for identity verification. Process these to maintain compliance.
-                            </p>
+                        <div className="glass-card p-10 rounded-[48px] border border-white/5 space-y-10">
+                            <div className="space-y-6">
+                                {(inventoryStats || []).map((asset) => (
+                                    <div key={asset.id} className="flex items-center justify-between group/asset">
+                                        <div className="flex items-center gap-4">
+                                            <div className="h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5 transition-transform duration-500 group-hover/asset:scale-110 group-hover/asset:rotate-6">
+                                                <CryptoIcon
+                                                    symbol={asset.symbol}
+                                                    iconUrl={asset.icon_url}
+                                                    className="p-2"
+                                                />
+                                            </div>
+                                            <div className="space-y-0.5">
+                                                <span className="font-black text-sm tracking-tight uppercase">{asset.symbol}</span>
+                                                <p className="text-[10px] text-foreground/20 font-black uppercase tracking-widest">{asset.name}</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-xl border border-white/5">
+                                            <div className={cn(
+                                                "h-1.5 w-1.5 rounded-full",
+                                                asset.is_active ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse" : "bg-red-500"
+                                            )} />
+                                            <span className={cn(
+                                                "text-[9px] font-black uppercase tracking-[0.2em]",
+                                                asset.is_active ? "text-emerald-500" : "text-red-500"
+                                            )}>
+                                                {asset.is_active ? "Online" : "Offline"}
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <Link href="/admin/inventory" className="group/btn relative block overflow-hidden rounded-[24px]">
+                                <div className="absolute inset-0 bg-primary opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500" />
+                                <div className="relative h-16 w-full flex items-center justify-center border-2 border-white/10 font-black text-[10px] uppercase tracking-[0.3em] group-hover/btn:text-white transition-colors duration-500 gap-3">
+                                    Manage Inventory <TrendingUp className="h-4 w-4 text-primary group-hover/btn:text-white transition-colors" />
+                                </div>
+                            </Link>
                         </div>
                     </div>
+
+                    {(pendingKYC ?? 0) > 0 && (
+                        <div className="relative overflow-hidden p-8 rounded-[40px] bg-red-500/5 border-2 border-red-500/20 group transition-all duration-500 hover:border-red-500/40">
+                            <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:rotate-12 transition-transform duration-700">
+                                <AlertTriangle className="h-20 w-20 text-red-500" />
+                            </div>
+                            <div className="relative z-10 flex items-start gap-5">
+                                <div className="h-12 w-12 rounded-2xl bg-red-500/20 border border-red-500/30 flex items-center justify-center shrink-0">
+                                    <ShieldAlert className="h-6 w-6 text-red-500" />
+                                </div>
+                                <div className="space-y-4">
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] font-black text-red-500 uppercase tracking-[0.3em]">Compliance Alert</p>
+                                        <p className="text-sm text-foreground/50 font-medium leading-relaxed">
+                                            <span className="text-foreground font-black">{pendingKYC} KYC Submissions</span> are awaiting review in the Ghana and Nigeria regions.
+                                        </p>
+                                    </div>
+                                    <Link href="/admin/kyc" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-red-500 hover:text-red-400 transition-colors">
+                                        Open Verifications <ArrowRight className="h-3 w-3" />
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

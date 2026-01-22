@@ -27,35 +27,53 @@ export default function Home() {
         <Testimonials />
         <TrustSection />
 
-        <section id="cta" className="py-24 relative overflow-hidden bg-background">
-          {/* Background Decor */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-96 bg-primary/10 blur-[100px] rounded-full pointer-events-none -z-10 will-change-[filter]" />
+        <section id="cta" className="py-32 relative overflow-hidden">
+          {/* Ambient Foundation */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-5xl h-[500px] bg-primary/10 blur-[140px] rounded-full -z-10 animate-pulse-slow" />
 
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="relative rounded-[40px] overflow-hidden border border-card-border glass-morphism p-12 sm:p-20 text-center">
-              {/* Inner background glow */}
-              <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-secondary/5 pointer-events-none" />
+            <div className="relative rounded-[60px] overflow-hidden border border-white/10 glass-card p-12 sm:p-24 text-center group">
+              {/* Internal Atmosphere */}
+              <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-secondary/5 opacity-50 pointer-events-none" />
+              <div className="absolute -top-24 -left-24 w-64 h-64 bg-primary/20 blur-[80px] rounded-full group-hover:scale-125 transition-transform duration-1000" />
+              <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-secondary/20 blur-[80px] rounded-full group-hover:scale-125 transition-transform duration-1000" />
 
               <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, scale: 0.98, y: 20 }}
+                whileInView={{ opacity: 1, scale: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ type: "spring", stiffness: 50, damping: 15 }}
-                className="relative z-10"
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="relative z-10 space-y-10"
               >
-                <h2 className="text-4xl font-extrabold tracking-tight sm:text-6xl mb-8">
-                  Ready to secure your <br className="hidden sm:block" />
-                  <span className="text-gradient">financial future?</span>
-                </h2>
-                <p className="text-foreground/60 max-w-xl mx-auto text-lg mb-12 font-medium">
-                  Join thousands of users in Ghana and Nigeria who trust CoinDarks for their daily crypto exchanges. Create your free account in seconds.
-                </p>
-                <Link href="/register">
-                  <button className="group relative rounded-full bg-primary px-12 py-5 font-bold text-white shadow-2xl shadow-primary/30 transition-all hover:scale-105 hover:shadow-primary/40 active:scale-95">
-                    <span className="relative z-10">Create Free Account</span>
-                    <div className="absolute inset-0 rounded-full bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </button>
-                </Link>
+                <div className="space-y-6">
+                  <h2 className="text-5xl sm:text-7xl font-black tracking-tight leading-[0.95] sm:leading-[0.9]">
+                    Ready to bridge your <br />
+                    <span className="text-gradient">Financial Future?</span>
+                  </h2>
+                  <p className="text-foreground/50 max-w-2xl mx-auto text-lg sm:text-xl font-medium leading-relaxed">
+                    Join thousands of elite traders in Ghana and Nigeria who have upgraded to our
+                    institutional-grade bridge. Professional settlements, starting in seconds.
+                  </p>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+                  <Link href="/register" className="w-full sm:w-auto">
+                    <button className="w-full px-12 py-6 rounded-[24px] bg-primary text-white font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-primary/30 hover:scale-105 hover:shadow-primary/50 transition-all active:scale-95">
+                      Create Master Account
+                    </button>
+                  </Link>
+                  <Link href="/faq" className="w-full sm:w-auto">
+                    <button className="w-full px-12 py-6 rounded-[24px] glass border border-white/10 font-black text-sm uppercase tracking-[0.2em] hover:bg-white/5 transition-all">
+                      Read Documentation
+                    </button>
+                  </Link>
+                </div>
+
+                <div className="pt-8 flex flex-wrap justify-center gap-8 grayscale opacity-30">
+                  <span className="text-[10px] font-black tracking-[0.3em] uppercase">No Hidden Fees</span>
+                  <span className="text-[10px] font-black tracking-[0.3em] uppercase">Instant KYB/KYC</span>
+                  <span className="text-[10px] font-black tracking-[0.3em] uppercase">24/7 Liquidity</span>
+                </div>
               </motion.div>
             </div>
           </div>

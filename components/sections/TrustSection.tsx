@@ -2,91 +2,129 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { ShieldCheck, Lock } from "lucide-react";
+import { ShieldCheck, Lock, Globe, ArrowUpRight } from "lucide-react";
 
 export default function TrustSection() {
     return (
-        <section className="py-24 relative overflow-hidden bg-background">
-            <div className="absolute top-1/2 left-0 w-96 h-96 bg-primary/5 blur-[80px] rounded-full pointer-events-none -translate-y-1/2 -z-10 will-change-[filter]" />
+        <section className="py-32 relative overflow-hidden">
+            {/* Ambient Background */}
+            <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-secondary/5 blur-[120px] rounded-full -z-10" />
 
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-                    {/* Image Column */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center">
+
+                    {/* Visual Showcase Column */}
                     <motion.div
-                        initial={{ opacity: 0, x: -20, scale: 0.98 }}
-                        whileInView={{ opacity: 1, x: 0, scale: 1 }}
-                        viewport={{ once: true, amount: 0.1 }}
-                        transition={{
-                            type: "spring",
-                            stiffness: 80,
-                            damping: 25,
-                        }}
-                        className="relative order-2 lg:order-1 will-change-transform"
+                        initial={{ opacity: 0, x: -30 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                        className="lg:col-span-5 relative group"
                     >
-                        <div className="relative aspect-video rounded-3xl overflow-hidden border border-card-border glass-morphism p-2 bg-foreground/2">
-                            <div className="relative w-full h-full rounded-2xl overflow-hidden bg-foreground/5">
+                        <div className="relative aspect-4/5 rounded-[48px] overflow-hidden glass-card border border-white/10 p-3 bg-white/2 shadow-2xl">
+                            <div className="relative w-full h-full rounded-[40px] overflow-hidden bg-black/40">
                                 <Image
                                     src="/hero_graphic_1.png"
-                                    alt="Secure Network"
+                                    alt="Trusted Financial Infrastructure"
                                     fill
-                                    sizes="(max-width: 768px) 100vw, 50vw"
-                                    className="object-cover transition-transform duration-700 hover:scale-105"
+                                    className="object-cover opacity-90 group-hover:scale-105 transition-transform duration-1000"
                                 />
+                                <div className="absolute inset-0 bg-linear-to-t from-background via-transparent to-transparent opacity-60" />
                             </div>
                         </div>
-                        {/* Decorative elements */}
-                        <div className="absolute -top-10 -right-10 h-40 w-40 bg-primary/10 blur-[100px] rounded-full pointer-events-none -z-10" />
-                        <div className="absolute -bottom-10 -left-10 h-40 w-40 bg-secondary/10 blur-[100px] rounded-full pointer-events-none -z-10" />
+
+                        {/* Floating Interaction Element */}
+                        <motion.div
+                            animate={{ y: [0, -10, 0] }}
+                            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                            className="absolute -bottom-10 -right-10 glass p-8 rounded-[32px] border border-white/10 shadow-2xl max-w-[240px]"
+                        >
+                            <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
+                                <Globe className="h-6 w-6 text-primary" />
+                            </div>
+                            <p className="text-sm font-black tracking-tight mb-1">Local Payouts</p>
+                            <p className="text-xs text-foreground/50 font-medium">Bank-direct settlements across Ghana & Nigeria.</p>
+                        </motion.div>
                     </motion.div>
 
-                    {/* Content Column */}
-                    <motion.div
-                        initial={{ opacity: 0, x: 20, scale: 0.98 }}
-                        whileInView={{ opacity: 1, x: 0, scale: 1 }}
-                        viewport={{ once: true, amount: 0.1 }}
-                        transition={{
-                            type: "spring",
-                            stiffness: 80,
-                            damping: 25,
-                            delay: 0.05,
-                        }}
-                        className="space-y-10 order-1 lg:order-2 px-4 sm:px-0 will-change-transform"
-                    >
-                        <div>
-                            <h2 className="text-3xl font-extrabold tracking-tight sm:text-5xl mb-6 leading-tight">
-                                Why Thousands in <span className="text-gradient">Ghana & Nigeria</span> Trust Us
-                            </h2>
-                            <p className="text-foreground/60 leading-relaxed text-base sm:text-lg font-medium">
-                                We provide a professional bridge between your digital assets and local currency. Our platform is built on transparency, speed, and uncompromising security.
-                            </p>
+                    {/* Content Narrative Column */}
+                    <div className="lg:col-span-7 space-y-12">
+                        <div className="space-y-6">
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-secondary/20 bg-secondary/5 text-secondary text-[10px] font-black uppercase tracking-[0.3em]"
+                            >
+                                Built for Confidence
+                            </motion.div>
+                            <motion.h2
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: 0.1 }}
+                                className="text-4xl sm:text-6xl font-black tracking-tight leading-[1.05]"
+                            >
+                                Why the <span className="text-gradient">Continent&apos;s best</span> <br />
+                                trust CoinDarks.
+                            </motion.h2>
+                            <motion.p
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: 0.2 }}
+                                className="text-lg sm:text-xl text-foreground/60 font-medium max-w-2xl"
+                            >
+                                We provide more than just an exchange; we deliver a professional pipeline between
+                                global digital liquidity and local fiat economy.
+                            </motion.p>
                         </div>
 
-                        <div className="space-y-8">
-                            <div className="flex flex-col sm:flex-row gap-6 group">
-                                <div className="h-12 w-12 shrink-0 rounded-2xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20 group-hover:scale-110 transition-transform">
-                                    <Lock className="h-6 w-6" />
+                        <div className="space-y-10">
+                            <motion.div
+                                initial={{ opacity: 0, x: 20 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: 0.3 }}
+                                className="flex gap-8 group"
+                            >
+                                <div className="h-14 w-14 shrink-0 rounded-2xl glass border border-primary/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform shadow-sm">
+                                    <Lock className="h-7 w-7" />
                                 </div>
-                                <div className="flex-1">
-                                    <h4 className="font-bold text-lg mb-2">Non-Custodial Focus</h4>
-                                    <p className="text-sm text-foreground/60 leading-relaxed font-medium">
-                                        We don&apos;t hold your funds longer than necessary. Exchange and withdraw instantly to your local bank account or mobile money wallet.
+                                <div className="space-y-2">
+                                    <h4 className="text-xl font-black tracking-tight flex items-center gap-2">
+                                        Non-Custodial Ethos <ArrowUpRight className="h-4 w-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" />
+                                    </h4>
+                                    <p className="text-sm text-foreground/50 leading-relaxed font-medium">
+                                        We respect the sovereignty of your assets. Our engine executes trades instantly,
+                                        settling directly to your local accounts without unnecessary holding periods.
                                     </p>
                                 </div>
-                            </div>
+                            </motion.div>
 
-                            <div className="flex flex-col sm:flex-row gap-6 group">
-                                <div className="h-12 w-12 shrink-0 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary border border-secondary/20 group-hover:scale-110 transition-transform">
-                                    <ShieldCheck className="h-6 w-6" />
+                            <motion.div
+                                initial={{ opacity: 0, x: 20 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: 0.4 }}
+                                className="flex gap-8 group"
+                            >
+                                <div className="h-14 w-14 shrink-0 rounded-2xl glass border border-secondary/20 flex items-center justify-center text-secondary group-hover:scale-110 transition-transform shadow-sm">
+                                    <ShieldCheck className="h-7 w-7" />
                                 </div>
-                                <div className="flex-1">
-                                    <h4 className="font-bold text-lg mb-2">Local Compliance</h4>
-                                    <p className="text-sm text-foreground/60 leading-relaxed font-medium">
-                                        Fully compliant with local regulations in both Ghana and Nigeria, providing you with a legal, safe, and regulated exchange environment.
+                                <div className="space-y-2">
+                                    <h4 className="text-xl font-black tracking-tight flex items-center gap-2">
+                                        Regulatory Rigor <ArrowUpRight className="h-4 w-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" />
+                                    </h4>
+                                    <p className="text-sm text-foreground/50 leading-relaxed font-medium">
+                                        Operating in full alignment with Ghanaian and Nigerian financial standards.
+                                        We provide a legal, transparent, and fully audit-ready exchange framework.
                                     </p>
                                 </div>
-                            </div>
+                            </motion.div>
                         </div>
-                    </motion.div>
+                    </div>
+
                 </div>
             </div>
         </section>

@@ -8,19 +8,60 @@ import { Logo } from "@/components/ui/Logo";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { useState } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+
 
 export default function Navbar() {
     const { data: session } = useSession();
+    const pathname = usePathname();
+    const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
+    const [scrolledSection, setScrolledSection] = useState("");
 
-    const navLinks = [
+    const currentActive = useMemo(() => {
+        return pathname === "/" ? scrolledSection : pathname;
+    }, [pathname, scrolledSection]);
+
+    const navLinks = useMemo(() => [
         { name: "Exchange", href: "/#home", icon: Zap },
         { name: "Live Market", href: "/#market", icon: Globe },
         { name: "Features", href: "/#how-it-works", icon: ShieldCheck },
         { name: "Security", href: "/#security", icon: Shield },
         { name: "Testimonials", href: "/#testimonials", icon: Star },
-    ];
+    ], []);
+
+    // Active section detection for homepage
+    useEffect(() => {
+        if (pathname !== "/") return;
+
+        const handleScroll = () => {
+            const sections = navLinks.map(link => link.href.split("#")[1]).filter(Boolean);
+            let current = "";
+            for (const section of sections) {
+                const element = document.getElementById(section);
+                if (element) {
+                    const rect = element.getBoundingClientRect();
+                    if (rect.top <= 150) current = `/#${section}`;
+                }
+            }
+            if (scrolledSection !== current) {
+                setScrolledSection(current);
+            }
+        };
+
+        window.addEventListener("scroll", handleScroll, { passive: true });
+        handleScroll();
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, [pathname, navLinks, scrolledSection]);
+
+    const handlePrefetch = useCallback((href: string) => {
+        const route = href.split("#")[0];
+        if (route && route !== pathname) {
+            router.prefetch(route);
+        }
+    }, [pathname, router]);
 
     return (
         <header className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 py-4 mt-2">
@@ -30,17 +71,29 @@ export default function Navbar() {
                     <Logo />
 
                     {/* Desktop Nav Links */}
-                    <div className="hidden md:flex items-center gap-1 bg-white/5 rounded-2xl p-1 border border-white/5">
-                        {navLinks.map((link) => (
-                            <Link
-                                key={link.name}
-                                href={link.href}
-                                className="px-5 py-2 rounded-xl text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-white/5 transition-all flex items-center gap-2"
-                            >
-                                <link.icon className="h-4 w-4 opacity-70" />
-                                {link.name}
-                            </Link>
-                        ))}
+                    <div className="hidden md:flex items-center gap-1 bg-white/5 rounded-2xl p-1 border border-white/5 relative">
+                        {navLinks.map((link) => {
+                            const isActive = currentActive === link.href;
+                            return (
+                                <Link
+                                    key={link.name}
+                                    href={link.href}
+                                    onMouseEnter={() => handlePrefetch(link.href)}
+                                    className={`relative px-5 py-2 rounded-xl text-sm font-medium transition-all flex items-center gap-2 group ${isActive ? "text-white" : "text-foreground/60 hover:text-foreground"
+                                        }`}
+                                >
+                                    <link.icon className={`h-4 w-4 transition-colors ${isActive ? "text-primary" : "opacity-70 group-hover:opacity-100"}`} />
+                                    <span className="relative z-10">{link.name}</span>
+                                    {isActive && (
+                                        <motion.div
+                                            layoutId="nav-pill"
+                                            className="absolute inset-0 bg-white/5 border border-white/10 rounded-xl z-0"
+                                            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                        />
+                                    )}
+                                </Link>
+                            );
+                        })}
                     </div>
 
                     {/* User Actions */}
@@ -52,6 +105,7 @@ export default function Navbar() {
                             <div className="flex items-center gap-2">
                                 <Link
                                     href="/dashboard"
+                                    onMouseEnter={() => handlePrefetch("/dashboard")}
                                     className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm font-bold hover:bg-white/10 transition-all"
                                 >
                                     <LayoutDashboard className="h-4 w-4" />
@@ -69,12 +123,14 @@ export default function Navbar() {
                             <div className="flex items-center gap-2">
                                 <Link
                                     href="/login"
+                                    onMouseEnter={() => handlePrefetch("/login")}
                                     className="hidden sm:block text-sm font-bold px-5 py-2.5 hover:text-primary transition-colors"
                                 >
                                     Sign In
                                 </Link>
                                 <Link
                                     href="/register"
+                                    onMouseEnter={() => handlePrefetch("/register")}
                                     className="hidden sm:flex relative group overflow-hidden px-6 py-2.5 rounded-xl bg-primary font-bold text-white text-sm shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all active:scale-95"
                                 >
                                     <span className="relative z-10 flex items-center gap-2">
@@ -116,6 +172,7 @@ export default function Navbar() {
                                                     <Link
                                                         key={link.name}
                                                         href={link.href}
+                                                        onMouseEnter={() => handlePrefetch(link.href)}
                                                         onClick={(e) => {
                                                             const id = link.href.split("#")[1];
                                                             if (id) {

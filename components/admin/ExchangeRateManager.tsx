@@ -4,9 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { updateRateConfig, createRatePair, deleteRatePair, ExchangeRate } from "@/actions/rates";
 import { toast } from "sonner";
-import { Plus, RefreshCw, Calculator, DollarSign, Activity, Trash2, Loader2, Info, Hand, TrendingUp } from "lucide-react";
+import { Plus, RefreshCw, Calculator, DollarSign, Activity, Trash2, Loader2, Info, Hand, TrendingUp, Sliders } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
     Dialog,
     DialogContent,
@@ -15,8 +15,6 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-
-
 
 interface ExchangeRateManagerProps {
     initialRates: ExchangeRate[];
@@ -28,21 +26,18 @@ export function ExchangeRateManager({ initialRates }: ExchangeRateManagerProps) 
     const [newPair, setNewPair] = useState("");
     const [isAdding, setIsAdding] = useState(false);
     const [loading, setLoading] = useState<string | null>(null);
-
-    // Delete State
     const [pairToDelete, setPairToDelete] = useState<string | null>(null);
     const [isRefreshing, setIsRefreshing] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const handleRefresh = async () => {
         setIsRefreshing(true);
         router.refresh();
         setTimeout(() => setIsRefreshing(false), 1000);
     };
-    const [isDeleting, setIsDeleting] = useState(false);
 
     const handleUpdate = async (pair: string, changes: Partial<ExchangeRate>) => {
         setLoading(pair);
-        // Optimistic update
         setRates(prev => prev.map(r => r.pair === pair ? { ...r, ...changes } : r));
 
         const res = await updateRateConfig(pair, {
@@ -52,11 +47,8 @@ export function ExchangeRateManager({ initialRates }: ExchangeRateManagerProps) 
             is_automated: changes.is_automated
         });
 
-        if (res.error) {
-            toast.error(res.error);
-        } else {
-            toast.success("Rate updated");
-        }
+        if (res.error) toast.error(res.error);
+        else toast.success(`Node ${pair} Updated`);
         setLoading(null);
     };
 
@@ -64,36 +56,32 @@ export function ExchangeRateManager({ initialRates }: ExchangeRateManagerProps) 
         e.preventDefault();
         if (!newPair) return;
 
-        const toastId = toast.loading("Adding pair...");
+        const toastId = toast.loading("INITIALIZING PAIR MATRIX...");
         const res = await createRatePair(newPair.toUpperCase());
 
         if (res.success && res.rate) {
-            const newRate = res.rate;
-            toast.success("Pair added", { id: toastId });
-            setRates(prev => [newRate, ...prev]);
+            toast.success("Matrix Initialized", { id: toastId });
+            setRates(prev => [res.rate!, ...prev]);
             setNewPair("");
             setIsAdding(false);
         } else {
-            toast.error(res.error || "Failed to add", { id: toastId });
+            toast.error(res.error || "Initialization Failed", { id: toastId });
         }
     };
 
     const confirmDelete = async () => {
         if (!pairToDelete) return;
         setIsDeleting(true);
-        const toastId = toast.loading("Removing pair...");
+        const toastId = toast.loading("TERMINATING PAIR MATRIX...");
 
         try {
             const res = await deleteRatePair(pairToDelete);
-
             if (res.success) {
                 setRates(prev => prev.filter(r => r.pair !== pairToDelete));
-                toast.success("Pair removed", { id: toastId });
-            } else {
-                toast.error(res.error || "Failed to delete", { id: toastId });
-            }
+                toast.success("Matrix Terminated", { id: toastId });
+            } else toast.error(res.error || "Termination Failed", { id: toastId });
         } catch {
-            toast.error("Failed to delete", { id: toastId });
+            toast.error("Process Error", { id: toastId });
         } finally {
             setIsDeleting(false);
             setPairToDelete(null);
@@ -101,239 +89,295 @@ export function ExchangeRateManager({ initialRates }: ExchangeRateManagerProps) 
     };
 
     return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h2 className="text-xl font-bold">Exchange Rates</h2>
-                    <p className="text-sm text-foreground/40">Manage independent Buy/Sell profit margins.</p>
+        <div className="space-y-8 sm:space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+            {/* Header / Stats Focus */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 sm:gap-8">
+                <div className="space-y-1 sm:space-y-2">
+                    <div className="flex items-center gap-2.5 sm:gap-3">
+                        <div className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
+                        <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight">Liquidity Matrix</h2>
+                    </div>
+                    <p className="text-[11px] sm:text-sm text-foreground/40 font-medium">Manage institutional exchange parameters and margins.</p>
                 </div>
-                <button
-                    onClick={() => setIsAdding(!isAdding)}
-                    className="flex items-center gap-2 px-4 py-2 bg-white/5 text-foreground rounded-xl font-bold text-xs hover:bg-white/10 transition-all border border-white/5"
-                >
-                    <Plus className="w-4 h-4" />
-                    ADD PAIR
-                </button>
-                <button
-                    onClick={handleRefresh}
-                    className="p-2 hover:bg-white/5 rounded-lg transition-colors"
-                >
-                    <RefreshCw className={cn("h-4 w-4 transition-all", isRefreshing && "animate-spin text-primary")} />
-                </button>
-            </div>
-
-            {/* Admin Guidance / Help Section */}
-            <div className="p-6 rounded-[32px] bg-primary/5 border border-primary/10 space-y-4">
-                <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                        <Info className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                        <h3 className="text-sm font-black uppercase tracking-wider">Split Margin Logic</h3>
-                        <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest leading-none mt-1">You can now set different margins for buying and selling</p>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="p-4 rounded-2xl bg-black/20 border border-white/5 space-y-2">
-                        <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-500">
-                            <TrendingUp className="h-3 w-3" /> Buy Margin (User Buys)
-                        </div>
-                        <p className="text-xs text-foreground/60 leading-relaxed font-medium">
-                            Added to the base rate. <br />
-                            Price = <span className="text-foreground">Base × (1 + Buy%)</span>
-                        </p>
-                    </div>
-
-                    <div className="p-4 rounded-2xl bg-black/20 border border-white/5 space-y-2">
-                        <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-rose-500">
-                            <Calculator className="h-3 w-3" /> Sell Margin (User Sells)
-                        </div>
-                        <p className="text-xs text-foreground/60 leading-relaxed font-medium">
-                            Subtracted from the base rate. <br />
-                            Price = <span className="text-foreground">Base × (1 - Sell%)</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            {isAdding && (
-                <form onSubmit={handleAddPair} className="flex gap-2 p-4 bg-white/5 rounded-2xl border border-white/5 mb-4">
-                    <input
-                        autoFocus
-                        value={newPair}
-                        onChange={(e) => setNewPair(e.target.value)}
-                        placeholder="e.g. BTC-USD"
-                        className="flex-1 bg-black/20 border border-white/10 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-primary uppercase font-mono"
-                    />
-                    <button type="submit" className="px-4 py-2 bg-primary text-white rounded-xl text-xs font-bold">
-                        SAVE
+                <div className="flex items-center gap-2.5 sm:gap-4">
+                    <button
+                        onClick={handleRefresh}
+                        className="h-10 w-10 sm:h-12 sm:w-12 rounded-[14px] sm:rounded-2xl glass border border-white/5 flex items-center justify-center hover:bg-white/5 transition-all group active:scale-95 shadow-xl shrink-0"
+                    >
+                        <RefreshCw className={cn("h-3.5 w-3.5 sm:h-5 sm:w-5 opacity-40 group-hover:opacity-100 transition-all group-hover:rotate-180 duration-700", isRefreshing && "animate-spin text-primary opacity-100")} />
                     </button>
-                </form>
-            )}
-
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                {rates.map((rate) => (
-                    <div key={rate.pair} className="relative p-5 rounded-[24px] border border-white/5 bg-card-bg/50 backdrop-blur-md hover:border-primary/20 transition-all group">
-                        <div className="flex justify-between items-start mb-6">
-                            <div className="flex items-center gap-3">
-                                <div className="h-10 w-10 rounded-xl bg-linear-to-br from-amber-500/20 to-amber-500/5 flex items-center justify-center border border-white/5">
-                                    <DollarSign className="h-5 w-5 text-amber-500" />
-                                </div>
-                                <div>
-                                    <h3 className="font-bold text-sm">{rate.pair}</h3>
-                                    <div className="flex items-center gap-1.5 mt-1">
-                                        <div className={cn("h-1.5 w-1.5 rounded-full", rate.is_automated ? "bg-emerald-500 animate-pulse" : "bg-amber-500")} />
-                                        <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-wider">
-                                            {rate.is_automated ? "Live Feed" : "Manual Override"}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <button
-                                    onClick={() => handleUpdate(rate.pair, { is_automated: !rate.is_automated })}
-                                    className={cn(
-                                        "px-3 py-1.5 rounded-lg transition-all flex items-center gap-2 text-xs font-bold border",
-                                        rate.is_automated
-                                            ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/20"
-                                            : "bg-amber-500/10 text-amber-500 border-amber-500/20 hover:bg-amber-500/20"
-                                    )}
-                                    title="Toggle Automation"
-                                >
-                                    {rate.is_automated ? (
-                                        <>
-                                            <Activity className="h-3.5 w-3.5" />
-                                            <span>Auto</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Hand className="h-3.5 w-3.5" />
-                                            <span>Manual</span>
-                                        </>
-                                    )}
-                                </button>
-                                <button
-                                    onClick={() => setPairToDelete(rate.pair)}
-                                    className="p-2 rounded-lg bg-white/5 text-foreground/40 hover:text-rose-500 hover:bg-rose-500/10 transition-colors"
-                                    title="Remove Pair"
-                                >
-                                    <Trash2 className="h-4 w-4" />
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className="space-y-4">
-                            {/* Base Rate Display/Input */}
-                            <div className="space-y-2">
-                                <div className="flex justify-between text-[10px] uppercase font-bold text-foreground/40 tracking-wider">
-                                    <span>Base Rate ({rate.pair.split('-')[1] || 'USD'})</span>
-                                    {rate.is_automated && <span>Source: CoinGecko</span>}
-                                </div>
-                                {rate.is_automated ? (
-                                    <div className="px-4 py-3 bg-black/20 rounded-xl flex justify-between items-center opacity-75">
-                                        <span className="font-mono font-bold text-sm">
-                                            {rate.rate.toLocaleString()} {rate.pair.split('-')[1] || 'USD'}
-                                        </span>
-                                        <RefreshCw className="h-3 w-3 text-foreground/20" />
-                                    </div>
-                                ) : (
-                                    <SafeNumericInput
-                                        value={rate.manual_rate || 0}
-                                        onChange={(val) => handleUpdate(rate.pair, { manual_rate: val })}
-                                        className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm font-mono focus:outline-none focus:border-amber-500 transition-all text-amber-500 font-bold"
-                                        placeholder="0.00"
-                                    />
-                                )}
-                            </div>
-
-                            {/* Two Margins Grid */}
-                            <div className="grid grid-cols-2 gap-3">
-                                <div className="space-y-2">
-                                    <label className="text-[10px] uppercase font-bold text-emerald-500 tracking-wider">Buy %</label>
-                                    <div className="relative">
-                                        <SafeNumericInput
-                                            value={rate.buy_margin || 0}
-                                            onChange={(val) => handleUpdate(rate.pair, { buy_margin: val })}
-                                            className="w-full bg-black/20 border border-white/10 rounded-xl pl-3 pr-7 py-2 text-xs font-mono focus:outline-none focus:border-emerald-500 transition-all font-bold"
-                                        />
-                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/20 font-bold text-[10px]">%</span>
-                                    </div>
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-[10px] uppercase font-bold text-rose-500 tracking-wider">Sell %</label>
-                                    <div className="relative">
-                                        <SafeNumericInput
-                                            value={rate.sell_margin || 0}
-                                            onChange={(val) => handleUpdate(rate.pair, { sell_margin: val })}
-                                            className="w-full bg-black/20 border border-white/10 rounded-xl pl-3 pr-7 py-2 text-xs font-mono focus:outline-none focus:border-rose-500 transition-all font-bold"
-                                        />
-                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/20 font-bold text-[10px]">%</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Final Rate Calculation Display */}
-                            <div className="pt-4 border-t border-white/5 space-y-2">
-                                <div className="flex justify-between items-center">
-                                    <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">User Buys</span>
-                                    <p className="font-mono font-bold text-sm text-foreground">
-                                        {((rate.is_automated ? rate.rate : (rate.manual_rate || 0)) * (1 + rate.buy_margin / 100)).toLocaleString()} {rate.pair.split('-')[1] || 'USD'}
-                                    </p>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-[9px] font-black text-rose-500 uppercase tracking-widest">User Sells</span>
-                                    <p className="font-mono font-bold text-sm text-foreground">
-                                        {((rate.is_automated ? rate.rate : (rate.manual_rate || 0)) * (1 - rate.sell_margin / 100)).toLocaleString()} {rate.pair.split('-')[1] || 'USD'}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {loading === rate.pair && (
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                className="absolute inset-0 bg-black/50 backdrop-blur-sm rounded-[24px] flex items-center justify-center z-10"
-                            >
-                                <RefreshCw className="h-6 w-6 text-primary animate-spin" />
-                            </motion.div>
-                        )}
-                    </div>
-                ))}
+                    <button
+                        onClick={() => setIsAdding(!isAdding)}
+                        className="h-10 sm:h-12 px-4 sm:px-6 rounded-[14px] sm:rounded-2xl bg-white/5 border border-white/5 text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] hover:bg-white/10 transition-all active:scale-95 shadow-xl flex items-center gap-2 sm:gap-3"
+                    >
+                        <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
+                        <span>Add Pair</span>
+                    </button>
+                </div>
             </div>
 
-            {rates.length === 0 && !isAdding && (
-                <div className="text-center py-12 rounded-[32px] border border-dashed border-white/5 bg-white/5">
-                    <Calculator className="h-8 w-8 text-foreground/20 mx-auto mb-3" />
-                    <p className="text-sm font-bold text-foreground/40">No exchange rates configured</p>
-                    <button onClick={() => setIsAdding(true)} className="text-primary text-xs font-bold mt-2 hover:underline">Add BTC-USD now</button>
-                </div>
-            )}
+            {/* Institutional Guidance */}
+            <div className="relative group">
+                <div className="absolute inset-0 bg-primary/3 blur-3xl opacity-50 rounded-[28px] sm:rounded-[48px]" />
+                <div className="relative p-5 sm:p-10 rounded-[24px] sm:rounded-[48px] glass border border-primary/10 overflow-hidden shadow-2xl">
+                    <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6 sm:gap-10">
+                        <div className="space-y-3 sm:space-y-4 max-w-sm">
+                            <div className="flex items-center gap-3 sm:gap-4">
+                                <div className="h-10 w-10 sm:h-14 sm:w-14 rounded-[14px] sm:rounded-[20px] bg-primary/10 flex items-center justify-center border border-primary/20 shadow-inner">
+                                    <Info className="h-4 w-4 sm:h-7 sm:w-7 text-primary" />
+                                </div>
+                                <h3 className="text-lg sm:text-xl font-black uppercase tracking-tight">Margin Logic</h3>
+                            </div>
+                            <p className="text-[10px] sm:text-xs text-foreground/40 font-medium leading-relaxed">
+                                Deploy independent profit benchmarks for infrastructure ingress and egress.
+                                The matrix recalculates real-time values based on these parameters.
+                            </p>
+                        </div>
 
+                        <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 w-full">
+                            <div className="p-5 sm:p-8 rounded-xl sm:rounded-3xl bg-white/3 border border-white/5 space-y-3 sm:space-y-4 shadow-xl">
+                                <div className="flex justify-between items-center">
+                                    <div className="flex items-center gap-2.5 sm:gap-3 text-emerald-500">
+                                        <TrendingUp className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                        <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em]">Buy Benchmark</span>
+                                    </div>
+                                    <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+                                </div>
+                                <p className="text-[9px] sm:text-[11px] text-foreground/60 leading-relaxed font-black uppercase tracking-widest">
+                                    Applied to Global Base. <br />
+                                    <span className="text-white">Price = Base × (1 + Buy%)</span>
+                                </p>
+                            </div>
+
+                            <div className="p-5 sm:p-8 rounded-xl sm:rounded-3xl bg-white/3 border border-white/5 space-y-3 sm:space-y-4 shadow-xl">
+                                <div className="flex justify-between items-center">
+                                    <div className="flex items-center gap-2.5 sm:gap-3 text-rose-500">
+                                        <Calculator className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                        <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em]">Sell Benchmark</span>
+                                    </div>
+                                    <div className="h-1.5 w-1.5 rounded-full bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.5)]" />
+                                </div>
+                                <p className="text-[9px] sm:text-[11px] text-foreground/60 leading-relaxed font-black uppercase tracking-widest">
+                                    Applied to Global Base. <br />
+                                    <span className="text-white">Price = Base × (1 - Sell%)</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Addition Matrix */}
+            <AnimatePresence>
+                {isAdding && (
+                    <motion.form
+                        initial={{ opacity: 0, y: -20, scale: 0.98 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -20, scale: 0.98 }}
+                        onSubmit={handleAddPair}
+                        className="flex flex-col sm:flex-row gap-3 sm:gap-4 p-5 sm:p-8 rounded-[20px] sm:rounded-[32px] glass border border-primary/20 shadow-3xl"
+                    >
+                        <div className="relative flex-1">
+                            <Sliders className="absolute left-5 sm:left-6 top-1/2 -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-foreground/10" />
+                            <input
+                                autoFocus
+                                value={newPair}
+                                onChange={(e) => setNewPair(e.target.value)}
+                                placeholder="E.G. BTC-USD / SOL-NGN"
+                                className="w-full h-13 sm:h-16 pl-14 sm:pl-16 pr-6 sm:pr-8 bg-white/3 border border-white/5 rounded-[14px] sm:rounded-[20px] text-[10px] sm:text-xs font-black tracking-widest sm:tracking-[0.4em] uppercase focus:outline-none focus:border-primary/50 transition-all font-mono placeholder:text-foreground/5"
+                            />
+                        </div>
+                        <button type="submit" className="h-13 sm:h-16 px-8 sm:px-12 rounded-[14px] sm:rounded-[20px] bg-primary text-white text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] shadow-2xl shadow-primary/20 active:scale-95 transition-all">
+                            Initialize
+                        </button>
+                    </motion.form>
+                )}
+            </AnimatePresence>
+
+            {/* Pairs Matrix */}
+            <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-8">
+                <AnimatePresence mode="popLayout">
+                    {rates.map((rate) => (
+                        <motion.div
+                            key={rate.pair}
+                            layout
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            className="group relative p-6 sm:p-10 rounded-[32px] sm:rounded-[48px] glass border border-white/5 hover:border-amber-500/30 transition-all duration-700 shadow-2xl"
+                        >
+                            {/* Overlay Glow */}
+                            <div className="absolute inset-0 bg-amber-500/1 opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-[48px]" />
+
+                            <div className="relative z-10 space-y-10">
+                                <div className="flex justify-between items-start">
+                                    <div className="flex items-center gap-4 sm:gap-5">
+                                        <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-[16px] sm:rounded-[24px] bg-white/5 border border-white/5 flex items-center justify-center shadow-inner group-hover:rotate-6 transition-transform duration-500 shrink-0">
+                                            <DollarSign className="h-5 w-5 sm:h-7 sm:w-7 text-amber-500" />
+                                        </div>
+                                        <div className="space-y-0.5 sm:space-y-1">
+                                            <h3 className="text-lg sm:text-xl font-black uppercase tracking-tighter leading-none">{rate.pair}</h3>
+                                            <div className="flex items-center gap-2">
+                                                <div className={cn("h-1.5 w-1.5 rounded-full", rate.is_automated ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]")} />
+                                                <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.2em] text-foreground/30">
+                                                    {rate.is_automated ? "Direct Feed" : "Manual Pulse"}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col items-end gap-3">
+                                        <button
+                                            onClick={() => handleUpdate(rate.pair, { is_automated: !rate.is_automated })}
+                                            className={cn(
+                                                "h-10 px-5 rounded-2xl flex items-center gap-3 text-[9px] font-black uppercase tracking-[0.2em] border transition-all duration-500",
+                                                rate.is_automated
+                                                    ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                                                    : "bg-amber-500/10 text-amber-500 border-amber-500/20"
+                                            )}
+                                        >
+                                            {rate.is_automated ? <Activity className="h-3 w-3" /> : <Hand className="h-3 w-3" />}
+                                            <span>{rate.is_automated ? "Auto" : "Manual"}</span>
+                                        </button>
+                                        <button onClick={() => setPairToDelete(rate.pair)} className="text-foreground/10 hover:text-rose-500 transition-colors">
+                                            <Trash2 className="h-4 w-4" />
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-6">
+                                    {/* Core Benchmark */}
+                                    <div className="space-y-3">
+                                        <p className="text-[9px] font-black text-foreground/20 uppercase tracking-[0.3em] ml-2">Mainframe Reference ({rate.pair.split('-')[1] || 'USD'})</p>
+                                        {rate.is_automated ? (
+                                            <div className="h-12 sm:h-16 px-5 sm:px-8 rounded-[14px] sm:rounded-[24px] bg-white/3 border border-white/5 flex items-center justify-between group/feed opacity-60">
+                                                <span className="font-mono font-black text-sm sm:text-lg tracking-tight">
+                                                    {rate.rate.toLocaleString()}
+                                                </span>
+                                                <div className="flex items-center gap-2 sm:gap-3">
+                                                    <span className="text-[7px] sm:text-[8px] font-black uppercase tracking-widest text-foreground/20 whitespace-nowrap">Source: Feed</span>
+                                                    <RefreshCw className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-foreground/10" />
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="relative group/input">
+                                                <div className="absolute inset-0 bg-amber-500/5 blur-xl opacity-0 group-focus-within/input:opacity-100 transition-opacity" />
+                                                <SafeNumericInput
+                                                    value={rate.manual_rate || 0}
+                                                    onChange={(val) => handleUpdate(rate.pair, { manual_rate: val })}
+                                                    className="w-full h-14 sm:h-16 px-6 sm:px-8 bg-white/3 border border-white/5 rounded-[18px] sm:rounded-[24px] font-mono font-black text-base sm:text-lg tracking-tight text-amber-500 focus:outline-none focus:border-amber-500/50 transition-all relative z-10"
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Benchmarks Matrix */}
+                                    <div className="grid grid-cols-2 gap-4 sm:gap-5 py-2 sm:py-4">
+                                        <div className="space-y-3">
+                                            <label className="text-[9px] font-black text-emerald-500 uppercase tracking-[0.3em] ml-2">Ingress %</label>
+                                            <div className="relative group/margin">
+                                                <SafeNumericInput
+                                                    value={rate.buy_margin || 0}
+                                                    onChange={(val) => handleUpdate(rate.pair, { buy_margin: val })}
+                                                    className="w-full h-12 sm:h-14 pl-4 sm:pl-6 pr-8 sm:pr-10 bg-white/3 border border-white/5 rounded-[16px] sm:rounded-[20px] font-mono font-black text-xs sm:text-sm tracking-widest focus:outline-none focus:border-emerald-500/50 transition-all"
+                                                />
+                                                <span className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-foreground/10 font-black text-[9px] sm:text-[10px]">%</span>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-3">
+                                            <label className="text-[9px] font-black text-rose-500 uppercase tracking-[0.3em] ml-2">Egress %</label>
+                                            <div className="relative group/margin">
+                                                <SafeNumericInput
+                                                    value={rate.sell_margin || 0}
+                                                    onChange={(val) => handleUpdate(rate.pair, { sell_margin: val })}
+                                                    className="w-full h-12 sm:h-14 pl-4 sm:pl-6 pr-8 sm:pr-10 bg-white/3 border border-white/5 rounded-[16px] sm:rounded-[20px] font-mono font-black text-xs sm:text-sm tracking-widest focus:outline-none focus:border-rose-500/50 transition-all"
+                                                />
+                                                <span className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-foreground/10 font-black text-[9px] sm:text-[10px]">%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Projected Cycles */}
+                                    <div className="p-5 sm:p-8 rounded-[20px] sm:rounded-[32px] bg-white/3 border border-white/5 space-y-4 sm:space-y-5 shadow-inner">
+                                        <div className="flex justify-between items-center group/result">
+                                            <div className="flex items-center gap-2.5 sm:gap-3">
+                                                <div className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-emerald-500/20" />
+                                                <span className="text-[8px] sm:text-[9px] font-black text-foreground/20 uppercase tracking-widest">Protocol Buy</span>
+                                            </div>
+                                            <p className="font-mono font-black text-xs sm:text-base text-foreground group-hover/result:text-emerald-500 transition-colors">
+                                                {((rate.is_automated ? rate.rate : (rate.manual_rate || 0)) * (1 + rate.buy_margin / 100)).toLocaleString()} <span className="text-[8px] sm:text-[10px] opacity-20 ml-1">{rate.pair.split('-')[1] || 'USD'}</span>
+                                            </p>
+                                        </div>
+                                        <div className="flex justify-between items-center group/result">
+                                            <div className="flex items-center gap-2.5 sm:gap-3">
+                                                <div className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-rose-500/20" />
+                                                <span className="text-[8px] sm:text-[9px] font-black text-foreground/20 uppercase tracking-widest">Protocol Sell</span>
+                                            </div>
+                                            <p className="font-mono font-black text-xs sm:text-base text-foreground group-hover/result:text-rose-500 transition-colors">
+                                                {((rate.is_automated ? rate.rate : (rate.manual_rate || 0)) * (1 - rate.sell_margin / 100)).toLocaleString()} <span className="text-[8px] sm:text-[10px] opacity-20 ml-1">{rate.pair.split('-')[1] || 'USD'}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {loading === rate.pair && (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    className="absolute inset-0 bg-black/60 backdrop-blur-md rounded-[48px] flex flex-col items-center justify-center z-50 space-y-6"
+                                >
+                                    <div className="relative">
+                                        <div className="absolute inset-0 bg-primary/20 blur-2xl animate-pulse" />
+                                        <RefreshCw className="h-10 w-10 text-primary animate-spin relative" />
+                                    </div>
+                                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white">Recalibrating Matrix...</p>
+                                </motion.div>
+                            )}
+                        </motion.div>
+                    ))}
+                </AnimatePresence>
+
+                {rates.length === 0 && !isAdding && (
+                    <div className="col-span-full py-20 sm:py-32 rounded-[32px] sm:rounded-[64px] border border-dashed border-white/5 bg-white/2 flex flex-col items-center justify-center space-y-6 sm:space-y-8">
+                        <div className="h-16 w-16 sm:h-24 sm:w-24 rounded-[20px] sm:rounded-[40px] bg-white/5 flex items-center justify-center border border-white/5 text-foreground/10">
+                            <Sliders className="h-7 w-7 sm:h-10 sm:w-10" />
+                        </div>
+                        <div className="text-center space-y-2 sm:space-y-3">
+                            <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight">Zero Matrix Detected</h3>
+                            <p className="text-[11px] sm:text-sm text-foreground/30 font-medium max-w-xs leading-relaxed">No liquidity pairs have been initialized for system-wide trading.</p>
+                        </div>
+                        <button onClick={() => setIsAdding(true)} className="h-14 sm:h-16 px-10 sm:px-12 rounded-[18px] sm:rounded-[28px] bg-primary text-white text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] shadow-2xl shadow-primary/20 hover:scale-105 transition-all">Initialize Core Matrix</button>
+                    </div>
+                )}
+            </div>
+
+            {/* Termination Logic */}
             <Dialog open={!!pairToDelete} onOpenChange={() => !isDeleting && setPairToDelete(null)}>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Delete Rate Pair?</DialogTitle>
-                        <DialogDescription>
-                            This will stop price tracking for {pairToDelete}. Users may not be able to trade this pair.
+                <DialogContent className="rounded-[40px] glass border-white/10 p-12 max-w-lg">
+                    <DialogHeader className="space-y-6">
+                        <div className="h-20 w-20 rounded-3xl bg-rose-500/10 flex items-center justify-center text-rose-500 border border-rose-500/20">
+                            <Trash2 className="h-10 w-10" />
+                        </div>
+                        <DialogTitle className="text-4xl font-black uppercase tracking-tight leading-none">Terminate Matrix?</DialogTitle>
+                        <DialogDescription className="text-lg text-foreground/40 font-medium leading-relaxed">
+                            This will immediately purge the <span className="text-white font-bold">{pairToDelete}</span> matrix from the global exchange registry. All related settlement cycles will be aborted.
                         </DialogDescription>
                     </DialogHeader>
-                    <DialogFooter>
+                    <DialogFooter className="flex flex-col sm:flex-row gap-6 mt-10">
                         <button
                             onClick={() => setPairToDelete(null)}
-                            className="px-4 py-2 rounded-xl text-sm font-bold hover:bg-white/5 transition-all text-foreground/60 hover:text-foreground"
+                            className="flex-1 h-18 rounded-[24px] glass border border-white/5 text-[10px] font-black uppercase tracking-[0.2em]"
                             disabled={isDeleting}
                         >
-                            Cancel
+                            Abort
                         </button>
                         <button
                             onClick={confirmDelete}
-                            className="px-4 py-2 bg-rose-500 text-white rounded-xl text-sm font-bold hover:bg-rose-600 transition-all flex items-center gap-2"
+                            className="flex-2 h-18 rounded-[24px] bg-rose-500 text-white text-[10px] font-black uppercase tracking-[0.2em] shadow-2xl shadow-rose-500/20 flex items-center justify-center gap-4 disabled:opacity-50"
                             disabled={isDeleting}
                         >
-                            {isDeleting && <Loader2 className="h-3 w-3 animate-spin" />}
-                            Delete
+                            {isDeleting ? <Loader2 className="h-5 w-5 animate-spin" /> : <Trash2 className="h-5 w-5" />}
+                            Terminate Matrix
                         </button>
                     </DialogFooter>
                 </DialogContent>
@@ -342,10 +386,6 @@ export function ExchangeRateManager({ initialRates }: ExchangeRateManagerProps) 
     );
 }
 
-/**
- * A custom numeric input that handles its own local string state.
- * This allows typing negative signs (-) and leading zeros without them being stripped by React's controlled state.
- */
 function SafeNumericInput({ value, onChange, className, placeholder }: { value: number; onChange: (v: number) => void; className?: string; placeholder?: string }) {
     const [localValue, setLocalValue] = useState(value.toString());
     const [prevValue, setPrevValue] = useState(value);
@@ -358,14 +398,13 @@ function SafeNumericInput({ value, onChange, className, placeholder }: { value: 
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
-        setLocalValue(val);
+        const sanitized = val.replace(/[^0-9.-]/g, ''); // Allow only numbers, dot, and minus
+        setLocalValue(sanitized);
 
-        // Notify parent of valid numerical changes
-        const parsed = parseFloat(val);
+        const parsed = parseFloat(sanitized);
         if (!isNaN(parsed)) {
             onChange(parsed);
-        } else if (val === "" || val === "-") {
-            // If input is empty or just a negative sign, treat as 0 for the parent's state
+        } else if (sanitized === "" || sanitized === "-") {
             onChange(0);
         }
     };
