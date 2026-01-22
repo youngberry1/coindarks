@@ -72,7 +72,7 @@ export function GeneralSettings({ user }: GeneralSettingsProps) {
                     <Loading message="Processing biometric data upload..." />
                 )}
             </AnimatePresence>
-            <div className="p-5 md:p-8 rounded-3xl md:rounded-[32px] border border-white/5 bg-card-bg/50 backdrop-blur-md">
+            <div className="p-4 md:p-8 rounded-[24px] md:rounded-[32px] border border-white/5 bg-card-bg/50 backdrop-blur-md">
                 <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
                     <UserIcon className="h-5 w-5 text-primary" />
                     Profile Information

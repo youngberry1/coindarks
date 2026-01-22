@@ -103,9 +103,9 @@ export function SecuritySettings() {
                     <Loading message="Updating primary security keys..." />
                 )}
             </AnimatePresence>
-            <div className="p-4 sm:p-6 md:p-8 rounded-[24px] sm:rounded-[32px] border border-border bg-card-bg/50 backdrop-blur-md shadow-sm dark:shadow-none transition-all">
-                <h3 className="text-sm sm:text-base md:text-lg font-bold mb-2 flex items-center gap-2">
-                    <Lock className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 text-primary" />
+            <div className="p-4 md:p-8 rounded-[24px] md:rounded-[32px] border border-border bg-card-bg/50 backdrop-blur-md shadow-sm dark:shadow-none transition-all">
+                <h3 className="text-base md:text-lg font-bold mb-2 flex items-center gap-2">
+                    <Lock className="h-4 w-4 md:h-5 md:w-5 text-primary" />
                     Change Password
                 </h3>
                 <p className="text-[10px] sm:text-[12px] md:text-sm text-foreground/40 font-medium mb-6 sm:mb-8">Ensure your account is using a long, random password to stay secure.</p>

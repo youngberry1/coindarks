@@ -117,19 +117,19 @@ export function PaymentMethodManager({ initialMethods }: PaymentMethodManagerPro
     };
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-6 md:space-y-8">
             <AnimatePresence>
                 {isSaving && <Loading message="Verifying account details..." />}
                 {isDeleting && <Loading message="Removing payment method..." />}
             </AnimatePresence>
 
             {/* Header + Add Button */}
-            <div className="flex items-center justify-between">
-                <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em]">Your Saved Accounts</p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-0">
+                <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em] text-left">Your Saved Accounts</p>
                 {!isAdding && (
                     <button
                         onClick={() => setIsAdding(true)}
-                        className="px-5 py-2.5 rounded-xl bg-primary text-white font-bold text-xs shadow-lg shadow-primary/20 hover:scale-105 transition-all flex items-center gap-2"
+                        className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-primary text-white font-bold text-xs shadow-lg shadow-primary/20 hover:scale-105 transition-all flex items-center justify-center sm:justify-start gap-2"
                     >
                         <Plus className="h-4 w-4" /> Add Payment Method
                     </button>
@@ -138,8 +138,8 @@ export function PaymentMethodManager({ initialMethods }: PaymentMethodManagerPro
 
             {/* Add Form */}
             {isAdding && (
-                <div className="p-6 md:p-8 rounded-[32px] border border-primary/20 bg-primary/5 space-y-6 animate-in zoom-in-95 duration-300 shadow-sm dark:shadow-none">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="p-4 md:p-8 rounded-[32px] border border-primary/20 bg-primary/5 space-y-4 md:space-y-6 animate-in zoom-in-95 duration-300 shadow-sm dark:shadow-none">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                         <div className="space-y-2">
                             <label className="text-[10px] font-black text-foreground/40 uppercase tracking-widest ml-1">Type</label>
                             <div className="flex p-1 bg-card-bg/20 border border-border rounded-xl">
@@ -254,10 +254,10 @@ export function PaymentMethodManager({ initialMethods }: PaymentMethodManagerPro
                     methods.map((method) => (
                         <div
                             key={method.id}
-                            className="group p-5 md:p-6 rounded-[32px] border border-border bg-card-bg/50 hover:bg-card-bg shadow-sm dark:shadow-none transition-all flex flex-col sm:flex-row sm:items-center gap-6"
+                            className="group p-4 md:p-6 rounded-[24px] md:rounded-[32px] border border-border bg-card-bg/50 hover:bg-card-bg shadow-sm dark:shadow-none transition-all flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6"
                         >
                             <div className="flex items-center gap-4 shrink-0 min-w-0">
-                                <div className="h-14 w-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center font-black text-lg text-primary shrink-0">
+                                <div className="h-12 w-12 md:h-14 md:w-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center font-black text-lg text-primary shrink-0">
                                     {method.method_type === 'BANK_ACCOUNT' ? <Landmark className="h-6 w-6" /> : <Smartphone className="h-6 w-6" />}
                                 </div>
                                 <div className="min-w-0 flex-1">
@@ -289,9 +289,9 @@ export function PaymentMethodManager({ initialMethods }: PaymentMethodManagerPro
             </div>
 
             {/* Warning Section */}
-            <div className="p-6 md:p-8 rounded-[40px] border border-secondary/20 bg-secondary/5 backdrop-blur-md flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
-                <div className="h-14 w-14 lg:h-16 lg:w-16 rounded-3xl bg-secondary/10 flex items-center justify-center shrink-0">
-                    <AlertCircle className="h-8 w-8 text-secondary" />
+            <div className="p-5 md:p-8 rounded-[32px] md:rounded-[40px] border border-secondary/20 bg-secondary/5 backdrop-blur-md flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+                <div className="h-12 w-12 lg:h-16 lg:w-16 rounded-2xl lg:rounded-3xl bg-secondary/10 flex items-center justify-center shrink-0">
+                    <AlertCircle className="h-6 w-6 lg:h-8 lg:w-8 text-secondary" />
                 </div>
                 <div className="flex-1 min-w-0">
                     <h4 className="font-black text-lg mb-1 leading-none">Usage & Security</h4>
