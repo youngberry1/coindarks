@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/select";
 import { CryptoIcon } from "@/components/CryptoIcon";
 import { cn } from "@/lib/utils";
-import { ChevronDown } from "lucide-react";
 
 interface AssetOption {
     id: string;
@@ -36,46 +35,45 @@ export function AssetSelector({ value, onChange, options, type, className }: Ass
         <Select value={value} onValueChange={onChange}>
             <SelectTrigger
                 className={cn(
-                    "group/trigger w-auto h-16 px-6 rounded-[24px] bg-black/40 backdrop-blur-xl border border-white/5 hover:border-primary/50 hover:bg-black/60 transition-all duration-500 shadow-2xl outline-none focus:ring-0",
+                    "group/trigger w-auto h-12 px-4 rounded-[16px] bg-black/40 backdrop-blur-xl border border-white/5 hover:border-primary/50 hover:bg-black/60 transition-all duration-500 shadow-2xl outline-none focus:ring-0",
                     className
                 )}
                 aria-label={`Select ${type === 'CRYPTO' ? 'Cryptocurrency' : 'Fiat Currency'}`}
             >
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
                     {/* Icon handling */}
                     {type === "CRYPTO" ? (
-                        <div className="h-9 w-9 relative shrink-0 transition-transform duration-500 group-hover/trigger:scale-110 group-hover/trigger:rotate-6">
+                        <div className="h-8 w-8 relative shrink-0">
                             {selectedOption && (
                                 <CryptoIcon
                                     symbol={selectedOption.id}
                                     iconUrl={selectedOption.icon}
-                                    className="object-contain"
+                                    className="rounded-full"
                                 />
                             )}
                         </div>
                     ) : selectedOption?.icon ? (
-                        <div className="h-9 w-9 relative shrink-0 transition-transform duration-500 group-hover/trigger:scale-110">
+                        <div className="h-8 w-8 relative shrink-0">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src={selectedOption.icon} alt={selectedOption.name} className="h-full w-full object-contain rounded-full shadow-2xl" />
+                            <img src={selectedOption.icon} alt={selectedOption.name} className="h-full w-full object-contain rounded-full shadow-sm" />
                         </div>
                     ) : (
-                        <div className="h-9 w-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[11px] font-black shrink-0 transition-transform duration-500 group-hover/trigger:scale-110">
+                        <div className="h-6 w-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[10px] font-black shrink-0 transition-transform duration-500 group-hover/trigger:scale-110">
                             {selectedOption?.symbol ? selectedOption.symbol[0] : '$'}
                         </div>
                     )}
 
-                    <div className="flex flex-col items-start text-left min-w-[70px]">
+                    <div className="flex flex-col items-start text-left min-w-[60px]">
                         <SelectValue placeholder="Asset">
-                            <span className="font-black text-sm uppercase tracking-tight block leading-none text-white group-hover/trigger:text-primary transition-colors">
+                            <span className="font-black text-xs uppercase tracking-tight block leading-none text-white group-hover/trigger:text-primary transition-colors">
                                 {selectedOption?.id}
                             </span>
-                            <span className="text-[10px] font-black text-foreground/40 uppercase tracking-widest block mt-1.5 leading-none truncate max-w-[100px]">
+                            <span className="text-[9px] font-black text-foreground/40 uppercase tracking-widest block mt-1 leading-none truncate max-w-[80px]">
                                 {selectedOption?.name}
                             </span>
                         </SelectValue>
                     </div>
 
-                    <ChevronDown className="h-4 w-4 text-foreground/20 transition-transform duration-500 group-focus:rotate-180" />
                 </div>
             </SelectTrigger>
             <SelectContent className="bg-black/95 backdrop-blur-3xl border border-white/10 rounded-[32px] p-2 min-w-[220px] z-50 shadow-2xl">

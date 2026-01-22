@@ -3,21 +3,18 @@ import { redirect } from "next/navigation";
 import { Metadata } from "next";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import {
-    Coins,
     ShieldCheck,
-    AlertCircle,
-    Info,
     Clock,
-    Zap
+    Zap,
+    Info
 } from "lucide-react";
 import Link from "next/link";
 import { TradingForm } from "@/components/dashboard/TradingForm";
 import { getCryptos } from "@/actions/crypto";
 
-
 export const metadata: Metadata = {
     title: "Instant Exchange | CoinDarks",
-    description: "Exchange crypto and fiat instantly with the best rates in Ghana and Nigeria.",
+    description: "Exchange crypto and fiat instantly with the best rates.",
 };
 
 const ASSET_METADATA: Record<string, { name: string; coingeckoId: string }> = {
@@ -42,7 +39,6 @@ export default async function ExchangePage() {
 
     // 2. Fetch Available Inventory
     const inventory = await getCryptos(false);
-
     const isAdmin = session.user.role === 'ADMIN';
     const isKycApproved = user?.kyc_status === 'APPROVED' || isAdmin;
 
@@ -56,64 +52,32 @@ export default async function ExchangePage() {
         }));
 
     return (
-        <div className="space-y-12 md:space-y-16 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-            {/* Page Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-                <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                        <div className="h-2 w-12 bg-primary rounded-full" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Market Service</span>
-                    </div>
-                    <h1 className="text-5xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]">
-                        Instant <span className="text-primary text-gradient">Exchange</span>
-                    </h1>
-                    <p className="max-w-xl text-foreground/40 font-bold text-sm md:text-base leading-relaxed">
-                        Fast, secure, and reliable cryptocurrency swaps with competitive rates and high liquidity.
-                    </p>
+        <div className="min-h-[85vh] flex flex-col items-center justify-center relative overflow-hidden py-6 md:py-0">
+            {/* Background Effects */}
+            <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-primary/10 via-background to-background" />
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[128px] -z-10" />
+
+            <div className="w-full max-w-lg mx-auto px-4 flex flex-col items-center gap-8 z-10">
+
+                {/* Minimal Header */}
+                <div className="text-center space-y-2">
+                    <h1 className="text-2xl md:text-3xl font-black tracking-tighter">Instant <span className="text-primary">Exchange</span></h1>
+                    <p className="text-foreground/40 font-medium text-xs md:text-sm">Best rates, zero hidden fees.</p>
                 </div>
 
-                {!isKycApproved && (
-                    <Link
-                        href="/dashboard/kyc/submit"
-                        className="group flex items-center gap-6 p-6 rounded-[32px] bg-amber-500/5 border border-amber-500/10 hover:bg-amber-500/10 transition-all duration-500 max-w-md shadow-2xl"
-                    >
-                        <div className="h-14 w-14 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform duration-500">
-                            <ShieldCheck className="h-7 w-7" />
-                        </div>
-                        <div className="space-y-1">
-                            <p className="font-black text-xs uppercase tracking-tight">Identity Verification Required</p>
-                            <p className="text-[11px] text-foreground/40 font-bold leading-relaxed">Please complete your verification to enable high-volume trading and withdrawals.</p>
-                        </div>
-                    </Link>
-                )}
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-16">
-                {/* Main Action Area */}
-                <div className="lg:col-span-8 order-1">
+                {/* Main Trading Area */}
+                <div className="w-full">
                     {!isKycApproved ? (
-                        <div className="group relative p-12 md:p-20 rounded-[64px] border border-white/5 bg-white/2 backdrop-blur-3xl overflow-hidden text-center space-y-10">
-                            <div className="absolute inset-0 bg-linear-to-b from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-
-                            <div className="relative">
-                                <div className="h-32 w-32 rounded-[48px] bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-amber-500/20 group-hover:scale-110 transition-transform duration-700">
-                                    <AlertCircle className="h-16 w-16 text-amber-500" />
-                                </div>
-
-                                <div className="space-y-4 max-w-md mx-auto">
-                                    <h2 className="text-4xl font-black uppercase tracking-tighter">Trading <span className="text-amber-500">Disabled</span></h2>
-                                    <p className="text-foreground/40 font-bold leading-relaxed italic">
-                                        &quot;To maintain security and comply with regulations, please verify your identity before initiating your first trade.&quot;
-                                    </p>
-                                </div>
+                        <div className="max-w-sm mx-auto p-6 rounded-2xl border border-white/5 bg-white/2 backdrop-blur-xl text-center space-y-4">
+                            <div className="h-12 w-12 mx-auto rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500">
+                                <ShieldCheck className="h-6 w-6" />
                             </div>
-
-                            <Link
-                                href="/dashboard/kyc/submit"
-                                className="inline-flex items-center gap-4 px-12 py-6 rounded-[28px] bg-primary text-white font-black text-xs uppercase tracking-[0.3em] shadow-2xl shadow-primary/30 hover:scale-105 active:scale-95 transition-all relative z-10"
-                            >
-                                <Zap className="h-4 w-4" />
-                                Start Verification Status
+                            <div className="space-y-1">
+                                <h2 className="text-lg font-bold">Verification Required</h2>
+                                <p className="text-xs text-foreground/50">Verify identity to trade.</p>
+                            </div>
+                            <Link href="/dashboard/kyc/submit" className="block w-full py-2.5 rounded-xl bg-primary text-white font-bold text-xs shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all">
+                                Start Verification
                             </Link>
                         </div>
                     ) : (
@@ -124,71 +88,25 @@ export default async function ExchangePage() {
                     )}
                 </div>
 
-                {/* Information Sidebar */}
-                <div className="lg:col-span-4 space-y-8 order-2">
-                    {/* Trading Info Card */}
-                    <div className="p-10 rounded-[48px] border border-white/5 bg-white/2 backdrop-blur-3xl space-y-10 group/info relative overflow-hidden">
-                        <div className="absolute inset-0 bg-primary/2 opacity-0 group-hover/info:opacity-100 transition-opacity duration-700 pointer-events-none" />
-                        <div className="flex items-center gap-4 mb-2">
-                            <div className="h-10 w-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
-                                <Info className="h-5 w-5" />
-                            </div>
-                            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/20">Trade Information</p>
-                        </div>
-
-                        <div className="space-y-10">
-                            <div className="group flex gap-6 hover:translate-x-2 transition-transform duration-500">
-                                <div className="h-14 w-14 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5 group-hover:text-primary transition-colors">
-                                    <Clock className="h-7 w-7" />
-                                </div>
-                                <div className="space-y-1">
-                                    <p className="font-black text-sm uppercase tracking-tight">Processing Time</p>
-                                    <p className="text-[11px] text-foreground/40 font-bold leading-relaxed">Orders are typically completed within 5-30 minutes after payment confirm.</p>
-                                </div>
-                            </div>
-
-                            <div className="group flex gap-6 hover:translate-x-2 transition-transform duration-500">
-                                <div className="h-14 w-14 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5 group-hover:text-emerald-500 transition-colors">
-                                    <ShieldCheck className="h-7 w-7" />
-                                </div>
-                                <div className="space-y-1">
-                                    <p className="font-black text-sm uppercase tracking-tight">Transaction Security</p>
-                                    <p className="text-[11px] text-foreground/40 font-bold leading-relaxed">Every trade is manually reviewed by our security team to ensure safety.</p>
-                                </div>
-                            </div>
-
-                            <div className="group flex gap-6 hover:translate-x-2 transition-transform duration-500">
-                                <div className="h-14 w-14 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5 group-hover:text-amber-500 transition-colors">
-                                    <Zap className="h-7 w-7" />
-                                </div>
-                                <div className="space-y-1">
-                                    <p className="font-black text-sm uppercase tracking-tight">Expert Support</p>
-                                    <p className="text-[11px] text-foreground/40 font-bold leading-relaxed">Our 24/7 support desk is always ready to assist with your transactions.</p>
-                                </div>
-                            </div>
-                        </div>
+                {/* Features Footer (Compact Strip) */}
+                <div className="flex items-center justify-center gap-6 md:gap-12 opacity-50 w-full pt-4">
+                    <div className="flex items-center gap-2">
+                        <Clock className="h-3 w-3 text-primary" />
+                        <span className="text-[10px] uppercase font-bold tracking-widest">15m Settle</span>
                     </div>
 
-                    {/* Supported Assets Card */}
-                    <div className="p-10 rounded-[48px] border border-white/5 bg-linear-to-br from-primary/5 to-transparent relative overflow-hidden group/assets">
-                        <div className="absolute top-0 right-0 p-8 text-primary/5 -rotate-12 group-hover/assets:rotate-0 transition-transform duration-1000">
-                            <Coins className="h-32 w-32" />
-                        </div>
-                        <div className="flex items-center gap-4 mb-8">
-                            <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/20">Supported Assets</h3>
-                        </div>
-                        <div className="flex flex-wrap gap-3 relative z-10">
-                            {(inventory || []).filter(i => i.is_active).map((asset) => (
-                                <div
-                                    key={asset.id}
-                                    className="px-5 py-2.5 rounded-2xl bg-black/40 border border-white/5 text-[10px] font-black uppercase tracking-wider text-foreground/60 hover:border-primary transition-all cursor-default"
-                                >
-                                    {asset.symbol}
-                                </div>
-                            ))}
-                        </div>
+                    <div className="h-3 w-px bg-white/10" />
+                    <div className="flex items-center gap-2">
+                        <Zap className="h-3 w-3 text-amber-500" />
+                        <span className="text-[10px] uppercase font-bold tracking-widest">Live Rates</span>
                     </div>
                 </div>
+
+                {/* Help Link */}
+                <Link href="/dashboard/support" className="flex items-center gap-2 text-[10px] font-bold text-foreground/20 hover:text-foreground/50 transition-colors">
+                    <Info className="h-3 w-3" /> Report Issue
+                </Link>
+
             </div>
         </div>
     );

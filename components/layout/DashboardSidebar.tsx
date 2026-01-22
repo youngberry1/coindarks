@@ -86,7 +86,7 @@ export function DashboardSidebar({ user }: SidebarProps) {
                 <div className="relative group p-4 rounded-[32px] glass-card border border-white/5 overflow-hidden">
                     <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     <div className="relative z-10 flex items-center gap-4">
-                        <div className="h-12 w-12 rounded-2xl bg-primary flex items-center justify-center text-white font-black text-xl shadow-2xl shadow-primary/20 overflow-hidden shrink-0 border border-white/10 ring-4 ring-primary/5">
+                        <div className="relative h-12 w-12 rounded-full bg-primary flex items-center justify-center text-white font-black text-xl shadow-2xl shadow-primary/20 overflow-hidden shrink-0 border border-white/10 ring-4 ring-primary/5">
                             {user?.profile_image ? (
                                 <Image
                                     src={user.profile_image}

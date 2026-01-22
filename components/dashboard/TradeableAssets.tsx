@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { getCryptos, Cryptocurrency } from '@/actions/crypto';
+import { CryptoIcon } from '@/components/CryptoIcon';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { Zap, Sparkles, TrendingUp } from 'lucide-react';
 
@@ -43,9 +43,8 @@ export default function TradeableAssets({ initialData = [] }: TradeableAssetsPro
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {cryptos.map((crypto, idx) => {
-                    const iconUrl = `https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/${crypto.symbol.toLowerCase()}.svg`;
                     const inStock = crypto.stock_status === 'IN STOCK';
 
                     return (
@@ -67,17 +66,10 @@ export default function TradeableAssets({ initialData = [] }: TradeableAssetsPro
                                 <div className="relative z-10 space-y-8">
                                     <div className="flex items-center justify-between">
                                         <div className="h-16 w-16 rounded-[24px] bg-white/5 p-3 flex items-center justify-center border border-white/5 shadow-2xl transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
-                                            <Image
-                                                src={crypto.icon_url?.startsWith('http') ? crypto.icon_url : iconUrl}
-                                                alt={crypto.symbol}
-                                                width={64}
-                                                height={64}
+                                            <CryptoIcon
+                                                symbol={crypto.symbol}
+                                                iconUrl={crypto.icon_url}
                                                 className="rounded-xl"
-                                                onError={(e) => {
-                                                    e.currentTarget.style.display = 'none';
-                                                    e.currentTarget.parentElement!.innerText = crypto.symbol[0];
-                                                    e.currentTarget.parentElement!.className += ' text-primary font-black text-2xl';
-                                                }}
                                             />
                                         </div>
                                         <div className={cn(
