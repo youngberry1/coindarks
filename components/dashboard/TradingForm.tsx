@@ -158,6 +158,16 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
         setDisplayRate(baseRate * marginMultiplier);
     }, [cachedRates, asset, fiat, type]);
 
+    const isRateMissing = !isLoading && cachedRates.length > 0 && displayRate === null;
+
+    // Clear inputs if rate is unavailable
+    useEffect(() => {
+        if (isRateMissing) {
+            setAmountFiat("");
+            setAmountCrypto("");
+        }
+    }, [isRateMissing]);
+
     // 3. Periodic Background Refresh
     useEffect(() => {
         setIsLoading(true);
@@ -511,6 +521,13 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                 </div>
 
                 {/* Error & Warning */}
+                {isRateMissing && (
+                    <div className="mt-4 p-4 rounded-xl bg-amber-500/10 border border-amber-500/10 text-amber-500 text-xs font-bold flex items-center gap-3">
+                        <AlertCircle className="h-5 w-5 shrink-0" />
+                        Exchange rate currently unavailable for this pair. Please check back later.
+                    </div>
+                )}
+
                 {error && (
                     <div className="mt-4 p-4 rounded-xl bg-red-500/10 border border-red-500/10 text-red-500 text-xs font-bold flex items-center gap-3">
                         <AlertCircle className="h-5 w-5 shrink-0" />
@@ -524,10 +541,14 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                         <button disabled className="w-full py-5 rounded-[20px] bg-white/5 border border-white/5 text-foreground/30 font-bold cursor-not-allowed text-sm uppercase tracking-widest">
                             Currently Unavailable
                         </button>
+                    ) : isRateMissing ? (
+                        <button disabled className="w-full py-5 rounded-[20px] bg-white/5 border border-white/5 text-foreground/30 font-bold cursor-not-allowed text-sm uppercase tracking-widest">
+                            Rate Unavailable
+                        </button>
                     ) : (
                         <button
                             onClick={handleSubmit}
-                            disabled={isSubmitting || !!error || !amountFiat || !receivingAddress}
+                            disabled={isSubmitting || !!error || !amountFiat || !receivingAddress || !displayRate}
                             className={cn(
                                 "w-full py-5 rounded-[20px] font-black text-sm uppercase tracking-widest transition-all shadow-xl hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:grayscale disabled:hover:scale-100",
                                 type === 'BUY' ? "bg-primary text-white shadow-primary/20 hover:shadow-primary/30" : "bg-rose-500 text-white shadow-rose-500/20 hover:shadow-rose-500/30"
