@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -14,12 +16,25 @@ export function Loading({
     fullScreen = true,
     className
 }: LoadingProps) {
-    return (
-        <div className={cn(
-            "flex flex-col items-center justify-center relative overflow-hidden",
-            fullScreen ? "fixed inset-0 z-9999 bg-background/80 backdrop-blur-md h-dvh w-screen" : "p-4 sm:p-8 md:p-12 w-full min-h-[200px]",
-            className
-        )}>
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        // Use timeout to avoid synchronous cascading render warning
+        const timeout = setTimeout(() => setMounted(true), 0);
+        return () => clearTimeout(timeout);
+    }, []);
+
+    const content = (
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className={cn(
+                "flex flex-col items-center justify-center overflow-hidden",
+                fullScreen ? "fixed inset-0 z-99999 bg-background/80 backdrop-blur-md h-screen w-screen" : "relative p-4 sm:p-8 md:p-12 w-full min-h-[200px]",
+                className
+            )}
+        >
             <div className="flex flex-col items-center gap-4 sm:gap-6 md:gap-8 max-w-[90vw]">
                 {/* Responsive High-End Spinner */}
                 <div className="relative w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16">
@@ -53,6 +68,11 @@ export function Loading({
                 <div className="absolute inset-0 opacity-[0.02] pointer-events-none mix-blend-overlay grayscale invert dark:invert-0"
                     style={{ backgroundImage: `url("https://grainy-gradients.vercel.app/noise.svg")` }} />
             )}
-        </div>
+        </motion.div>
     );
+
+    if (!fullScreen) return content;
+    if (!mounted) return null;
+
+    return createPortal(content, document.body);
 }

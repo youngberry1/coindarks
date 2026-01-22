@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
     Plus,
     Trash2,
@@ -41,6 +42,7 @@ const NETWORK_OPTIONS: Record<string, string[]> = {
 };
 
 export function WalletManager({ initialWallets, assets }: WalletManagerProps) {
+    const router = useRouter();
     const [wallets, setWallets] = useState<Wallet[]>(initialWallets);
     const [isAdding, setIsAdding] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
@@ -55,6 +57,11 @@ export function WalletManager({ initialWallets, assets }: WalletManagerProps) {
     });
 
     const [editingWallet, setEditingWallet] = useState<string | null>(null);
+
+    // Sync state with props when data is re-fetched via router.refresh()
+    useEffect(() => {
+        setWallets(initialWallets);
+    }, [initialWallets]);
 
     const handleSave = async () => {
         console.log("HandleSave triggered. Form state:", form);
@@ -79,18 +86,13 @@ export function WalletManager({ initialWallets, assets }: WalletManagerProps) {
             success: (data) => {
                 if (data.error) throw new Error(data.error);
 
-                setWallets(prev => {
-                    const existsIndex = prev.findIndex(w => (editingWallet ? w.name === editingWallet : (w.asset === form.asset && w.network === form.network && w.name === form.name)));
-                    if (existsIndex > -1) {
-                        const newWallets = [...prev];
-                        newWallets[existsIndex] = { ...form };
-                        return newWallets;
-                    }
-                    return [...prev, { ...form }];
-                });
                 setIsAdding(false);
                 setEditingWallet(null);
                 setForm({ name: "", asset: assets[0] || "", network: NETWORK_OPTIONS[assets[0]]?.[0] || "Native", address: "" });
+
+                // Refresh router to get updated data from server
+                router.refresh();
+
                 return data.success;
             },
             error: (err) => err.message || 'Failed to save wallet',
@@ -118,7 +120,7 @@ export function WalletManager({ initialWallets, assets }: WalletManagerProps) {
             const result = await deleteWallet(wallet.asset, wallet.network, wallet.name);
             if (result.success) {
                 toast.success(result.success);
-                setWallets(prev => prev.filter(w => !(w.asset === wallet.asset && w.network === wallet.network && w.name === wallet.name)));
+                router.refresh(); // Sync with server data
             } else {
                 toast.error(result.error);
             }

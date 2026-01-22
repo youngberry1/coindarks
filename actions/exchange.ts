@@ -40,22 +40,27 @@ export async function createOrder(data: {
         let pairMargin = 0;
 
         if (rateData && (rateData.manual_rate || rateData.rate) > 0) {
-            // Direct pair found
+            // Direct pair found (e.g. BTC-GHS or USDT-GHS)
             effectiveRate = rateData.manual_rate || rateData.rate;
-            pairMargin = rateData.margin_percent;
+            pairMargin = data.type === 'BUY' ? rateData.buy_margin : rateData.sell_margin;
         } else {
-            // Fallback: Use USD rate × Fiat multiplier
+            // Fallback Logic: Use USD rate * Admin Bridge Rate
             const usdPair = allRates.find(r => r.pair === `${data.asset}-USD` || r.pair === `${data.asset}-USDT`);
-            const stablePair = allRates.find(r => (r.pair === `USDT-${data.fiat_currency}` || r.pair === `USDC-${data.fiat_currency}` || r.pair === `USD-${data.fiat_currency}`) && (r.display_rate || r.rate) > 0);
-
-            if (!usdPair || !stablePair) {
-                return { error: `Exchange rate for ${data.asset} not available` };
+            if (!usdPair) {
+                return { error: `No exchange rate found for ${data.asset}.` };
             }
 
-            const baseRate = usdPair.manual_rate || usdPair.rate;
-            const fiatMultiplier = stablePair.display_rate || stablePair.rate;
-            effectiveRate = baseRate * fiatMultiplier;
-            pairMargin = usdPair.margin_percent;
+            // Look for specific bridge pair (e.g., USDT-GHS, USDC-GHS, or USD-GHS)
+            const bridgePair = allRates.find(r =>
+                (r.pair === `USDT-${data.fiat_currency}` || r.pair === `USDC-${data.fiat_currency}` || r.pair === `USD-${data.fiat_currency}`) &&
+                (r.display_rate > 0 || r.rate > 0)
+            );
+
+            // Use bridge pair rate if found, otherwise use hardcoded fallback for GHS/NGN
+            const fiatMultiplier = bridgePair ? (bridgePair.display_rate || bridgePair.rate) : (data.fiat_currency === 'GHS' ? 16.5 : (data.fiat_currency === 'NGN' ? 1650 : 1)); // Default to 1 if neither GHS/NGN and no bridge pair
+
+            effectiveRate = (usdPair.manual_rate || usdPair.rate) * fiatMultiplier;
+            pairMargin = data.type === 'BUY' ? usdPair.buy_margin : usdPair.sell_margin;
         }
 
         // 3. Apply Margin (Buy/Sell spread)
@@ -105,17 +110,18 @@ export async function createOrder(data: {
 
         // Direct query to bypass "getAdminWallets" role check (which restricts to ADMIN users)
         // We use supabaseAdmin here which is safe as we are on server side controlling the query
-        const { data: adminWallet } = await supabaseAdmin
+        const { data: adminWallets } = await supabaseAdmin
             .from('admin_wallets')
             .select('address')
             .eq('currency', targetCurrency)
-            .eq('is_active', true)
-            .single();
+            .eq('is_active', true);
 
-        if (!adminWallet) {
+        if (!adminWallets || adminWallets.length === 0) {
             return { error: `System account not available for ${targetCurrency}. Please contact support.` };
         }
-        deposit_address = adminWallet.address;
+
+        // Joined addresses for display in UI/Email
+        deposit_address = adminWallets.map(w => w.address).join('\n');
 
         // 5. Create Order
         const orderNumber = generateOrderId();
@@ -148,7 +154,8 @@ export async function createOrder(data: {
                     'PENDING',
                     data.asset,
                     amount_crypto.toString(),
-                    `${amount_fiat} ${data.fiat_currency}`
+                    `${amount_fiat} ${data.fiat_currency}`,
+                    deposit_address
                 );
             }
         } catch (emailErr) {

@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createOrder } from "@/actions/exchange";
-import { getExchangeRates } from "@/actions/rates";
+import { getExchangeRates, ExchangeRate } from "@/actions/rates";
 import { getWallets } from "@/actions/wallets";
 import { getPaymentMethods } from "@/actions/payment-methods";
 import { toast } from "sonner";
@@ -65,8 +65,9 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
     const [isLoading, setIsLoading] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Price State (The effective price for the user)
+    // Price State
     const [displayRate, setDisplayRate] = useState<number | null>(null);
+    const [cachedRates, setCachedRates] = useState<ExchangeRate[]>([]);
 
     // Success State
     const [orderSuccess, setOrderSuccess] = useState<{
@@ -105,66 +106,89 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
         loadWallets();
     }, [asset.id, type]);
 
-    // Fetch Admin-Configured Price
-    const fetchPrice = useCallback(async () => {
-        // Don't show loading on periodic refresh to avoid flicker
+    const [refreshCountdown, setRefreshCountdown] = useState(15);
+
+    // 1. Fetch Raw Rates from DB/API
+    const updateRatesCache = useCallback(async () => {
         try {
             const rates = await getExchangeRates();
-            // pairName removed as unused
-            // My backend logic in `rates.ts` handles generic 'BTC-USD'. 
-            // Here we have 'GHS'. I need to handle currency conversion for display if backend only returns USD.
-            // Assumption: `getExchangeRates` returns USD base. We convert to Local Fiat here.
-
-            const exactPair = rates.find(r => r.pair === `${asset.id}-${fiat.id}`);
-            const usdPair = rates.find(r => r.pair === `${asset.id}-USD` || r.pair === `${asset.id}-USDT`);
-
-            // Dynamic Fiat Rate: Use USDT-GHS or USDC-GHS if defined by Admin, otherwise fallback to hardcoded
-            const stablePair = rates.find(r => (r.pair === `USDT-${fiat.id}` || r.pair === `USDC-${fiat.id}`) && (r.display_rate || r.rate) > 0);
-            const fiatMultiplier = stablePair ? (stablePair.display_rate || stablePair.rate) : fiat.rate;
-
-            let baseRate = 0;
-            let pairMargin = 0;
-
-            if (exactPair && (exactPair.display_rate || exactPair.rate) > 0) {
-                // Use the direct rate (fetched dynamically from CoinGecko or manual)
-                baseRate = exactPair.display_rate || exactPair.rate;
-                pairMargin = exactPair.margin_percent;
-            } else if (usdPair) {
-                // Fallback: Use USD rate * derived fiat multiplier
-                baseRate = (usdPair.display_rate || usdPair.rate) * fiatMultiplier;
-                pairMargin = usdPair.margin_percent;
-            } else {
-                setDisplayRate(null);
-                return;
-            }
-
-            // Calculate Effective Rate based on Type (Buy/Sell Margin)
-            const marginMultiplier = type === 'BUY'
-                ? (1 + (pairMargin / 100))
-                : (1 - (pairMargin / 100));
-
-            setDisplayRate(baseRate * marginMultiplier);
+            setCachedRates(rates);
+            setRefreshCountdown(15);
         } catch {
-            // toast.error("Failed to sync rates");
+            // Error handled by timeout/retry in rates.ts
         }
-    }, [asset, fiat, type]);
+    }, []);
 
+    // 2. Synchronous Price Calculation (Instant UI update)
+    useEffect(() => {
+        if (!cachedRates.length) return;
+
+        const exactPair = cachedRates.find(r => r.pair === `${asset.id}-${fiat.id}`);
+        const usdPair = cachedRates.find(r => r.pair === `${asset.id}-USD` || r.pair === `${asset.id}-USDT`);
+
+        // Robust Multiplier Logic
+        const bridgePair = cachedRates.find(r =>
+            (r.pair === `USDT-${fiat.id}` || r.pair === `USDC-${fiat.id}` || r.pair === `USD-${fiat.id}`) &&
+            (r.display_rate > 0 || r.rate > 0)
+        );
+
+        const fiatMultiplier = bridgePair ? (bridgePair.display_rate || bridgePair.rate) : fiat.rate;
+
+        let baseRate = 0;
+        let buyMargin = 0;
+        let sellMargin = 0;
+
+        if (exactPair && (exactPair.display_rate || exactPair.rate) > 0) {
+            baseRate = exactPair.display_rate || exactPair.rate;
+            buyMargin = exactPair.buy_margin;
+            sellMargin = exactPair.sell_margin;
+        } else if (usdPair) {
+            baseRate = (usdPair.display_rate || usdPair.rate) * fiatMultiplier;
+            buyMargin = usdPair.buy_margin;
+            sellMargin = usdPair.sell_margin;
+        } else {
+            setDisplayRate(null);
+            return;
+        }
+
+        const currentMargin = type === 'BUY' ? buyMargin : sellMargin;
+        const marginMultiplier = type === 'BUY'
+            ? (1 + (currentMargin / 100))
+            : (1 - (currentMargin / 100));
+
+        setDisplayRate(baseRate * marginMultiplier);
+    }, [cachedRates, asset, fiat, type]);
+
+    // 3. Periodic Background Refresh
     useEffect(() => {
         setIsLoading(true);
-        fetchPrice().finally(() => setIsLoading(false));
-        const interval = setInterval(fetchPrice, 30000);
-        return () => clearInterval(interval);
-    }, [fetchPrice]);
+        updateRatesCache().finally(() => setIsLoading(false));
+
+        const priceInterval = setInterval(updateRatesCache, 15000);
+        const timerInterval = setInterval(() => {
+            setRefreshCountdown(prev => (prev > 0 ? prev - 1 : 15));
+        }, 1000);
+
+        return () => {
+            clearInterval(priceInterval);
+            clearInterval(timerInterval);
+        };
+    }, [updateRatesCache]);
 
     // Validation
     const validateAmount = (fiatVal: number) => {
+        if (fiatVal <= 0) {
+            setError("Amount must be greater than zero");
+            return false;
+        }
+
         const ghsRate = FIAT.find(f => f.id === 'GHS')?.rate || 16.5;
-        // Min order ~ $6 USD (100 GHS)
+        // Min order ~ $6.5 USD (rounded for clean numbers)
         const minUsd = 100 / ghsRate;
         const minCurrentFiat = minUsd * fiat.rate;
 
-        if (fiatVal > 0 && fiatVal < minCurrentFiat) {
-            setError(`Minimum order is ${fiat.symbol}${Math.ceil(minCurrentFiat).toLocaleString()}`);
+        if (fiatVal < minCurrentFiat) {
+            setError(`Minimum ${type === 'BUY' ? 'purchase' : 'sale'} is ${fiat.symbol}${Math.ceil(minCurrentFiat).toLocaleString()}`);
             return false;
         }
         setError(null);
@@ -190,6 +214,9 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
 
     // Handle Input Changes
     const handleFiatChange = (val: string) => {
+        // Block negative input immediately
+        if (val.startsWith('-')) return;
+
         setAmountFiat(val);
         setLastInputType('FIAT');
 
@@ -204,12 +231,17 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
             validateAmount(numVal);
         }
 
-        if (displayRate && !isNaN(numVal)) {
+        if (displayRate && !isNaN(numVal) && numVal > 0) {
             setAmountCrypto((numVal / displayRate).toFixed(8));
+        } else if (numVal <= 0) {
+            setAmountCrypto("0.00");
         }
     };
 
     const handleCryptoChange = (val: string) => {
+        // Block negative input immediately
+        if (val.startsWith('-')) return;
+
         setAmountCrypto(val);
         setLastInputType('CRYPTO');
 
@@ -220,10 +252,13 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
         }
 
         const numVal = parseFloat(val);
-        if (displayRate && !isNaN(numVal)) {
+        if (displayRate && !isNaN(numVal) && numVal > 0) {
             const fiatVal = numVal * displayRate;
             setAmountFiat(fiatVal.toFixed(2));
             validateAmount(fiatVal);
+        } else if (numVal <= 0) {
+            setAmountFiat("0.00");
+            setError("Amount must be greater than zero");
         }
     };
 
@@ -366,7 +401,7 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                                 onClick={() => copyToClipboard(orderSuccess.depositAddress!)}
                                 aria-label="Copy deposit address"
                             >
-                                <p className="font-mono text-xs break-all text-foreground/80 flex-1 text-left">{orderSuccess.depositAddress}</p>
+                                <p className="font-mono text-xs break-all text-foreground/80 flex-1 text-left whitespace-pre-line">{orderSuccess.depositAddress}</p>
                                 <Copy className="h-4 w-4 text-foreground/20 group-hover:text-primary transition-colors" />
                             </button>
                         </>
@@ -529,38 +564,46 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                                     )}
                                 />
                                 <AnimatePresence>
-                                    {showWalletDropdown && savedWallets.length > 0 && (
+                                    {showWalletDropdown && (
                                         <motion.div
                                             initial={{ opacity: 0, y: -10 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             exit={{ opacity: 0, y: -10 }}
-                                            className="absolute top-full left-0 right-0 mt-2 bg-black/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl z-50 overflow-hidden max-h-48 overflow-y-auto"
+                                            className="absolute top-full left-0 right-0 mt-2 bg-black/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl z-50 overflow-hidden max-h-60 overflow-y-auto"
                                         >
                                             <div className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-foreground/30 bg-white/5">
                                                 {type === 'BUY' ? 'Saved Wallets' : 'Saved Accounts'}
                                             </div>
-                                            {savedWallets.map((w: SavedWallet) => (
-                                                <button
-                                                    key={w.id}
-                                                    onClick={() => setReceivingAddress(w.address)}
-                                                    className="w-full text-left px-4 py-3 hover:bg-primary/20 hover:text-primary text-sm font-medium flex flex-col gap-0.5 transition-colors border-b border-white/5 last:border-0"
-                                                >
-                                                    <div className="flex items-center gap-2">
-                                                        {w.type === 'FIAT' && (w.network === 'Mobile Money' ? <Smartphone className="h-3 w-3" /> : <Landmark className="h-3 w-3" />)}
-                                                        <span className="font-bold">{w.name || 'Unnamed'}</span>
-                                                    </div>
-                                                    <span className="text-[10px] font-mono opacity-50 truncate w-full block">{w.address}</span>
-                                                </button>
-                                            ))}
+
+                                            {savedWallets.length > 0 ? (
+                                                savedWallets.map((w: SavedWallet) => (
+                                                    <button
+                                                        key={w.id}
+                                                        onClick={() => setReceivingAddress(w.address)}
+                                                        className="w-full text-left px-4 py-3 hover:bg-primary/20 hover:text-primary text-sm font-medium flex flex-col gap-0.5 transition-colors border-b border-white/5 last:border-0"
+                                                    >
+                                                        <div className="flex items-center gap-2">
+                                                            {w.type === 'FIAT' && (w.network === 'Mobile Money' ? <Smartphone className="h-3 w-3" /> : <Landmark className="h-3 w-3" />)}
+                                                            <span className="font-bold">{w.name || 'Unnamed'}</span>
+                                                        </div>
+                                                        <span className="text-[10px] font-mono opacity-50 truncate w-full block">{w.address}</span>
+                                                    </button>
+                                                ))
+                                            ) : (
+                                                <div className="px-5 py-8 text-center space-y-2">
+                                                    <p className="text-xs font-bold text-foreground/40 italic">No saved {type === 'BUY' ? 'wallets' : 'accounts'} found.</p>
+                                                </div>
+                                            )}
+
                                             {/* Add New Option */}
                                             <a
-                                                href="/dashboard/wallets?tab=fiat"
-                                                className="w-full text-left px-4 py-3 bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-colors sticky bottom-0 backdrop-blur-xl border-t border-white/10"
+                                                href={type === 'BUY' ? "/dashboard/wallets?tab=crypto" : "/dashboard/wallets?tab=fiat"}
+                                                className="w-full text-left px-4 py-4 bg-primary/10 hover:bg-primary/20 text-primary text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-colors sticky bottom-0 backdrop-blur-2xl border-t border-white/10"
                                             >
-                                                <div className="h-4 w-4 rounded-full border border-current flex items-center justify-center">
-                                                    <Plus className="h-2 w-2" />
+                                                <div className="h-5 w-5 rounded-full border-2 border-current flex items-center justify-center">
+                                                    <Plus className="h-3 w-3 stroke-[3px]" />
                                                 </div>
-                                                Add New Account
+                                                Add New {type === 'BUY' ? 'Wallet' : 'Account'}
                                             </a>
                                         </motion.div>
                                     )}
@@ -569,11 +612,25 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                         </div>
 
                         <div className="p-8 rounded-[32px] bg-linear-to-br from-primary/5 to-transparent border border-border space-y-6 shadow-sm dark:shadow-none">
-                            <div className="flex justify-between text-sm">
-                                <span className="text-foreground/40 font-medium">Global Market Rate</span>
+                            <div className="flex justify-between items-center text-sm">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-foreground/40 font-medium">Global Market Rate</span>
+                                    <div className={cn(
+                                        "flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold border transition-all duration-500",
+                                        refreshCountdown <= 5
+                                            ? "bg-amber-500/10 border-amber-500/20 text-amber-500 animate-pulse"
+                                            : "bg-emerald-500/10 border-emerald-500/20 text-emerald-500"
+                                    )}>
+                                        <div className={cn(
+                                            "h-1.5 w-1.5 rounded-full bg-current",
+                                            refreshCountdown <= 5 ? "animate-ping" : ""
+                                        )} />
+                                        Refreshing in {refreshCountdown}s
+                                    </div>
+                                </div>
                                 <span className="font-bold">
                                     {!displayRate ? (
-                                        isLoading ? <span className="text-foreground/20 text-xs">Fetching...</span> : <span className="text-rose-500 text-xs">Rate unavailable</span>
+                                        isLoading ? <span className="text-foreground/20 text-xs text-gradient animate-pulse tracking-widest uppercase">Syncing...</span> : <span className="text-rose-500 text-xs">Rate unavailable</span>
                                     ) : `1 ${asset.id} ≈ ${fiat.symbol}${displayRate.toLocaleString()}`}
                                 </span>
                             </div>

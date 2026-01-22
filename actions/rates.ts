@@ -10,7 +10,8 @@ export type ExchangeRate = {
     pair: string;
     rate: number;
     manual_rate: number | null;
-    margin_percent: number;
+    buy_margin: number;
+    sell_margin: number;
     is_automated: boolean;
     display_rate: number; // The final rate shown to user (Base +/- Margin)
 };
@@ -30,10 +31,8 @@ export async function getExchangeRates(): Promise<ExchangeRate[]> {
 
     // 2. If any automated, fetch from API
     // Mapping: 'BTC-USD' -> 'bitcoin' vs 'usd'
-    const pairsToFetch = dbRates.filter((r) => r.is_active || true); // Assuming all in DB are active
+    const pairsToFetch = dbRates.filter((r) => r.is_active || true);
 
-    // For now, hardcode mapping since we only have a few assets. 
-    // Ideally store 'coingecko_id' in DB.
     const assetMapping: Record<string, string> = {
         'BTC': 'bitcoin',
         'ETH': 'ethereum',
@@ -53,27 +52,50 @@ export async function getExchangeRates(): Promise<ExchangeRate[]> {
         if (quote) currencies.add(quote.toLowerCase());
     });
 
-    // Default to USD if empty
     if (currencies.size === 0) currencies.add('usd');
 
     let apiRates: Record<string, Record<string, number>> = {};
 
     if (ids.size > 0) {
+        const idString = Array.from(ids).join(',');
+        const currencyString = Array.from(currencies).join(',');
+        const url = `${COINGECKO_API_URL}?ids=${idString}&vs_currencies=${currencyString}`;
+        const options = COINGECKO_API_KEY ? { headers: { 'x-cg-demo-api-key': COINGECKO_API_KEY } } : {};
+
+        // Robust Fetch Helper with Timeout & Retry
+        const fetchWithRetry = async (url: string, options: RequestInit, retries = 2): Promise<unknown> => {
+            for (let i = 0; i <= retries; i++) {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout
+
+                try {
+                    const response = await fetch(url, { ...options, signal: controller.signal });
+                    clearTimeout(timeoutId);
+                    if (response.ok) return await response.json();
+                    if (response.status === 429) { // Rate limit
+                        await new Promise(resolve => setTimeout(resolve, 2000 * (i + 1)));
+                        continue;
+                    }
+                } catch (err: unknown) {
+                    clearTimeout(timeoutId);
+                    if (err instanceof Error && err.name === 'AbortError') console.warn(`Fetch timeout on attempt ${i + 1}`);
+                    if (i === retries) throw err;
+                    await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+                }
+            }
+        };
+
         try {
-            const idString = Array.from(ids).join(',');
-            const currencyString = Array.from(currencies).join(',');
-
-            const url = `${COINGECKO_API_URL}?ids=${idString}&vs_currencies=${currencyString}`;
-            const options = COINGECKO_API_KEY ? { headers: { 'x-cg-demo-api-key': COINGECKO_API_KEY } } : {};
-
-            const res = await fetch(url, { ...options, next: { revalidate: 60 } }); // Cache for 60s
-            apiRates = await res.json();
+            apiRates = await fetchWithRetry(url, { ...options, next: { revalidate: 30 } }) as Record<string, Record<string, number>>;
         } catch (e) {
-            console.error("CoinGecko API Error:", e);
+            console.error("CoinGecko API Final Failure:", e);
         }
     }
 
-    // 3. Calculate final rates
+    // 3. Calculate final rates & multipliers
+    const ghsBridge = dbRates.find(r => r.pair === 'USD-GHS' || r.pair === 'USDT-GHS');
+    const ngnBridge = dbRates.find(r => r.pair === 'USD-NGN' || r.pair === 'USDT-NGN');
+
     return dbRates.map((r) => {
         const [base, quote] = r.pair.split('-');
         const coingeckoId = assetMapping[base];
@@ -87,19 +109,42 @@ export async function getExchangeRates(): Promise<ExchangeRate[]> {
             baseRate = Number(r.manual_rate) || Number(r.rate) || 0;
         }
 
+        // Bridge Multiplier Logic for display_rate
+        let displayRate = baseRate;
+        if (quote === 'GHS' && baseRate === 0 && ghsBridge) {
+            // If GHS rate is missing (automated fail), try to bridge via USD
+            const btcUsd = dbRates.find(rt => rt.pair === `${base}-USD` || rt.pair === `${base}-USDT`);
+            if (btcUsd) {
+                const usdPrice = btcUsd.is_automated && apiRates[assetMapping[base]]?.usd
+                    ? apiRates[assetMapping[base]].usd
+                    : (Number(btcUsd.manual_rate) || 0);
+                displayRate = usdPrice * (Number(ghsBridge.manual_rate) || 0);
+            }
+        } else if (quote === 'NGN' && baseRate === 0 && ngnBridge) {
+            // If NGN rate is missing, bridge via USD
+            const btcUsd = dbRates.find(rt => rt.pair === `${base}-USD` || rt.pair === `${base}-USDT`);
+            if (btcUsd) {
+                const usdPrice = btcUsd.is_automated && apiRates[assetMapping[base]]?.usd
+                    ? apiRates[assetMapping[base]].usd
+                    : (Number(btcUsd.manual_rate) || 0);
+                displayRate = usdPrice * (Number(ngnBridge.manual_rate) || 0);
+            }
+        }
+
         return {
             pair: r.pair,
             rate: baseRate,
             manual_rate: Number(r.manual_rate),
-            margin_percent: Number(r.margin_percent),
+            buy_margin: Number(r.buy_margin),
+            sell_margin: Number(r.sell_margin),
             is_automated: r.is_automated,
-            display_rate: baseRate // Just base for now, UI determines final
+            display_rate: displayRate
         };
     });
 }
 
 // Admin Actions for Rates
-export async function updateRateConfig(pair: string, data: { manual_rate?: number; margin_percent?: number; is_automated?: boolean }) {
+export async function updateRateConfig(pair: string, data: { manual_rate?: number; buy_margin?: number; sell_margin?: number; is_automated?: boolean }) {
     const { error } = await supabaseAdmin
         .from('exchange_rates')
         .update(data)
@@ -124,7 +169,7 @@ export async function createRatePair(pair: string): Promise<{ success?: string; 
 
     const { data: newRate, error } = await supabaseAdmin
         .from('exchange_rates')
-        .insert({ pair, is_automated: true, margin_percent: 2 })
+        .insert({ pair, is_automated: true, buy_margin: 2, sell_margin: 2 })
         .select()
         .single();
 

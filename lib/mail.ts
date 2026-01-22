@@ -593,7 +593,8 @@ export const sendOrderStatusEmail = async (
     status: 'COMPLETED' | 'CANCELLED' | 'PROCESSING' | 'PENDING',
     asset: string,
     amount: string,
-    fiatAmount: string
+    fiatAmount: string,
+    depositAddress?: string
 ) => {
 
 
@@ -648,6 +649,9 @@ export const sendOrderStatusEmail = async (
         .details-table tr:last-child td { border-bottom: none; }
         .detail-label { font-size: 13px; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px; white-space: nowrap; }
         .detail-value { font-size: 15px; font-weight: 600; color: #1e293b; text-align: right; padding-left: 20px; word-break: break-all; }
+        .instruction-box { background-color: #fefce8; border: 1px solid #fef08a; border-radius: 12px; padding: 20px; margin: 30px 0; }
+        .instruction-title { font-size: 14px; font-weight: 800; color: #854d0e; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px; }
+        .payment-address { font-family: 'Courier New', Courier, monospace; font-size: 14px; color: #1e293b; font-weight: 700; white-space: pre-line; word-break: break-all; }
         .footer { padding: 32px 20px; background-color: #f8fafc; border-top: 1px solid #e2e8f0; text-align: center; }
         .footer p { margin: 0; font-size: 12px; color: #94a3b8; font-weight: 500; }
         .button { display: block; padding: 16px 32px; background-color: ${template.color}; color: #ffffff; text-decoration: none; border-radius: 12px; font-weight: 700; text-align: center; font-size: 16px; transition: opacity 0.2s; }
@@ -685,6 +689,14 @@ export const sendOrderStatusEmail = async (
                     </tr>
                 </table>
             </div>
+
+            ${depositAddress ? `
+            <div class="instruction-box">
+                <div class="instruction-title">Payment Instructions</div>
+                <p style="font-size: 13px; margin-bottom: 12px;">Please make your payment to the following account(s). Use your order number <strong>#${orderNumber}</strong> as the reference.</p>
+                <div class="payment-address">${depositAddress}</div>
+            </div>
+            ` : ''}
 
             <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;line-height:100%; margin: 20px 0; width: 100%;">
                 <tr>

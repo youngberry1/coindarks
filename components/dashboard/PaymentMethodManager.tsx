@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
     Plus,
@@ -49,6 +49,11 @@ export function PaymentMethodManager({ initialMethods }: PaymentMethodManagerPro
         account_number: "",
         account_name: ""
     });
+
+    // Sync state with props when data is re-fetched via router.refresh()
+    useEffect(() => {
+        setMethods(initialMethods);
+    }, [initialMethods]);
 
     const handleSave = async () => {
         if (!form.provider) {

@@ -18,17 +18,24 @@ export async function getAdminWallets() {
     const session = await auth();
     if (session?.user?.role !== "ADMIN") return [];
 
-    const { data, error } = await supabaseAdmin
-        .from('admin_wallets')
-        .select('*')
-        .order('created_at', { ascending: false });
+    let retries = 3;
+    while (retries > 0) {
+        try {
+            const { data, error } = await supabaseAdmin
+                .from('admin_wallets')
+                .select('*')
+                .order('created_at', { ascending: false });
 
-    if (error) {
-        console.error("Error fetching admin wallets:", error);
-        return [];
+            if (error) throw error;
+            return data as AdminWallet[];
+        } catch (error) {
+            retries--;
+            console.error(`Error fetching admin wallets (Attempts left: ${retries}):`, error);
+            if (retries === 0) return [];
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
     }
-
-    return data as AdminWallet[];
+    return [];
 }
 
 export async function createAdminWallet(data: { chain: string; currency: string; address: string; label?: string }) {
