@@ -392,33 +392,32 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
             </AnimatePresence>
 
             {/* Main Trading Card */}
-            <div className="bg-[#13161B] border border-white/5 rounded-[32px] p-6 md:p-8 shadow-2xl relative overflow-hidden backdrop-blur-xl">
+            <div className="bg-black/20 backdrop-blur-md rounded-[40px] p-2 border border-white/5 shadow-2xl relative">
 
-                {/* Header / Tabs */}
-                <div className="flex items-center justify-between mb-8">
-                    <div className="text-lg font-black tracking-tight text-white">Swap</div>
-                    <div className="flex bg-black/40 p-1 rounded-full border border-white/5">
+                {/* Tabs Wrapper */}
+                <div className="bg-black/40 p-1 rounded-[32px] flex items-center justify-between mb-4 relative z-10">
+                    <div className="flex bg-white/5 rounded-[28px] p-1">
                         <button
                             onClick={() => setType('BUY')}
-                            className={cn("px-6 py-2 rounded-full text-xs font-black uppercase tracking-wider transition-all", type === 'BUY' ? "bg-primary text-white shadow-lg" : "text-foreground/40 hover:text-foreground")}
+                            className={cn("px-8 py-3 rounded-[24px] text-xs font-black uppercase tracking-[0.2em] transition-all duration-300", type === 'BUY' ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-foreground/40 hover:text-foreground")}
                         >Buy</button>
                         <button
                             onClick={() => setType('SELL')}
-                            className={cn("px-6 py-2 rounded-full text-xs font-black uppercase tracking-wider transition-all", type === 'SELL' ? "bg-rose-500 text-white shadow-lg" : "text-foreground/40 hover:text-foreground")}
+                            className={cn("px-8 py-3 rounded-[24px] text-xs font-black uppercase tracking-[0.2em] transition-all duration-300", type === 'SELL' ? "bg-rose-500 text-white shadow-lg shadow-rose-500/20" : "text-foreground/40 hover:text-foreground")}
                         >Sell</button>
                     </div>
-                    <div className="flex items-center gap-2 text-[10px] font-mono text-foreground/30">
+                    <div className="pr-6 flex items-center gap-2 text-[10px] font-mono text-foreground/30">
                         {refreshCountdown}s <RefreshCw className={cn("h-3 w-3", refreshCountdown < 5 && "animate-spin")} />
                     </div>
                 </div>
 
-                <div className="space-y-2 relative">
+                <div className="space-y-2 relative px-2 pb-2">
                     {/* Input Block 1: Pay */}
-                    <div className="bg-[#0A0C10] rounded-[24px] p-6 border border-white/5 hover:border-white/10 transition-colors group/pay relative z-0">
-                        <div className="flex justify-between items-center mb-4">
+                    <div className="bg-[#0A0C10]/80 rounded-[32px] p-8 hover:bg-[#0A0C10] transition-colors group/pay relative z-0 border border-transparent hover:border-white/5">
+                        <div className="flex justify-between items-center mb-6">
                             <span className="text-xs text-foreground/40 font-bold uppercase tracking-wide">You Pay</span>
                             {/* Asset Selector Integrated */}
-                            <div className="scale-90 origin-right">
+                            <div className="scale-100 origin-right">
                                 {type === 'BUY' ? (
                                     <AssetSelector value={fiat.id} onChange={(val) => setFiat(FIAT.find(f => f.id === val)!)} options={FIAT} type="FIAT" />
                                 ) : (
@@ -431,7 +430,7 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                             value={type === 'BUY' ? amountFiat : amountCrypto}
                             onChange={(e) => type === 'BUY' ? handleFiatChange(e.target.value) : handleCryptoChange(e.target.value)}
                             placeholder="0.00"
-                            className="w-full bg-transparent text-4xl font-black outline-none placeholder:text-white/5 transition-all text-white py-2"
+                            className="w-full bg-transparent text-5xl font-black outline-none placeholder:text-white/5 transition-all text-white py-2 tracking-tight"
                         />
                         <div className="text-right text-[11px] font-medium text-foreground/30 mt-2 h-4">
                             {/* Balance Placeholder */}
@@ -439,19 +438,19 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                     </div>
 
                     {/* Arrow Connector */}
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-                        <div className="bg-[#13161B] p-2 rounded-xl border border-white/10 shadow-xl">
-                            <div className="bg-white/5 p-2 rounded-lg text-foreground/70 hover:text-primary transition-colors cursor-pointer">
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[calc(50%-8px)] z-10 pointer-events-none">
+                        <div className="bg-[#13161B] p-2 rounded-xl border border-white/10 shadow-xl pointer-events-auto">
+                            <div onClick={() => setType(type === 'BUY' ? 'SELL' : 'BUY')} className="bg-white/5 p-2 rounded-lg text-foreground/70 hover:text-primary transition-colors cursor-pointer active:scale-90">
                                 <ArrowDown className="h-4 w-4" />
                             </div>
                         </div>
                     </div>
 
                     {/* Input Block 2: Receive */}
-                    <div className="bg-[#0A0C10] rounded-[24px] p-6 border border-white/5 hover:border-white/10 transition-colors group/receive relative z-0">
-                        <div className="flex justify-between items-center mb-4">
+                    <div className="bg-[#0A0C10]/80 rounded-[32px] p-8 hover:bg-[#0A0C10] transition-colors group/receive relative z-0 border border-transparent hover:border-white/5">
+                        <div className="flex justify-between items-center mb-6">
                             <span className="text-xs text-foreground/40 font-bold uppercase tracking-wide">You Receive</span>
-                            <div className="scale-90 origin-right">
+                            <div className="scale-100 origin-right">
                                 {type === 'BUY' ? (
                                     <AssetSelector value={asset.id} onChange={(val) => setAsset(supportedAssets.find(a => a.id === val)!)} options={supportedAssets} type="CRYPTO" />
                                 ) : (
@@ -465,7 +464,7 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                             onChange={(e) => type === 'BUY' ? handleCryptoChange(e.target.value) : handleFiatChange(e.target.value)}
                             placeholder="0.00"
                             readOnly
-                            className="w-full bg-transparent text-4xl font-black outline-none placeholder:text-white/5 text-emerald-500 transition-all cursor-default py-2"
+                            className="w-full bg-transparent text-5xl font-black outline-none placeholder:text-white/5 text-emerald-500 transition-all cursor-default py-2 tracking-tight"
                         />
                         <div className="text-right text-[11px] font-medium text-foreground/30 mt-2 h-4 flex justify-end items-center gap-1">
                             {isLoading ? <span className="animate-pulse">Fetching rates...</span> : (
