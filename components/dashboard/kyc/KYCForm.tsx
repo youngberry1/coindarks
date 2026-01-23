@@ -3,7 +3,6 @@
 import { useState, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useDropzone, FileRejection } from "react-dropzone";
 import {
     ShieldCheck,
     Upload,
@@ -19,6 +18,13 @@ import { submitKYC } from "@/actions/kyc";
 import { Loading } from "@/components/ui/Loading";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { ChangeEvent } from "react";
+
+// Define locally since we removed react-dropzone
+export interface FileRejection {
+    file: File;
+    errors: { code: string; message: string }[];
+}
 
 const STEPS = ["ID Type", "Details", "Upload Photos", "Complete"];
 
@@ -366,21 +372,41 @@ function ImageUpload({
     onRejected: (rejections: FileRejection[]) => void;
     onRemove: () => void;
 }) {
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({
-        onDrop,
-        onDropRejected: onRejected,
-        // Explicit MIME types with extensions help Android/Mobile pickers launch faster and more reliably
-        accept: {
-            'image/jpeg': ['.jpeg', '.jpg'],
-            'image/png': ['.png'],
-            'image/webp': ['.webp'],
-            'image/heic': ['.heic'],
-            'image/heif': ['.heif']
-        },
-        maxFiles: 1,
-        multiple: false,
-        maxSize: 5 * 1024 * 1024 // 5MB
-    });
+    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Custom Validation since we removed react-dropzone
+        // 1. Check File Size (5MB = 5 * 1024 * 1024)
+        if (file.size > 5 * 1024 * 1024) {
+            onRejected([{ file, errors: [{ code: 'file-too-large', message: 'File is larger than 5MB' }] }]);
+            // Clear input value so selecting the same file again triggers onChange
+            e.target.value = "";
+            return;
+        }
+
+        // 2. Check File Type
+        // Quick check for video to give specific error
+        if (file.type.startsWith('video/')) {
+            onRejected([{ file, errors: [{ code: 'file-invalid-type', message: 'Videos not allowed' }] }]);
+            e.target.value = "";
+            return;
+        }
+
+        // Looser check or explicit check. We know mobile browsers sometimes give weird types, 
+        // but checking startsWith('image/') is usually safe enough combined with accept attr.
+        // However, user specifically mentioned "popular image formats".
+        // Let's stick to the accept attribute doing the heavy lifting in the UI, 
+        // and a loose image check here just to catch non-images.
+        if (!file.type.startsWith('image/')) {
+            onRejected([{ file, errors: [{ code: 'file-invalid-type', message: 'File is not an image' }] }]);
+            e.target.value = "";
+            return;
+        }
+
+        onDrop([file]);
+        e.target.value = ""; // Reset for re-selection possibility
+    };
 
     const [hasError, setHasError] = useState(false);
 
@@ -415,15 +441,19 @@ function ImageUpload({
     }
 
     return (
-        <div {...getRootProps()} className={`aspect-video rounded-3xl border-2 border-dashed transition-all flex flex-col items-center justify-center p-8 text-center cursor-pointer ${isDragActive ? "border-primary bg-primary/10" : "border-white/10 bg-white/5 hover:border-primary/40 hover:bg-white/10"
-            }`}>
-            <input {...getInputProps()} />
-            <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-4 text-primary">
+        <label className="group relative aspect-video rounded-3xl border-2 border-dashed border-white/10 bg-white/5 hover:border-primary/40 hover:bg-white/10 transition-all flex flex-col items-center justify-center p-8 text-center cursor-pointer active:scale-[0.98]">
+            <input
+                type="file"
+                className="hidden"
+                accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+                onChange={handleFileChange}
+            />
+            <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-4 text-primary group-hover:scale-110 transition-transform">
                 <Upload className="h-6 w-6" />
             </div>
             <p className="font-bold mb-1">{label}</p>
-            <p className="text-xs text-foreground/40 font-medium">Drag & drop or click to upload</p>
+            <p className="text-xs text-foreground/40 font-medium">Tap to upload image</p>
             <p className="text-[10px] text-foreground/30 mt-2">Max 5MB • JPG, PNG, WebP</p>
-        </div>
+        </label>
     );
 }
