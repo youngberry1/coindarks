@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { motion } from "framer-motion";
 import {
     LayoutDashboard,
     RefreshCcw,
@@ -17,7 +16,6 @@ import {
     Mail,
     LogOut,
     Menu,
-    ChevronRight,
     Megaphone,
     BookOpen,
     Sparkles,
@@ -140,18 +138,6 @@ export function DashboardSidebar({ user }: SidebarProps) {
                                 isActive ? "text-white scale-110" : "text-foreground/30 group-hover:text-primary"
                             )} />
                             <span className="font-black text-[13px] tracking-tight whitespace-nowrap">{link.name}</span>
-
-                            {isActive && (
-                                <motion.div
-                                    layoutId="nav-indicator"
-                                    className="ml-auto"
-                                    transition={{ type: "spring", bounce: 0.2, duration: 0.3 }}
-                                >
-                                    <div className="h-5 w-5 rounded-lg bg-white/20 flex items-center justify-center">
-                                        <ChevronRight className="h-3 w-3 text-white" />
-                                    </div>
-                                </motion.div>
-                            )}
                         </Link>
                     );
                 })}
