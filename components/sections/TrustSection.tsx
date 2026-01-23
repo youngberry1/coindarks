@@ -21,15 +21,17 @@ export default function TrustSection() {
                         transition={{ duration: 0.8, ease: "easeOut" }}
                         className="lg:col-span-5 relative group"
                     >
-                        <div className="relative aspect-4/5 rounded-[48px] overflow-hidden glass-card border border-white/10 p-3 bg-white/2 shadow-2xl">
-                            <div className="relative w-full h-full rounded-[40px] overflow-hidden bg-black/40">
+                        <div className="relative aspect-square rounded-[32px] overflow-hidden border border-white/5 bg-black/20 shadow-2xl">
+                            <div className="relative w-full h-full overflow-hidden">
                                 <Image
-                                    src="/hero_graphic_1.png"
-                                    alt="Trusted Financial Infrastructure"
+                                    src="/trust-professional.png"
+                                    alt="Global Finance Connection"
                                     fill
+                                    sizes="(max-width: 768px) 100vw, 600px"
                                     className="object-cover opacity-90 group-hover:scale-105 transition-transform duration-1000"
                                 />
-                                <div className="absolute inset-0 bg-linear-to-t from-background via-transparent to-transparent opacity-60" />
+                                <div className="absolute inset-0 bg-linear-to-t from-background/80 via-transparent to-transparent opacity-60" />
+                                <div className="absolute inset-0 ring-1 ring-white/10 rounded-[32px] pointer-events-none" />
                             </div>
                         </div>
 
@@ -37,7 +39,7 @@ export default function TrustSection() {
                         <motion.div
                             animate={{ y: [0, -10, 0] }}
                             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                            className="absolute -bottom-10 -right-10 glass p-8 rounded-[32px] border border-white/10 shadow-2xl max-w-[240px]"
+                            className="absolute -bottom-10 right-0 lg:-right-10 glass p-8 rounded-[32px] border border-white/10 shadow-2xl max-w-[240px]"
                         >
                             <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
                                 <Globe className="h-6 w-6 text-primary" />
@@ -63,10 +65,9 @@ export default function TrustSection() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: 0.1 }}
-                                className="text-4xl sm:text-6xl font-black tracking-tight leading-[1.05]"
+                                className="text-4xl sm:text-6xl font-black tracking-tight leading-[1.05] max-w-lg lg:max-w-none"
                             >
-                                Why the <span className="text-gradient">Continent&apos;s best</span> <br />
-                                trust CoinDarks.
+                                Why the <span className="text-gradient">Continent&apos;s best</span> trust CoinDarks.
                             </motion.h2>
                             <motion.p
                                 initial={{ opacity: 0, y: 20 }}

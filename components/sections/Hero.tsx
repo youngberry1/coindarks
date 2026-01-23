@@ -33,8 +33,8 @@ export default function Hero() {
                         transition={{ duration: 0.6, ease: "easeOut" }}
                         className="inline-flex items-center gap-3 px-5 py-2 rounded-full glass border border-primary/20 shadow-[0_0_20px_rgba(var(--primary),0.1)] group cursor-default"
                     >
-                        <Sparkles className="h-4 w-4 text-primary animate-pulse" />
-                        <span className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-foreground/80">
+                        <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
+                        <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-foreground/60">
                             The New Standard for Web3 in Africa
                         </span>
                     </motion.div>
@@ -45,7 +45,7 @@ export default function Hero() {
                             initial={{ opacity: 0, filter: "blur(10px)", y: 20 }}
                             animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
                             transition={{ duration: 0.8, delay: 0.1 }}
-                            className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tight leading-[0.95] sm:leading-[0.9]"
+                            className="text-4xl sm:text-6xl lg:text-8xl font-black tracking-tight leading-[1.1] sm:leading-none lg:leading-[0.9] overflow-visible"
                         >
                             The Cleanest Way <br />
                             To <span className="text-gradient">Bridge Value.</span>
@@ -74,8 +74,8 @@ export default function Hero() {
                             onMouseEnter={() => handlePrefetch("/register")}
                             className="w-full sm:w-auto"
                         >
-                            <button className="w-full px-12 py-6 rounded-[24px] bg-primary text-white font-black text-sm uppercase tracking-widest shadow-2xl shadow-primary/30 hover:scale-[1.02] hover:shadow-primary/50 transition-all flex items-center justify-center gap-3 active:scale-95 group">
-                                Get Started <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                            <button className="w-full px-12 py-5 sm:py-6 rounded-[20px] sm:rounded-[24px] bg-primary text-white font-bold text-sm uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.02] hover:shadow-primary/40 transition-all flex items-center justify-center gap-3 active:scale-95 group">
+                                Start Trading <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
                             </button>
                         </Link>
                         <Link href="#market" className="w-full sm:w-auto">
@@ -92,16 +92,18 @@ export default function Hero() {
                         transition={{ duration: 1, delay: 0.4 }}
                         className="relative w-full max-w-5xl mt-12 group"
                     >
-                        <div className="relative aspect-video lg:aspect-21/9 rounded-[40px] overflow-hidden border border-white/10 glass-card p-4">
-                            <div className="relative w-full h-full rounded-[30px] overflow-hidden bg-black/40">
+                        <div className="relative aspect-video lg:aspect-21/9 rounded-[24px] overflow-hidden border border-white/5 bg-black/40 shadow-2xl shadow-primary/5">
+                            <div className="relative w-full h-full overflow-hidden">
                                 <Image
-                                    src="/hero-main.png"
-                                    alt="CoinDarks Desktop Interface"
+                                    src="/hero-professional.png"
+                                    alt="CoinDarks Pro Interface"
                                     fill
                                     priority
-                                    className="object-cover opacity-80 group-hover:scale-105 transition-transform duration-1000"
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
+                                    className="object-cover opacity-90 group-hover:scale-105 transition-transform duration-1000"
                                 />
-                                <div className="absolute inset-0 bg-linear-to-t from-background via-transparent to-transparent opacity-60" />
+                                <div className="absolute inset-0 bg-linear-to-t from-background via-transparent to-transparent opacity-40" />
+                                <div className="absolute inset-0 ring-1 ring-white/10 rounded-[24px] pointer-events-none" />
                             </div>
                         </div>
 

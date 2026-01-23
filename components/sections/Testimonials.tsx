@@ -93,7 +93,7 @@ function TestimonialCard({ testimonial }: { testimonial: typeof testimonials[0] 
             }}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
-            className="group relative h-[300px] w-[400px] shrink-0 rounded-[40px] glass-card border border-white/5 p-10 shadow-sm transition-all duration-500 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5 transform-gpu"
+            className="group relative h-[280px] w-[300px] sm:w-[350px] lg:w-[400px] shrink-0 rounded-[32px] sm:rounded-[40px] glass-card border border-white/5 p-6 sm:p-10 shadow-sm transition-all duration-500 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5 transform-gpu"
         >
             <div
                 style={{

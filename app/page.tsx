@@ -59,7 +59,7 @@ export default function Home() {
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
                   <Link href="/register" className="w-full sm:w-auto">
                     <button className="w-full px-12 py-6 rounded-[24px] bg-primary text-white font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-primary/30 hover:scale-105 hover:shadow-primary/50 transition-all active:scale-95">
-                      Create Master Account
+                      Start Trading
                     </button>
                   </Link>
                   <Link href="/faq" className="w-full sm:w-auto">

@@ -1,38 +1,25 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ShieldCheck, Lock, Fingerprint, ShieldAlert, CheckCircle2 } from "lucide-react";
+import Image from "next/image";
+import { ShieldCheck, Lock, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const securityFeatures = [
     {
-        title: "End-to-End Encryption",
-        description: "Your data and transactions are secured using bank-grade AES-256 standards, ensuring privacy at every touchpoint.",
+        title: "AES-256 Encryption",
+        description: "Bank-grade data protection standards.",
         icon: Lock,
         color: "text-primary",
         bg: "bg-primary/10",
     },
     {
-        title: "Cold Storage Protocol",
-        description: "98% of digital assets are stored offline in multi-signature cold wallets, shielded from any and all online threats.",
+        title: "Cold Storage",
+        description: "98% assets stored offline.",
         icon: ShieldCheck,
         color: "text-secondary",
         bg: "bg-secondary/10",
     },
-    {
-        title: "Biometric Integration",
-        description: "Advanced identity verification including biometric-ready ecosystems and hardware-level multi-factor authentication.",
-        icon: Fingerprint,
-        color: "text-accent",
-        bg: "bg-accent/10",
-    },
-    {
-        title: "Proactive Guard",
-        description: "Our AI-driven systems monitor suspicious activities around the clock to block unauthorized access in real-time.",
-        icon: ShieldAlert,
-        color: "text-primary",
-        bg: "bg-primary/10",
-    }
 ];
 
 export default function Security() {
@@ -104,32 +91,37 @@ export default function Security() {
                         </div>
                     </div>
 
-                    {/* Feature Matrix */}
-                    <div className="lg:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-6 relative">
-                        {/* Decorative Connection Lines */}
-                        <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-secondary/5 -z-10 rounded-[40px]" />
+                    {/* Security Asset & Features */}
+                    <div className="lg:w-1/2 space-y-8">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.8 }}
+                            className="relative aspect-square sm:aspect-video lg:aspect-square rounded-[32px] overflow-hidden border border-white/5 bg-black/20 shadow-2xl group"
+                        >
+                            <Image
+                                src="/security-professional.png"
+                                alt="Institutional Grade Security"
+                                fill
+                                sizes="(max-width: 768px) 100vw, 600px"
+                                className="object-cover opacity-90 group-hover:scale-105 transition-transform duration-1000"
+                            />
+                            <div className="absolute inset-0 bg-linear-to-t from-background/80 via-transparent to-transparent opacity-60" />
+                            <div className="absolute inset-0 ring-1 ring-white/10 rounded-[32px] pointer-events-none" />
+                        </motion.div>
 
-                        {securityFeatures.map((feature, index) => (
-                            <motion.div
-                                key={feature.title}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: index * 0.1 }}
-                                className="p-10 rounded-[40px] glass-card border border-white/5 hover:border-primary/20 transition-all duration-500 hover-lift flex flex-col items-center text-center sm:text-left sm:items-start group"
-                            >
-                                <div className={cn(
-                                    "h-14 w-14 rounded-2xl flex items-center justify-center mb-8 transition-all duration-500 group-hover:scale-110 shadow-sm",
-                                    feature.bg
-                                )}>
-                                    <feature.icon className={cn("h-7 w-7", feature.color)} />
+                        <div className="grid grid-cols-2 gap-4">
+                            {securityFeatures.slice(0, 2).map((feature) => (
+                                <div key={feature.title} className="p-5 rounded-[24px] bg-white/2 border border-white/5 backdrop-blur-sm">
+                                    <feature.icon className={cn("h-6 w-6 mb-3", feature.color)} />
+                                    <h3 className="text-sm font-bold mb-1">{feature.title}</h3>
+                                    <p className="text-[11px] text-foreground/40 leading-relaxed font-medium">
+                                        {feature.description}
+                                    </p>
                                 </div>
-                                <h3 className="text-lg font-black tracking-tight mb-3">{feature.title}</h3>
-                                <p className="text-sm text-foreground/50 leading-relaxed font-medium">
-                                    {feature.description}
-                                </p>
-                            </motion.div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
 
                 </div>

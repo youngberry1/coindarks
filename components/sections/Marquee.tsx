@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Image from "next/image";
 import { Smartphone } from "lucide-react";
 import AirtelIcon from "@/public/assets/airtel.svg";
@@ -50,16 +49,8 @@ export default function Marquee() {
             {/* Subtle gradient overlay for depth */}
             <div className="absolute inset-0 bg-linear-to-r from-background via-transparent to-background pointer-events-none opacity-40" />
 
-            <div className="flex whitespace-nowrap relative z-10">
-                <motion.div
-                    animate={{ x: [0, -1800] }}
-                    transition={{
-                        duration: 30,
-                        repeat: Infinity,
-                        ease: "linear"
-                    }}
-                    className="flex gap-12 items-center px-8"
-                >
+            <div className="flex whitespace-nowrap relative z-10 w-full overflow-hidden mask-linear-fade">
+                <div className="flex gap-12 items-center px-8 animate-[scroll_40s_linear_infinite] w-max hover:paused">
                     {/* Double the list to create a seamless loop */}
                     {[...partners, ...partners].map((partner, index) => (
                         <div
@@ -85,7 +76,7 @@ export default function Marquee() {
                             </span>
                         </div>
                     ))}
-                </motion.div>
+                </div>
             </div>
         </div>
     );
