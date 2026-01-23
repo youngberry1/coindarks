@@ -48,8 +48,8 @@ export function SupportModal({ isOpen, onClose, orders = [] }: SupportModalProps
                                         <MessageSquare className="h-7 w-7 text-primary" />
                                     </div>
                                     <div>
-                                        <h3 className="text-2xl font-black tracking-tight">Support Ticket</h3>
-                                        <p className="text-[10px] text-foreground/60 font-black uppercase tracking-[0.2em]">Typical response: 15 mins</p>
+                                        <h3 className="text-2xl font-black tracking-tight">Help Request</h3>
+                                        <p className="text-[10px] text-foreground/60 font-black uppercase tracking-[0.2em]">Estimated response: 15 mins</p>
                                     </div>
                                 </div>
                                 <button

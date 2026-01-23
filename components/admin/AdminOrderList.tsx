@@ -53,7 +53,7 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
         try {
             const result = await updateOrderStatus(orderId, newStatus as OrderStatus);
             if (result.success) {
-                toast.success(`Unit ${orderId.slice(0, 8)} updated to ${newStatus}`);
+                toast.success(`Trade ${orderId.slice(0, 8)} updated to ${newStatus}`);
                 setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus as OrderStatus } : o));
             } else {
                 toast.error(result.error);
@@ -67,7 +67,7 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
 
     const copyAddress = (address: string, id: string) => {
         navigator.clipboard.writeText(address);
-        toast.success("Registry Endpoint Captured");
+        toast.success("Target Address Copied");
         setCopiedId(id);
         setTimeout(() => setCopiedId(null), 2000);
     };
@@ -101,7 +101,7 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                     <div className="absolute inset-0 bg-primary/5 blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 rounded-[32px]" />
                     <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-foreground/20 group-focus-within:text-primary transition-all duration-500" />
                     <input
-                        placeholder="IDENTIFY CYCLE BY CODED ID, EMAIL, OR IDENTITY..."
+                        placeholder="FIND TRADE BY ORDER NUMBER, EMAIL, OR NAME..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full pl-16 pr-8 h-18 rounded-[32px] glass border border-white/5 focus:border-primary/30 focus:outline-none transition-all font-black text-xs uppercase tracking-[0.2em] relative z-10"
@@ -111,7 +111,7 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                 <div className="h-18 px-8 rounded-[32px] glass border border-white/5 flex items-center gap-4 text-foreground/20 shrink-0">
                     <Activity className="h-5 w-5 text-primary" />
                     <span className="text-[10px] font-black uppercase tracking-[0.2em] tabular-nums whitespace-nowrap">
-                        {filteredOrders.length} Elements Audited
+                        {filteredOrders.length} Trades Found
                     </span>
                 </div>
             </div>
@@ -121,12 +121,12 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="border-b border-white/5 bg-white/2">
-                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Cycle ID</th>
-                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Node Identity</th>
-                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Audit Type</th>
+                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Order Number</th>
+                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Member Info</th>
+                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Trade Type</th>
                             <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Net Value</th>
-                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Status Phase</th>
-                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em] text-right">Endpoint</th>
+                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Current Status</th>
+                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em] text-right">Destination</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
@@ -208,7 +208,7 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                                             <button
                                                 onClick={() => copyAddress(order.receiving_address, order.id)}
                                                 className="h-10 w-10 rounded-xl bg-white/5 border border-white/5 text-foreground/20 hover:text-primary hover:border-primary/20 transition-all active:scale-90 flex items-center justify-center"
-                                                title={order.type === 'BUY' ? "Capture Wallet Matrix" : "Capture Payment Hub"}
+                                                title={order.type === 'BUY' ? "Copy Wallet Address" : "Copy Account Details"}
                                             >
                                                 {copiedId === order.id ? (
                                                     <CheckCircle2 className="h-4.5 w-4.5 text-emerald-500" />
@@ -220,7 +220,7 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                                                 <button
                                                     onClick={() => openExplorer(order.receiving_address)}
                                                     className="h-10 w-10 rounded-xl bg-white/5 border border-white/5 text-foreground/20 hover:text-primary hover:border-primary/20 transition-all active:scale-90 flex items-center justify-center"
-                                                    title="Audit on Block Explorer"
+                                                    title="View on Blockchain"
                                                 >
                                                     <ExternalLink className="h-4.5 w-4.5" />
                                                 </button>
@@ -285,7 +285,7 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                             <div className="space-y-3">
                                 <div className="flex items-center gap-2">
                                     <Sparkles className="h-3.5 w-3.5 text-primary opacity-30" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-foreground/40">{order.asset} ALLOCATION</span>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-foreground/40">{order.asset} TRADE DETAILS</span>
                                 </div>
                                 <div>
                                     <p className="text-3xl font-black tabular-nums tracking-tighter leading-none mb-1">{order.amount_crypto} <span className="text-lg opacity-30">{order.asset}</span></p>

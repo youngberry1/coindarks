@@ -53,7 +53,7 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
     const handleCopy = async (text: string, id: string) => {
         try {
             await navigator.clipboard.writeText(text);
-            toast.success("Endpoint Captured");
+            toast.success("Address Copied");
             setCopiedId(id);
             setTimeout(() => setCopiedId(null), 2000);
         } catch {
@@ -63,7 +63,7 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const toastId = toast.loading(isEditing ? "UPDATING REGISTRY..." : "AUTHORIZING ENDPOINT...");
+        const toastId = toast.loading(isEditing ? "UPDATING SETTINGS..." : "ADDING ADDRESS...");
 
         try {
             const finalData = { ...formData };
@@ -79,13 +79,13 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
                 const res = await updateAdminWallet(isEditing, finalData);
                 if (res.error) throw new Error(res.error);
                 setWallets(prev => prev.map(w => w.id === isEditing ? { ...w, ...finalData } : w));
-                toast.success("Endpoint Updated", { id: toastId });
+                toast.success("Address Updated", { id: toastId });
             } else {
                 const res = await createAdminWallet(finalData);
                 if (res.error) throw new Error(res.error);
                 if (res.wallet) {
                     setWallets(prev => [res.wallet!, ...prev]);
-                    toast.success("Endpoint Authorized", { id: toastId });
+                    toast.success("Address Added", { id: toastId });
                 }
             }
             resetForm();
@@ -98,13 +98,13 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
     const confirmDelete = async () => {
         if (!walletToDelete) return;
         setIsDeleting(true);
-        const toastId = toast.loading("DE-AUTHORIZING ENDPOINT...");
+        const toastId = toast.loading("REMOVING ADDRESS...");
 
         try {
             const res = await deleteAdminWallet(walletToDelete);
             if (res.success) {
                 setWallets(prev => prev.filter(w => w.id !== walletToDelete));
-                toast.success("Endpoint Terminated", { id: toastId });
+                toast.success("Address Removed", { id: toastId });
             } else throw new Error(res.error);
         } catch (err) {
             const error = err as Error;
@@ -119,7 +119,7 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
         setWallets(prev => prev.map(w => w.id === id ? { ...w, is_active: !currentStatus } : w));
         const res = await updateAdminWallet(id, { is_active: !currentStatus });
         if (res.success) {
-            toast.success(`Node ${!currentStatus ? 'Activated' : 'Suspended'}`);
+            toast.success(`Address ${!currentStatus ? 'Activated' : 'Suspended'}`);
         } else {
             setWallets(prev => prev.map(w => w.id === id ? { ...w, is_active: currentStatus } : w));
             toast.error(res.error);
@@ -146,9 +146,9 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
                 <div className="space-y-1 sm:space-y-2">
                     <div className="flex items-center gap-2.5 sm:gap-3">
                         <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-                        <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight">Endpoint Registry</h2>
+                        <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight">Global Deposit Addresses</h2>
                     </div>
-                    <p className="text-[11px] sm:text-sm text-foreground/40 font-medium">Configure institutional liquidity ingress endpoints.</p>
+                    <p className="text-[11px] sm:text-sm text-foreground/40 font-medium">Configure addresses where members will send funds.</p>
                 </div>
                 <button
                     onClick={() => setIsAdding(!isAdding)}
@@ -157,7 +157,7 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
                     <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
                     <Plus className="w-3.5 h-3.5 sm:w-5 sm:h-5 relative z-10" />
                     <span className="text-[9px] sm:text-xs font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] relative z-10 whitespace-nowrap">
-                        {isAdding ? "Close Matrix" : "Authorize Endpoint"}
+                        {isAdding ? "Close" : "Add New Address"}
                     </span>
                 </button>
             </div>
@@ -191,13 +191,13 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
                                         walletType === 'FIAT' ? "bg-primary text-white shadow-lg" : "text-foreground/30 hover:text-foreground"
                                     )}
                                 >
-                                    Fiat Bridge
+                                    Bank / Mobile Money
                                 </button>
                             </div>
 
                             <div className="flex items-center gap-2.5 sm:gap-3 text-foreground/20">
                                 <Shield className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em]">Secure Node Initialization</span>
+                                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em]">Adding New Address</span>
                             </div>
                         </div>
 
@@ -207,7 +207,7 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
                                     <div className="space-y-4">
                                         <div className="flex items-center gap-2 ml-4">
                                             <Globe className="h-3.5 w-3.5 text-foreground/20" />
-                                            <label className="text-[9px] sm:text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em] ml-1">Network Chain</label>
+                                            <label className="text-[9px] sm:text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em] ml-1">Network (e.g. BEP20)</label>
                                         </div>
                                         <input
                                             required
@@ -233,7 +233,7 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
                                     <div className="md:col-span-2 space-y-4">
                                         <div className="flex items-center gap-2 ml-4">
                                             <Wallet className="h-3.5 w-3.5 text-foreground/20" />
-                                            <label className="text-[9px] sm:text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em] ml-1">Registry Endpoint (Address)</label>
+                                            <label className="text-[9px] sm:text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em] ml-1">Wallet Address</label>
                                         </div>
                                         <input
                                             required
@@ -249,7 +249,7 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
                                     <div className="space-y-4">
                                         <div className="flex items-center gap-2 ml-4">
                                             <Landmark className="h-3.5 w-3.5 text-foreground/20" />
-                                            <label className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em]">Banking Institution</label>
+                                            <label className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em]">Bank / Provider Name</label>
                                         </div>
                                         <input
                                             required
@@ -276,7 +276,7 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
                                         <div className="space-y-4">
                                             <div className="flex items-center gap-2 ml-4">
                                                 <Activity className="h-3.5 w-3.5 text-foreground/20" />
-                                                <label className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em]">Coded Identity (Account #)</label>
+                                                <label className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em]">Account Number</label>
                                             </div>
                                             <input
                                                 required
@@ -289,7 +289,7 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
                                         <div className="space-y-4">
                                             <div className="flex items-center gap-2 ml-4">
                                                 <Users className="h-3.5 w-3.5 text-foreground/20" />
-                                                <label className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em]">Corporate Identity (Account Name)</label>
+                                                <label className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em]">Account Name</label>
                                             </div>
                                             <input
                                                 required
@@ -309,13 +309,13 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
                                     onClick={resetForm}
                                     className="h-13 sm:h-16 px-8 sm:px-10 rounded-[16px] sm:rounded-[28px] glass border border-white/5 text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] hover:bg-white/5 transition-all text-foreground/40"
                                 >
-                                    Abort Sequence
+                                    Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     className="h-13 sm:h-16 px-8 sm:px-10 rounded-[16px] sm:rounded-[28px] bg-emerald-500 text-white text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] shadow-2xl shadow-emerald-500/20 hover:scale-[1.02] active:scale-95 transition-all"
                                 >
-                                    {isEditing ? 'Commit Update' : 'Authorize Endpoint'}
+                                    {isEditing ? 'Save Changes' : 'Add New Address'}
                                 </button>
                             </div>
                         </form>
@@ -345,7 +345,7 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
                                         </div>
                                         <div>
                                             <h3 className="font-black text-base sm:text-lg uppercase tracking-tight leading-none mb-1 sm:mb-1.5">{wallet.currency}</h3>
-                                            <p className="text-[8px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] text-foreground/30">{wallet.chain === 'BANK' ? 'FIAT BRIDGE' : wallet.chain}</p>
+                                            <p className="text-[8px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] text-foreground/30">{wallet.chain === 'BANK' ? 'Bank & Mobile Money' : wallet.chain}</p>
                                         </div>
                                     </div>
                                     <button
@@ -369,14 +369,14 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
                                         <button
                                             onClick={() => handleCopy(wallet.address, wallet.id)}
                                             className="h-10 w-10 sm:h-10 sm:w-10 rounded-lg sm:rounded-xl bg-white/5 border border-white/5 text-foreground/20 hover:text-primary transition-all flex items-center justify-center active:scale-90"
-                                            title="Capture Endpoint"
+                                            title="Copy Address"
                                         >
                                             {copiedId === wallet.id ? <CheckCircle2 className="h-4 w-4 sm:h-4 sm:w-4 text-emerald-500" /> : <Copy className="h-4 w-4 sm:h-4 sm:w-4" />}
                                         </button>
                                         <button
                                             onClick={() => startEdit(wallet)}
                                             className="h-10 w-10 sm:h-10 sm:w-10 rounded-lg sm:rounded-xl bg-white/5 border border-white/5 text-foreground/20 hover:text-primary transition-all flex items-center justify-center active:scale-90"
-                                            title="Edit Matrix"
+                                            title="Edit Details"
                                         >
                                             <Edit2 className="h-4 w-4 sm:h-4 sm:w-4" />
                                         </button>
@@ -385,7 +385,7 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
                                     <button
                                         onClick={() => setWalletToDelete(wallet.id)}
                                         className="h-10 w-10 sm:h-10 sm:w-10 rounded-lg sm:rounded-xl bg-white/5 border border-white/5 text-foreground/20 hover:text-rose-500 hover:border-rose-500/20 transition-all flex items-center justify-center active:scale-90"
-                                        title="Terminate Endpoint"
+                                        title="Delete Address"
                                     >
                                         <Trash2 className="h-4 w-4 sm:h-4 sm:w-4" />
                                     </button>
@@ -401,10 +401,10 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
                             <Wallet className="h-8 w-8 sm:h-10 sm:w-10" />
                         </div>
                         <div className="text-center space-y-1 sm:space-y-2">
-                            <h3 className="text-lg sm:text-xl font-black uppercase tracking-tight">Empty Registry</h3>
-                            <p className="text-[11px] sm:text-sm text-foreground/30 font-medium">No institutional endpoints authorized.</p>
+                            <h3 className="text-lg sm:text-xl font-black uppercase tracking-tight">No Addresses found</h3>
+                            <p className="text-[11px] sm:text-sm text-foreground/30 font-medium">No deposit addresses have been added yet.</p>
                         </div>
-                        <button onClick={() => setIsAdding(true)} className="text-primary text-[10px] sm:text-xs font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] hover:scale-105 transition-transform">Initialize First Node</button>
+                        <button onClick={() => setIsAdding(true)} className="text-primary text-[10px] sm:text-xs font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] hover:scale-105 transition-transform">Add Your First Address</button>
                     </div>
                 )}
             </div>
@@ -415,10 +415,10 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
                         <div className="h-16 w-16 rounded-2xl bg-rose-500/10 flex items-center justify-center text-rose-500 border border-rose-500/20">
                             <Trash2 className="h-8 w-8" />
                         </div>
-                        <DialogTitle className="text-3xl font-black uppercase tracking-tight">Terminate Endpoint?</DialogTitle>
+                        <DialogTitle className="text-3xl font-black uppercase tracking-tight">Delete Address?</DialogTitle>
                         <DialogDescription className="text-foreground/40 font-medium leading-relaxed">
-                            Critical Action: This will immediately de-authorize this liquidity ingress node.
-                            Institutional settlements via this endpoint will be suspended.
+                            This will remove this deposit address from the platform.
+                            Members will no longer see this as a payment destination.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className="flex flex-col sm:flex-row gap-4 mt-8">
@@ -427,7 +427,7 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
                             className="flex-1 h-16 rounded-2xl glass border border-white/5 text-[10px] font-black uppercase tracking-[0.2em]"
                             disabled={isDeleting}
                         >
-                            Abort
+                            Cancel
                         </button>
                         <button
                             onClick={confirmDelete}
@@ -435,7 +435,7 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
                             disabled={isDeleting}
                         >
                             {isDeleting && <Loader2 className="h-4 w-4 animate-spin" />}
-                            Terminate Node
+                            Delete Address
                         </button>
                     </DialogFooter>
                 </DialogContent>

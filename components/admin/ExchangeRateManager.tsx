@@ -56,11 +56,11 @@ export function ExchangeRateManager({ initialRates }: ExchangeRateManagerProps) 
         e.preventDefault();
         if (!newPair) return;
 
-        const toastId = toast.loading("INITIALIZING PAIR MATRIX...");
+        const toastId = toast.loading("ADDING CURRENCY PAIR...");
         const res = await createRatePair(newPair.toUpperCase());
 
         if (res.success && res.rate) {
-            toast.success("Matrix Initialized", { id: toastId });
+            toast.success("Currency Pair Added", { id: toastId });
             setRates(prev => [res.rate!, ...prev]);
             setNewPair("");
             setIsAdding(false);
@@ -72,14 +72,14 @@ export function ExchangeRateManager({ initialRates }: ExchangeRateManagerProps) 
     const confirmDelete = async () => {
         if (!pairToDelete) return;
         setIsDeleting(true);
-        const toastId = toast.loading("TERMINATING PAIR MATRIX...");
+        const toastId = toast.loading("DELETING CURRENCY PAIR...");
 
         try {
             const res = await deleteRatePair(pairToDelete);
             if (res.success) {
                 setRates(prev => prev.filter(r => r.pair !== pairToDelete));
-                toast.success("Matrix Terminated", { id: toastId });
-            } else toast.error(res.error || "Termination Failed", { id: toastId });
+                toast.success("Currency Pair Deleted", { id: toastId });
+            } else toast.error(res.error || "Deletion Failed", { id: toastId });
         } catch {
             toast.error("Process Error", { id: toastId });
         } finally {
@@ -95,9 +95,9 @@ export function ExchangeRateManager({ initialRates }: ExchangeRateManagerProps) 
                 <div className="space-y-1 sm:space-y-2">
                     <div className="flex items-center gap-2.5 sm:gap-3">
                         <div className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
-                        <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight">Liquidity Matrix</h2>
+                        <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight">Exchange Rates</h2>
                     </div>
-                    <p className="text-[11px] sm:text-sm text-foreground/40 font-medium">Manage institutional exchange parameters and margins.</p>
+                    <p className="text-[11px] sm:text-sm text-foreground/40 font-medium">Manage currency conversion rates and profit margins.</p>
                 </div>
                 <div className="flex items-center gap-2.5 sm:gap-4">
                     <button
@@ -126,11 +126,10 @@ export function ExchangeRateManager({ initialRates }: ExchangeRateManagerProps) 
                                 <div className="h-10 w-10 sm:h-14 sm:w-14 rounded-[14px] sm:rounded-[20px] bg-primary/10 flex items-center justify-center border border-primary/20 shadow-inner">
                                     <Info className="h-4 w-4 sm:h-7 sm:w-7 text-primary" />
                                 </div>
-                                <h3 className="text-lg sm:text-xl font-black uppercase tracking-tight">Margin Logic</h3>
+                                <h3 className="text-lg sm:text-xl font-black uppercase tracking-tight">Profit Margin Guide</h3>
                             </div>
                             <p className="text-[10px] sm:text-xs text-foreground/40 font-medium leading-relaxed">
-                                Deploy independent profit benchmarks for infrastructure ingress and egress.
-                                The matrix recalculates real-time values based on these parameters.
+                                Set your profit margins for buying and selling. The system calculates the final price automatically based on current market rates.
                             </p>
                         </div>
 
@@ -139,13 +138,13 @@ export function ExchangeRateManager({ initialRates }: ExchangeRateManagerProps) 
                                 <div className="flex justify-between items-center">
                                     <div className="flex items-center gap-2.5 sm:gap-3 text-emerald-500">
                                         <TrendingUp className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                                        <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em]">Buy Benchmark</span>
+                                        <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em]">Buy Margin</span>
                                     </div>
                                     <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
                                 </div>
                                 <p className="text-[9px] sm:text-[11px] text-foreground/60 leading-relaxed font-black uppercase tracking-widest">
-                                    Applied to Global Base. <br />
-                                    <span className="text-white">Price = Base × (1 + Buy%)</span>
+                                    Applied to Market Price. <br />
+                                    <span className="text-white">Price = Market × (1 + Buy%)</span>
                                 </p>
                             </div>
 
@@ -153,13 +152,13 @@ export function ExchangeRateManager({ initialRates }: ExchangeRateManagerProps) 
                                 <div className="flex justify-between items-center">
                                     <div className="flex items-center gap-2.5 sm:gap-3 text-rose-500">
                                         <Calculator className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                                        <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em]">Sell Benchmark</span>
+                                        <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em]">Sell Margin</span>
                                     </div>
                                     <div className="h-1.5 w-1.5 rounded-full bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.5)]" />
                                 </div>
                                 <p className="text-[9px] sm:text-[11px] text-foreground/60 leading-relaxed font-black uppercase tracking-widest">
-                                    Applied to Global Base. <br />
-                                    <span className="text-white">Price = Base × (1 - Sell%)</span>
+                                    Applied to Market Price. <br />
+                                    <span className="text-white">Price = Market × (1 - Sell%)</span>
                                 </p>
                             </div>
                         </div>
@@ -188,7 +187,7 @@ export function ExchangeRateManager({ initialRates }: ExchangeRateManagerProps) 
                             />
                         </div>
                         <button type="submit" className="h-13 sm:h-16 px-8 sm:px-12 rounded-[14px] sm:rounded-[20px] bg-primary text-white text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] shadow-2xl shadow-primary/20 active:scale-95 transition-all">
-                            Initialize
+                            Add Pair
                         </button>
                     </motion.form>
                 )}
@@ -220,7 +219,7 @@ export function ExchangeRateManager({ initialRates }: ExchangeRateManagerProps) 
                                             <div className="flex items-center gap-2">
                                                 <div className={cn("h-1.5 w-1.5 rounded-full", rate.is_automated ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]")} />
                                                 <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.2em] text-foreground/30">
-                                                    {rate.is_automated ? "Direct Feed" : "Manual Pulse"}
+                                                    {rate.is_automated ? "Direct Market Feed" : "Manual Rate"}
                                                 </p>
                                             </div>
                                         </div>
@@ -247,14 +246,14 @@ export function ExchangeRateManager({ initialRates }: ExchangeRateManagerProps) 
                                 <div className="space-y-6">
                                     {/* Core Benchmark */}
                                     <div className="space-y-3">
-                                        <p className="text-[9px] font-black text-foreground/20 uppercase tracking-[0.3em] ml-2">Mainframe Reference ({rate.pair.split('-')[1] || 'USD'})</p>
+                                        <p className="text-[9px] font-black text-foreground/20 uppercase tracking-[0.3em] ml-2">Reference Price ({rate.pair.split('-')[1] || 'USD'})</p>
                                         {rate.is_automated ? (
                                             <div className="h-12 sm:h-16 px-5 sm:px-8 rounded-[14px] sm:rounded-[24px] bg-white/3 border border-white/5 flex items-center justify-between group/feed opacity-60">
                                                 <span className="font-mono font-black text-sm sm:text-lg tracking-tight">
                                                     {rate.rate.toLocaleString()}
                                                 </span>
                                                 <div className="flex items-center gap-2 sm:gap-3">
-                                                    <span className="text-[7px] sm:text-[8px] font-black uppercase tracking-widest text-foreground/20 whitespace-nowrap">Source: Feed</span>
+                                                    <span className="text-[7px] sm:text-[8px] font-black uppercase tracking-widest text-foreground/20 whitespace-nowrap">Source: Market Feed</span>
                                                     <RefreshCw className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-foreground/10" />
                                                 </div>
                                             </div>
@@ -273,7 +272,7 @@ export function ExchangeRateManager({ initialRates }: ExchangeRateManagerProps) 
                                     {/* Benchmarks Matrix */}
                                     <div className="grid grid-cols-2 gap-4 sm:gap-5 py-2 sm:py-4">
                                         <div className="space-y-3">
-                                            <label className="text-[9px] font-black text-emerald-500 uppercase tracking-[0.3em] ml-2">Ingress %</label>
+                                            <label className="text-[9px] font-black text-emerald-500 uppercase tracking-[0.3em] ml-2">Buy Margin %</label>
                                             <div className="relative group/margin">
                                                 <SafeNumericInput
                                                     value={rate.buy_margin || 0}
@@ -284,7 +283,7 @@ export function ExchangeRateManager({ initialRates }: ExchangeRateManagerProps) 
                                             </div>
                                         </div>
                                         <div className="space-y-3">
-                                            <label className="text-[9px] font-black text-rose-500 uppercase tracking-[0.3em] ml-2">Egress %</label>
+                                            <label className="text-[9px] font-black text-rose-500 uppercase tracking-[0.3em] ml-2">Sell Margin %</label>
                                             <div className="relative group/margin">
                                                 <SafeNumericInput
                                                     value={rate.sell_margin || 0}
@@ -301,7 +300,7 @@ export function ExchangeRateManager({ initialRates }: ExchangeRateManagerProps) 
                                         <div className="flex justify-between items-center group/result">
                                             <div className="flex items-center gap-2.5 sm:gap-3">
                                                 <div className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-emerald-500/20" />
-                                                <span className="text-[8px] sm:text-[9px] font-black text-foreground/20 uppercase tracking-widest">Protocol Buy</span>
+                                                <span className="text-[8px] sm:text-[9px] font-black text-foreground/20 uppercase tracking-widest">Final Buy Price</span>
                                             </div>
                                             <p className="font-mono font-black text-xs sm:text-base text-foreground group-hover/result:text-emerald-500 transition-colors">
                                                 {((rate.is_automated ? rate.rate : (rate.manual_rate || 0)) * (1 + rate.buy_margin / 100)).toLocaleString()} <span className="text-[8px] sm:text-[10px] opacity-20 ml-1">{rate.pair.split('-')[1] || 'USD'}</span>
@@ -310,7 +309,7 @@ export function ExchangeRateManager({ initialRates }: ExchangeRateManagerProps) 
                                         <div className="flex justify-between items-center group/result">
                                             <div className="flex items-center gap-2.5 sm:gap-3">
                                                 <div className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-rose-500/20" />
-                                                <span className="text-[8px] sm:text-[9px] font-black text-foreground/20 uppercase tracking-widest">Protocol Sell</span>
+                                                <span className="text-[8px] sm:text-[9px] font-black text-foreground/20 uppercase tracking-widest">Final Sell Price</span>
                                             </div>
                                             <p className="font-mono font-black text-xs sm:text-base text-foreground group-hover/result:text-rose-500 transition-colors">
                                                 {((rate.is_automated ? rate.rate : (rate.manual_rate || 0)) * (1 - rate.sell_margin / 100)).toLocaleString()} <span className="text-[8px] sm:text-[10px] opacity-20 ml-1">{rate.pair.split('-')[1] || 'USD'}</span>
@@ -330,7 +329,7 @@ export function ExchangeRateManager({ initialRates }: ExchangeRateManagerProps) 
                                         <div className="absolute inset-0 bg-primary/20 blur-2xl animate-pulse" />
                                         <RefreshCw className="h-10 w-10 text-primary animate-spin relative" />
                                     </div>
-                                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white">Recalibrating Matrix...</p>
+                                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white">Updating Rates...</p>
                                 </motion.div>
                             )}
                         </motion.div>
@@ -343,10 +342,10 @@ export function ExchangeRateManager({ initialRates }: ExchangeRateManagerProps) 
                             <Sliders className="h-7 w-7 sm:h-10 sm:w-10" />
                         </div>
                         <div className="text-center space-y-2 sm:space-y-3">
-                            <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight">Zero Matrix Detected</h3>
-                            <p className="text-[11px] sm:text-sm text-foreground/30 font-medium max-w-xs leading-relaxed">No liquidity pairs have been initialized for system-wide trading.</p>
+                            <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight">No Exchange Rates Found</h3>
+                            <p className="text-[11px] sm:text-sm text-foreground/30 font-medium max-w-xs leading-relaxed">No currency pairs have been added yet.</p>
                         </div>
-                        <button onClick={() => setIsAdding(true)} className="h-14 sm:h-16 px-10 sm:px-12 rounded-[18px] sm:rounded-[28px] bg-primary text-white text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] shadow-2xl shadow-primary/20 hover:scale-105 transition-all">Initialize Core Matrix</button>
+                        <button onClick={() => setIsAdding(true)} className="h-14 sm:h-16 px-10 sm:px-12 rounded-[18px] sm:rounded-[28px] bg-primary text-white text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] shadow-2xl shadow-primary/20 hover:scale-105 transition-all">Add Your First Pair</button>
                     </div>
                 )}
             </div>
@@ -358,9 +357,9 @@ export function ExchangeRateManager({ initialRates }: ExchangeRateManagerProps) 
                         <div className="h-20 w-20 rounded-3xl bg-rose-500/10 flex items-center justify-center text-rose-500 border border-rose-500/20">
                             <Trash2 className="h-10 w-10" />
                         </div>
-                        <DialogTitle className="text-4xl font-black uppercase tracking-tight leading-none">Terminate Matrix?</DialogTitle>
+                        <DialogTitle className="text-4xl font-black uppercase tracking-tight leading-none">Delete Currency Pair?</DialogTitle>
                         <DialogDescription className="text-lg text-foreground/40 font-medium leading-relaxed">
-                            This will immediately purge the <span className="text-white font-bold">{pairToDelete}</span> matrix from the global exchange registry. All related settlement cycles will be aborted.
+                            This will immediately remove the <span className="text-white font-bold">{pairToDelete}</span> pair from the market desk. This cannot be undone.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className="flex flex-col sm:flex-row gap-6 mt-10">
@@ -369,7 +368,7 @@ export function ExchangeRateManager({ initialRates }: ExchangeRateManagerProps) 
                             className="flex-1 h-18 rounded-[24px] glass border border-white/5 text-[10px] font-black uppercase tracking-[0.2em]"
                             disabled={isDeleting}
                         >
-                            Abort
+                            Cancel
                         </button>
                         <button
                             onClick={confirmDelete}
@@ -377,7 +376,7 @@ export function ExchangeRateManager({ initialRates }: ExchangeRateManagerProps) 
                             disabled={isDeleting}
                         >
                             {isDeleting ? <Loader2 className="h-5 w-5 animate-spin" /> : <Trash2 className="h-5 w-5" />}
-                            Terminate Matrix
+                            Delete Pair
                         </button>
                     </DialogFooter>
                 </DialogContent>

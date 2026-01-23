@@ -73,12 +73,12 @@ export function OrderDetailsCard({ order, paymentMethods = [] }: OrderDetailsCar
 
             <div className="space-y-2">
                 <h2 className="text-3xl font-black">
-                    {isCompleted ? "Trade Completed!" :
+                    {isCompleted ? "Exchange Successful!" :
                         isCancelled ? "Trade Cancelled" :
-                            "Trade Initiated!"}
+                            "Exchange Started!"}
                 </h2>
                 <p className="text-foreground/50 font-medium tracking-wide">
-                    Order <span className="text-primary font-mono font-bold">#{order.order_number}</span>
+                    Trade <span className="text-primary font-mono font-bold">#{order.order_number}</span>
                 </p>
                 {/* Status Badge */}
                 <span className={cn(
@@ -103,7 +103,7 @@ export function OrderDetailsCard({ order, paymentMethods = [] }: OrderDetailsCar
                         <p className="font-bold">{new Date(order.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                     </div>
                     <div>
-                        <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest">You Pay</p>
+                        <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest">You Send</p>
                         <p className="font-bold text-primary">
                             {order.type === 'BUY'
                                 ? `${order.fiat_currency === 'GHS' ? 'GH₵' : '₦'}${order.amount_fiat} `
@@ -111,7 +111,7 @@ export function OrderDetailsCard({ order, paymentMethods = [] }: OrderDetailsCar
                         </p>
                     </div>
                     <div className="text-right">
-                        <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest">You Get</p>
+                        <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest">You Receive</p>
                         <p className="font-bold text-emerald-500">
                             {order.type === 'BUY'
                                 ? `${order.amount_crypto} ${order.asset} `
@@ -124,7 +124,7 @@ export function OrderDetailsCard({ order, paymentMethods = [] }: OrderDetailsCar
                 {isPending && paymentMethods.length > 0 ? (
                     <>
                         <div className="space-y-2">
-                            <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-500">Action Required</p>
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-500">Next Steps</p>
 
                             <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl space-y-1">
                                 <p className="text-xs text-amber-500 font-bold">1. Send EXACTLY <span className="text-foreground">
@@ -132,13 +132,13 @@ export function OrderDetailsCard({ order, paymentMethods = [] }: OrderDetailsCar
                                         ? `${order.fiat_currency === 'GHS' ? 'GH₵' : '₦'}${order.amount_fiat} `
                                         : `${order.amount_crypto} ${order.asset} `}
                                 </span></p>
-                                <p className="text-[10px] text-amber-500/80 font-medium">Sending a different amount may delay your order.</p>
+                                <p className="text-[10px] text-amber-500/80 font-medium">Sending a different amount may delay your exchange.</p>
                             </div>
 
                             {order.type === 'BUY' && (
                                 <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl text-blue-500 space-y-1">
-                                    <p className="text-xs font-bold">2. Use Reference: <span className="text-white font-mono">{order.order_number}</span></p>
-                                    <p className="text-[10px] text-blue-500/80 font-medium">Add this as the &quot;Note&quot; or &quot;Remarks&quot; in your bank app.</p>
+                                    <p className="text-xs font-bold">2. Add Reference Code: <span className="text-white font-mono">{order.order_number}</span></p>
+                                    <p className="text-[10px] text-blue-500/80 font-medium">Enter this in the &quot;Reference&quot; or &quot;Note&quot; field of your bank app.</p>
                                 </div>
                             )}
 
@@ -149,7 +149,7 @@ export function OrderDetailsCard({ order, paymentMethods = [] }: OrderDetailsCar
                                 </div>
                             )}
 
-                            <p className="text-xs font-bold pt-2">{order.type === 'BUY' ? 'Payment Options:' : 'Send Wallet Address:'}</p>
+                            <p className="text-xs font-bold pt-2">{order.type === 'BUY' ? 'Payment Options:' : 'Recipient Wallet:'}</p>
                         </div>
 
                         {/* Payment Method Tabs (for multiple options) */}
@@ -222,7 +222,7 @@ export function OrderDetailsCard({ order, paymentMethods = [] }: OrderDetailsCar
                         </p>
                         <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl flex gap-3 text-amber-500 text-xs font-bold leading-relaxed">
                             <Info className="h-4 w-4 shrink-0 mt-0.5" />
-                            <p>Please wait up to 30 minutes for processing. If not received, contact support immediately.</p>
+                            <p>Please wait up to 30 minutes for completion. If you need help, contact our team immediately.</p>
                         </div>
                     </div>
                 ) : null}
@@ -232,7 +232,7 @@ export function OrderDetailsCard({ order, paymentMethods = [] }: OrderDetailsCar
                     <div className="pt-4 border-t border-white/5">
                         <div className="p-3 rounded-xl bg-white/5 flex items-center gap-3 text-xs font-medium text-foreground/60">
                             <Clock className="h-4 w-4 animate-spin-slow" />
-                            <p>Processing Time: 5-30 Minutes</p>
+                            <p>Estimated completion: 5-30 Minutes</p>
                         </div>
                     </div>
                 )}
@@ -241,12 +241,12 @@ export function OrderDetailsCard({ order, paymentMethods = [] }: OrderDetailsCar
             {/* Actions */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
                 <Link href="/dashboard/orders" className="px-10 py-4 rounded-2xl bg-white/5 border border-white/10 font-bold hover:bg-white/10 transition-all text-sm">
-                    Back to Orders
+                    Back to History
                 </Link>
 
                 {showContactSupport && (
                     <Link href="/dashboard/support" className="px-10 py-4 rounded-2xl bg-primary text-white font-bold shadow-xl shadow-primary/20 hover:scale-[1.02] transition-all text-sm flex items-center justify-center gap-2">
-                        <Info className="h-4 w-4" /> Contact Support
+                        <Info className="h-4 w-4" /> Get Help
                     </Link>
                 )}
             </div>

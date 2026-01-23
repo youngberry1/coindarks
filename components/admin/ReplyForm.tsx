@@ -20,10 +20,10 @@ interface ReplyFormProps {
 }
 
 const FROM_EMAILS = [
-    { value: 'support@coindarks.com', label: 'Support Team (support@coindarks.com)' },
+    { value: 'support@coindarks.com', label: 'Support Desk (support@coindarks.com)' },
     { value: 'admin@coindarks.com', label: 'Administrator (admin@coindarks.com)' },
     { value: 'finance@coindarks.com', label: 'Finance Dept (finance@coindarks.com)' },
-    { value: 'noreply@coindarks.com', label: 'No Reply (noreply@coindarks.com)' },
+    { value: 'noreply@coindarks.com', label: 'System (noreply@coindarks.com)' },
 ];
 
 export function ReplyForm({ ticketId }: ReplyFormProps) {
@@ -65,14 +65,14 @@ export function ReplyForm({ ticketId }: ReplyFormProps) {
         <div className="space-y-6 bg-card-bg/30 p-6 rounded-2xl border border-white/5">
             <AnimatePresence>
                 {isSubmitting && (
-                    <Loading message="Transmitting administrative override..." />
+                    <Loading message="Sending response..." />
                 )}
             </AnimatePresence>
-            <h3 className="text-sm font-black uppercase tracking-widest text-foreground/40">Reply to User</h3>
+            <h3 className="text-sm font-black uppercase tracking-widest text-foreground/40">Reply to Member</h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-foreground/40 uppercase tracking-widest ml-1">From Sender</label>
+                    <label className="text-[10px] font-bold text-foreground/40 uppercase tracking-widest ml-1">From</label>
                     <Select value={fromEmail} onValueChange={setFromEmail}>
                         <SelectTrigger className="w-full bg-card-bg border-white/10 font-mono text-xs">
                             <SelectValue />

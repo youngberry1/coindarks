@@ -52,14 +52,14 @@ export function KYCReviewList({ submissions }: KYCReviewListProps) {
         try {
             const result = await processKYC(id, action, reason);
             if (result.success) {
-                toast.success(`Unit ${action === 'APPROVE' ? 'Authorized' : 'De-authorized'} successfully`);
+                toast.success(`Member ${action === 'APPROVE' ? 'Approved' : 'Rejected'} successfully`);
                 setIsRejectionModalOpen(false);
                 setRejectionReason("");
             } else {
-                toast.error(result.error || "Failed to process unit");
+                toast.error(result.error || "Failed to process check");
             }
         } catch {
-            toast.error("An error occurred during verification sequence");
+            toast.error("An error occurred during identity check");
         } finally {
             setIsLoading(false);
         }
@@ -69,7 +69,7 @@ export function KYCReviewList({ submissions }: KYCReviewListProps) {
         <div className="space-y-10">
             <AnimatePresence>
                 {isLoading && (
-                    <Loading message="UPDATING REGISTRY CREDENTIALS..." />
+                    <Loading message="UPDATING IDENTITY RECORDS..." />
                 )}
             </AnimatePresence>
 
@@ -121,7 +121,7 @@ export function KYCReviewList({ submissions }: KYCReviewListProps) {
                                 <div className="space-y-4">
                                     <div className="flex items-center gap-2 ml-1">
                                         <IdCard className="h-3.5 w-3.5 text-foreground/20" />
-                                        <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em]">Primary Facade</p>
+                                        <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em]">Document Front</p>
                                     </div>
                                     <div className="relative aspect-4/3 rounded-[32px] overflow-hidden border border-white/5 bg-white/2 group/img shadow-2xl">
                                         <Image src={sub.frontUrl} fill className="object-cover transition-transform duration-700 group-hover/img:scale-110" alt="Front" unoptimized />
@@ -141,7 +141,7 @@ export function KYCReviewList({ submissions }: KYCReviewListProps) {
                                     <div className="space-y-4">
                                         <div className="flex items-center gap-2 ml-1">
                                             <Fingerprint className="h-3.5 w-3.5 text-foreground/20" />
-                                            <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em]">Reverse Matrix</p>
+                                            <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em]">Document Back</p>
                                         </div>
                                         <div className="relative aspect-4/3 rounded-[32px] overflow-hidden border border-white/5 bg-white/2 group/img shadow-2xl">
                                             <Image src={sub.backUrl!} fill className="object-cover transition-transform duration-700 group-hover/img:scale-110" alt="Back" unoptimized />
@@ -161,7 +161,7 @@ export function KYCReviewList({ submissions }: KYCReviewListProps) {
                                 <div className="space-y-4">
                                     <div className="flex items-center gap-2 ml-1">
                                         <Camera className="h-3.5 w-3.5 text-foreground/20" />
-                                        <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em]">Bio-Verification</p>
+                                        <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em]">Identity Selfie</p>
                                     </div>
                                     <div className="relative aspect-4/3 rounded-[32px] overflow-hidden border border-white/5 bg-white/2 group/img shadow-2xl">
                                         <Image src={sub.selfieUrl} fill className="object-cover transition-transform duration-700 group-hover/img:scale-110" alt="Selfie" unoptimized />
@@ -184,7 +184,7 @@ export function KYCReviewList({ submissions }: KYCReviewListProps) {
                                         <FileText className="h-6 w-6" />
                                     </div>
                                     <div>
-                                        <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em] mb-1">Coded Serial</p>
+                                        <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em] mb-1">ID Number</p>
                                         <p className="font-mono font-black text-sm tracking-widest">{sub.document_number}</p>
                                     </div>
                                 </div>
@@ -198,7 +198,7 @@ export function KYCReviewList({ submissions }: KYCReviewListProps) {
                                     className="flex-2 h-18 rounded-[28px] bg-primary text-white font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-4 transition-all disabled:opacity-50"
                                 >
                                     <ShieldCheck className="h-5 w-5" />
-                                    <span>Authorize Access</span>
+                                    <span>Approve Member</span>
                                 </button>
                                 <button
                                     disabled={isLoading}
@@ -221,8 +221,8 @@ export function KYCReviewList({ submissions }: KYCReviewListProps) {
             <Modal
                 isOpen={isRejectionModalOpen}
                 onClose={() => setIsRejectionModalOpen(false)}
-                title="REJECTION PROTOCOL"
-                description="Specify the logic for verification failure and node de-authorization."
+                title="REJECTION REASON"
+                description="Specify the reason for identity check failure and member rejection."
             >
                 <div className="space-y-8 p-2">
                     <div className="relative group">

@@ -22,8 +22,8 @@ import { CryptoIcon } from "@/components/CryptoIcon";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-    title: "Admin Dashboard | CoinDarks",
-    description: "Manage users, transactions, and platform status.",
+    title: "Platform Controls | CoinDarks",
+    description: "Centrally manage members, transactions, and system status.",
 };
 
 export default async function AdminDashboardPage() {
@@ -49,9 +49,9 @@ export default async function AdminDashboardPage() {
     ]);
 
     const stats = [
-        { name: "Total Users", value: totalUsers || 0, icon: Users, color: "text-blue-500", bg: "bg-blue-500/10", border: "border-blue-500/20", link: "/admin/users", sub: "Total registered accounts" },
-        { name: "Pending KYC", value: pendingKYC || 0, icon: ShieldAlert, color: "text-amber-500", bg: "bg-amber-500/10", border: "border-amber-500/20", link: "/admin/kyc", sub: "Awaiting verification review" },
-        { name: "Total Orders", value: totalOrders || 0, icon: Package, color: "text-emerald-500", bg: "bg-emerald-500/10", border: "border-emerald-500/20", link: "/admin/orders", sub: "All completed transactions" },
+        { name: "Member Count", value: totalUsers || 0, icon: Users, color: "text-blue-500", bg: "bg-blue-500/10", border: "border-blue-500/20", link: "/admin/users", sub: "Total registered accounts" },
+        { name: "Identity Verifications", value: pendingKYC || 0, icon: ShieldAlert, color: "text-amber-500", bg: "bg-amber-500/10", border: "border-amber-500/20", link: "/admin/kyc", sub: "Awaiting review" },
+        { name: "Global Transactions", value: totalOrders || 0, icon: Package, color: "text-emerald-500", bg: "bg-emerald-500/10", border: "border-emerald-500/20", link: "/admin/orders", sub: "All completed trades" },
     ];
 
     return (
@@ -64,11 +64,11 @@ export default async function AdminDashboardPage() {
                         <span className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/40">Secure Session : Administrator</span>
                     </div>
                     <h1 className="text-5xl sm:text-7xl font-black tracking-tight leading-none uppercase">
-                        Admin <br />
-                        <span className="text-gradient leading-relaxed">Dashboard.</span>
+                        Platform <br />
+                        <span className="text-gradient leading-relaxed">Controls.</span>
                     </h1>
                     <p className="text-xl text-foreground/50 font-medium max-w-2xl leading-relaxed">
-                        Centrally manage users, identity verifications, and global platform transactions across all regions.
+                        Centrally manage members, identity verifications, and global platform transactions across all regions.
                     </p>
                 </div>
 
@@ -77,7 +77,7 @@ export default async function AdminDashboardPage() {
                         <div className="absolute inset-0 bg-primary/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-[28px]" />
                         <div className="relative h-18 px-10 rounded-[28px] bg-primary text-white flex items-center justify-center gap-4 shadow-2xl shadow-primary/30 active:scale-95 transition-all text-xs uppercase tracking-[0.2em] font-black">
                             <Search className="h-5 w-5" />
-                            <span>Manage Users</span>
+                            <span>Member List</span>
                         </div>
                     </Link>
                     <Link href="/admin/support" className="w-full sm:w-auto group relative">
@@ -129,12 +129,12 @@ export default async function AdminDashboardPage() {
                     <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
                         <div className="space-y-1">
                             <h2 className="text-2xl font-black tracking-tight flex items-center gap-3 uppercase">
-                                Recent <span className="text-gradient">Registrations.</span>
+                                New <span className="text-gradient">Members.</span>
                             </h2>
-                            <p className="text-xs text-foreground/40 font-black uppercase tracking-[0.2em]">Latest users joined</p>
+                            <p className="text-xs text-foreground/40 font-black uppercase tracking-[0.2em]">Latest signups</p>
                         </div>
                         <Link href="/admin/users" className="group/link inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-primary hover:text-primary/70 transition-colors">
-                            All Users <ArrowRight className="h-4 w-4 group-hover/link:translate-x-2 transition-transform" />
+                            Member List <ArrowRight className="h-4 w-4 group-hover/link:translate-x-2 transition-transform" />
                         </Link>
                     </div>
 
@@ -221,8 +221,8 @@ export default async function AdminDashboardPage() {
                 <div className="xl:col-span-4 space-y-12">
                     <div className="space-y-8">
                         <div className="space-y-1">
-                            <h2 className="text-xl font-black tracking-tight uppercase">System <span className="text-gradient">Status.</span></h2>
-                            <p className="text-xs text-foreground/40 font-black uppercase tracking-[0.2em]">Asset Availability</p>
+                            <h2 className="text-xl font-black tracking-tight uppercase">System <span className="text-gradient">Health.</span></h2>
+                            <p className="text-xs text-foreground/40 font-black uppercase tracking-[0.2em]">Asset Reserves</p>
                         </div>
 
                         <div className="glass-card p-10 rounded-[48px] border border-white/5 space-y-10">
@@ -261,7 +261,7 @@ export default async function AdminDashboardPage() {
                             <Link href="/admin/inventory" className="group/btn relative block overflow-hidden rounded-[24px]">
                                 <div className="absolute inset-0 bg-primary opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500" />
                                 <div className="relative h-16 w-full flex items-center justify-center border-2 border-white/10 font-black text-[10px] uppercase tracking-[0.3em] group-hover/btn:text-white transition-colors duration-500 gap-3">
-                                    Manage Inventory <TrendingUp className="h-4 w-4 text-primary group-hover/btn:text-white transition-colors" />
+                                    Manage Reserves <TrendingUp className="h-4 w-4 text-primary group-hover/btn:text-white transition-colors" />
                                 </div>
                             </Link>
                         </div>
@@ -278,13 +278,13 @@ export default async function AdminDashboardPage() {
                                 </div>
                                 <div className="space-y-4">
                                     <div className="space-y-1">
-                                        <p className="text-[10px] font-black text-red-500 uppercase tracking-[0.3em]">Compliance Alert</p>
+                                        <p className="text-[10px] font-black text-red-500 uppercase tracking-[0.3em] text-center">Security Alert</p>
                                         <p className="text-sm text-foreground/50 font-medium leading-relaxed">
-                                            <span className="text-foreground font-black">{pendingKYC} KYC Submissions</span> are awaiting review in the Ghana and Nigeria regions.
+                                            <span className="text-foreground font-black">{pendingKYC} ID Submissions</span> are awaiting review.
                                         </p>
                                     </div>
                                     <Link href="/admin/kyc" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-red-500 hover:text-red-400 transition-colors">
-                                        Open Verifications <ArrowRight className="h-3 w-3" />
+                                        Open Checks <ArrowRight className="h-3 w-3" />
                                     </Link>
                                 </div>
                             </div>

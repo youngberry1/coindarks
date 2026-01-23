@@ -6,8 +6,8 @@ import { Users as UsersIcon } from "lucide-react";
 import { UserManagementList } from "@/components/admin/UserManagementList";
 
 export const metadata: Metadata = {
-    title: "Registry Base | CoinDarks Admin",
-    description: "Institutional oversight of platform users and access levels.",
+    title: "Member List | CoinDarks Admin",
+    description: "Manage platform members and their account status.",
 };
 
 export default async function AdminUsersPage() {
@@ -31,22 +31,22 @@ export default async function AdminUsersPage() {
                 <div className="space-y-4">
                     <div className="flex items-center gap-3">
                         <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/40">Master Registry : Global User Base</span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/40">Member Management : User Registry</span>
                     </div>
                     <h1 className="text-5xl sm:text-7xl font-black tracking-tight leading-none uppercase">
-                        Registry <br />
-                        <span className="text-gradient leading-relaxed">Base.</span>
+                        Member <br />
+                        <span className="text-gradient leading-relaxed">List.</span>
                     </h1>
                     <p className="text-xl text-foreground/50 font-medium max-w-2xl leading-relaxed">
-                        Comprehensive management of the institutional identity registry. monitor active nodes,
-                        control access ciphers, and audit regional on-boarding.
+                        Manage and monitor all registered members. View profile details,
+                        update account status, and track membership growth.
                     </p>
                 </div>
 
                 <div className="flex items-center gap-4">
                     <div className="h-14 px-6 rounded-2xl glass border border-white/5 flex items-center gap-3 text-foreground/30">
                         <UsersIcon className="h-5 w-5" />
-                        <span className="text-xs font-black uppercase tracking-widest">{users?.length || 0} Registered Nodes</span>
+                        <span className="text-xs font-black uppercase tracking-widest">{users?.length || 0} Registered Members</span>
                     </div>
                 </div>
             </div>

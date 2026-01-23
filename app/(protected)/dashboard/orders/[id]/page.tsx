@@ -11,11 +11,10 @@ interface PageProps {
     params: Promise<{ id: string }>;
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-    const resolvedParams = await params;
+export async function generateMetadata(): Promise<Metadata> {
     return {
-        title: `Order Details #${resolvedParams.id.slice(0, 8)} | CoinDarks`,
-        description: "View the status and details of your crypto exchange order.",
+        title: `Trade Details | CoinDarks`,
+        description: "View the status and details of your crypto exchange.",
     };
 }
 
@@ -96,8 +95,8 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                     <ArrowLeft className="h-5 w-5" />
                 </Link>
                 <div>
-                    <h1 className="text-2xl font-black tracking-tight">Order Details</h1>
-                    <p className="text-foreground/50 font-medium text-sm">View transaction details</p>
+                    <h1 className="text-2xl font-black tracking-tight">Trade Details</h1>
+                    <p className="text-foreground/50 font-medium text-sm">Detailed view of your activity</p>
                 </div>
             </div>
 

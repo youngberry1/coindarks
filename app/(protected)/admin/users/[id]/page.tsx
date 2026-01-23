@@ -26,8 +26,8 @@ export async function generateMetadata({ params }: UserProfilePageProps): Promis
     const { id } = await params;
     const { data: user } = await supabaseAdmin.from('users').select('first_name, last_name').eq('id', id).single();
     return {
-        title: `${user?.first_name} ${user?.last_name} | User Profile Admin`,
-        description: `Managing user profile for ${user?.first_name} ${user?.last_name}`,
+        title: `${user?.first_name} ${user?.last_name} | Member Profile Admin`,
+        description: `Managing member profile for ${user?.first_name} ${user?.last_name}`,
     };
 }
 
@@ -113,12 +113,12 @@ export default async function UserProfilePage({ params }: UserProfilePageProps) 
             {/* Header */}
             <div>
                 <Link href="/admin/users" className="inline-flex items-center text-sm text-foreground/50 hover:text-primary mb-4 transition-colors">
-                    <ArrowLeft className="h-4 w-4 mr-1" /> Back to Directory
+                    <ArrowLeft className="h-4 w-4 mr-1" /> Back to Members
                 </Link>
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div>
-                        <h1 className="text-3xl font-black tracking-tight mb-2">User Profile</h1>
-                        <p className="text-foreground/50 font-medium">Detailed view of user activities and verification status.</p>
+                        <h1 className="text-3xl font-black tracking-tight mb-2">Member Profile</h1>
+                        <p className="text-foreground/50 font-medium">Detailed view of member activity, trade history, and verification status.</p>
                     </div>
                 </div>
             </div>
@@ -175,7 +175,7 @@ export default async function UserProfilePage({ params }: UserProfilePageProps) 
                 {/* KYC Info Card */}
                 <Card className="p-6 md:p-8 rounded-[28px] md:rounded-[32px] border-white/5 bg-card-bg/50 backdrop-blur-md lg:col-span-2">
                     <h3 className="text-base md:text-lg font-black uppercase tracking-widest mb-6 flex items-center gap-2">
-                        <ShieldCheck className="h-5 w-5 text-primary" /> Identity Verification
+                        <ShieldCheck className="h-5 w-5 text-primary" /> Verification Details
                     </h3>
 
                     {kyc ? (
@@ -190,15 +190,15 @@ export default async function UserProfilePage({ params }: UserProfilePageProps) 
                                     </Badge>
                                 </div>
                                 <div>
-                                    <p className="text-[9px] md:text-[10px] font-black text-foreground/40 uppercase tracking-widest mb-1">Submitted</p>
+                                    <p className="text-[9px] md:text-[10px] font-black text-foreground/40 uppercase tracking-widest mb-1">Date Submitted</p>
                                     <p className="font-medium text-xs md:text-sm">{new Date(kyc.submitted_at).toLocaleDateString()}</p>
                                 </div>
                                 <div>
-                                    <p className="text-[9px] md:text-[10px] font-black text-foreground/40 uppercase tracking-widest mb-1">Type</p>
+                                    <p className="text-[9px] md:text-[10px] font-black text-foreground/40 uppercase tracking-widest mb-1">Document Type</p>
                                     <p className="font-medium capitalize text-xs md:text-sm">{kyc.document_type?.replace('_', ' ')}</p>
                                 </div>
                                 <div>
-                                    <p className="text-[9px] md:text-[10px] font-black text-foreground/40 uppercase tracking-widest mb-1">Doc Number</p>
+                                    <p className="text-[9px] md:text-[10px] font-black text-foreground/40 uppercase tracking-widest mb-1">ID Number</p>
                                     <p className="font-medium text-xs md:text-sm font-mono truncate">{kyc.document_number || 'N/A'}</p>
                                 </div>
                             </div>
@@ -231,7 +231,7 @@ export default async function UserProfilePage({ params }: UserProfilePageProps) 
                                 )}
                                 {selfieUrl && (
                                     <div className="space-y-2">
-                                        <p className="text-[10px] font-black text-foreground/40 uppercase tracking-widest">Selfie</p>
+                                        <p className="text-[10px] font-black text-foreground/40 uppercase tracking-widest">Selfie Photo</p>
                                         <div className="relative aspect-video rounded-xl overflow-hidden border border-white/10 bg-black/20 group">
                                             {/* eslint-disable-next-line @next/next/no-img-element */}
                                             <img src={selfieUrl} alt="Selfie" className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110" />
@@ -254,7 +254,7 @@ export default async function UserProfilePage({ params }: UserProfilePageProps) 
                 {/* Recent Activity / Orders */}
                 <div className="lg:col-span-3">
                     <h3 className="text-base md:text-lg font-black uppercase tracking-widest mb-6 flex items-center gap-2">
-                        <Clock className="h-5 w-5 text-primary" /> Recent Orders
+                        <Clock className="h-5 w-5 text-primary" /> Order History
                     </h3>
 
                     <div className="rounded-[28px] md:rounded-[32px] border border-white/5 bg-card-bg/50 backdrop-blur-md overflow-hidden">
@@ -265,9 +265,9 @@ export default async function UserProfilePage({ params }: UserProfilePageProps) 
                                     <table className="w-full text-left">
                                         <thead className="bg-white/5">
                                             <tr>
-                                                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-foreground/40">Order ID</th>
+                                                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-foreground/40">Order Number</th>
                                                 <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-foreground/40">Type</th>
-                                                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-foreground/40">Asset</th>
+                                                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-foreground/40">Currency</th>
                                                 <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-foreground/40">Amount</th>
                                                 <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-foreground/40">Status</th>
                                                 <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-foreground/40 text-right">Date</th>

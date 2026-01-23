@@ -40,8 +40,8 @@ export async function generateMetadata({ params }: TicketPageProps): Promise<Met
         .single();
 
     return {
-        title: `Ticket #${ticket?.ticket_id || id} | Support Admin`,
-        description: `Managing: ${ticket?.subject || 'Support Ticket'}`,
+        title: `Ticket #${ticket?.ticket_id || id} | Support Desk`,
+        description: `Managing: ${ticket?.subject || 'Support Request'}`,
     };
 }
 
@@ -74,7 +74,7 @@ export default async function AdminTicketPage({ params }: TicketPageProps) {
             {/* Header */}
             <div>
                 <Link href="/admin/support" className="inline-flex items-center text-sm text-foreground/50 hover:text-primary mb-4 transition-colors">
-                    <ArrowLeft className="h-4 w-4 mr-1" /> Back to Tickets
+                    <ArrowLeft className="h-4 w-4 mr-1" /> Back to Support Desk
                 </Link>
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
                     <div className="min-w-0 flex-1">
@@ -135,7 +135,7 @@ export default async function AdminTicketPage({ params }: TicketPageProps) {
                                     }`}>
                                     <div className="flex items-center justify-between gap-4 mb-2">
                                         <span className={`text-[10px] font-bold uppercase tracking-wider ${msg.is_admin_reply ? 'text-white/70' : 'text-primary'}`}>
-                                            {msg.is_admin_reply ? 'Support Team' : 'User'}
+                                            {msg.is_admin_reply ? 'Support Desk' : 'Member'}
                                         </span>
                                         <span className={`text-[9px] md:text-[10px] ${msg.is_admin_reply ? 'text-white/50' : 'text-foreground/30'}`}>
                                             {new Date(msg.created_at).toLocaleString()}
@@ -162,18 +162,18 @@ export default async function AdminTicketPage({ params }: TicketPageProps) {
                 {/* Sidebar Info */}
                 <div className="space-y-6">
                     <Card className="p-6 rounded-[24px] border-white/5 bg-card-bg/50 backdrop-blur-md">
-                        <h3 className="text-[10px] md:text-sm font-black uppercase tracking-widest mb-4 text-foreground/40">User Context</h3>
+                        <h3 className="text-[10px] md:text-sm font-black uppercase tracking-widest mb-4 text-foreground/40">Member Details</h3>
                         <div className="space-y-4">
                             <div>
                                 <p className="text-[10px] text-foreground/40 font-bold mb-1">Email</p>
                                 <p className="text-xs md:text-sm font-medium truncate">{ticket.users.email}</p>
                             </div>
                             <div>
-                                <p className="text-[10px] text-foreground/40 font-bold mb-1">Role</p>
+                                <p className="text-[10px] text-foreground/40 font-bold mb-1">Role / Access</p>
                                 <Badge variant="outline" className="text-[10px]">{ticket.users.role}</Badge>
                             </div>
                             <div>
-                                <p className="text-[10px] text-foreground/40 font-bold mb-1">KYC Status</p>
+                                <p className="text-[10px] text-foreground/40 font-bold mb-1">Identity Status</p>
                                 <Badge className={`text - [10px] ${ticket.users.kyc_status === 'APPROVED' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500'} `}>
                                     {ticket.users.kyc_status}
                                 </Badge>

@@ -27,7 +27,6 @@ import { signOut } from "next-auth/react";
 import { Logo } from "@/components/ui/Logo";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { cn } from "@/lib/utils";
 
 interface SidebarProps {
@@ -49,22 +48,22 @@ export function DashboardSidebar({ user }: SidebarProps) {
 
     const userLinks = [
         { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-        { name: "Exchange", href: "/dashboard/exchange", icon: RefreshCcw },
-        { name: "Order History", href: "/dashboard/orders", icon: History },
-        { name: "Wallets & Accounts", href: "/dashboard/wallets", icon: Wallet },
+        { name: "Buy & Sell", href: "/dashboard/exchange", icon: RefreshCcw },
+        { name: "My Trades", href: "/dashboard/orders", icon: History },
+        { name: "My Accounts", href: "/dashboard/wallets", icon: Wallet },
         { name: "Settings", href: "/dashboard/settings", icon: Settings },
-        { name: "Help & Support", href: "/dashboard/support", icon: Mail },
+        { name: "Help Center", href: "/dashboard/support", icon: Mail },
     ];
 
     const adminLinks = [
-        { name: "Admin Dashboard", href: "/admin", icon: LayoutDashboard },
-        { name: "KYC Verifications", href: "/admin/kyc", icon: ShieldCheck },
-        { name: "System Orders", href: "/admin/orders", icon: Package },
-        { name: "User Management", href: "/admin/users", icon: Users },
-        { name: "Customer Support", href: "/admin/support", icon: Mail },
+        { name: "Platform Controls", href: "/admin", icon: LayoutDashboard },
+        { name: "Identity Checks", href: "/admin/kyc", icon: ShieldCheck },
+        { name: "Global Transactions", href: "/admin/orders", icon: Package },
+        { name: "Member List", href: "/admin/users", icon: Users },
+        { name: "Support Desk", href: "/admin/support", icon: Mail },
         { name: "Documentation", href: "/admin/docs", icon: BookOpen },
-        { name: "Announcements", href: "/admin/announcements", icon: Megaphone },
-        { name: "General Settings", href: "/admin/settings", icon: Settings },
+        { name: "News & Updates", href: "/admin/announcements", icon: Megaphone },
+        { name: "System Rules", href: "/admin/settings", icon: Settings },
     ];
 
     const links = isAdmin ? adminLinks : userLinks;
@@ -114,7 +113,7 @@ export function DashboardSidebar({ user }: SidebarProps) {
             {/* Navigation */}
             <nav className="flex-1 space-y-1.5 overflow-y-auto px-4 custom-scrollbar">
                 <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em] px-4 mb-4 mt-6">
-                    {isAdmin ? "Infrastructure" : "Main Menu"}
+                    {isAdmin ? "Management" : "Main Menu"}
                 </p>
                 {links.map((link) => {
                     const isActive = pathname === link.href;
@@ -184,7 +183,7 @@ export function DashboardSidebar({ user }: SidebarProps) {
                                     kycStatus === 'APPROVED' ? 'text-emerald-500' :
                                         kycStatus === 'REJECTED' ? 'text-red-500' :
                                             'text-amber-500'
-                                )}>Verification Status</p>
+                                )}>Identity Status</p>
                                 <div className="flex items-center gap-1.5">
                                     <div className={cn(
                                         "h-1.5 w-1.5 rounded-full animate-pulse",
@@ -193,7 +192,7 @@ export function DashboardSidebar({ user }: SidebarProps) {
                                                 'bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]'
                                     )} />
                                     <span className="text-[12px] font-black uppercase tracking-tight">
-                                        {kycStatus === 'UNSUBMITTED' ? 'KYC Required' : kycStatus === 'APPROVED' ? 'Verified Account' : kycStatus}
+                                        {kycStatus === 'UNSUBMITTED' ? 'Verify Identity' : kycStatus === 'APPROVED' ? 'Fully Verified' : kycStatus}
                                     </span>
                                 </div>
                             </div>
@@ -207,13 +206,6 @@ export function DashboardSidebar({ user }: SidebarProps) {
                     </div>
                 )}
 
-                <div className="flex items-center justify-between px-5 py-3.5 glass-card rounded-[24px] border border-white/5">
-                    <div className="flex items-center gap-3">
-                        <div className="h-2 w-2 rounded-full bg-primary" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40">Interface Mode</span>
-                    </div>
-                    <ThemeToggle />
-                </div>
 
                 <button
                     onClick={() => signOut()}
@@ -237,7 +229,6 @@ export function DashboardSidebar({ user }: SidebarProps) {
             <div className="lg:hidden fixed top-0 left-0 right-0 z-40 p-4 flex items-center justify-between bg-background/60 backdrop-blur-3xl border-b border-white/5">
                 <Logo className="scale-75 origin-left" />
                 <div className="flex items-center gap-3">
-                    <ThemeToggle />
                     <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
                         <SheetTrigger asChild>
                             <button

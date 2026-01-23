@@ -74,7 +74,7 @@ export function SupportForm({ orders = [], onClose }: SupportFormProps) {
         <>
             <AnimatePresence>
                 {isSubmitting && (
-                    <Loading message="Establishing secure connection to support..." />
+                    <Loading message="Sending request..." />
                 )}
             </AnimatePresence>
             {success ? (
@@ -86,8 +86,8 @@ export function SupportForm({ orders = [], onClose }: SupportFormProps) {
                     <div className="h-24 w-24 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-6 border-4 border-emerald-500/20">
                         <CheckCircle2 className="h-12 w-12 text-emerald-500" />
                     </div>
-                    <h4 className="text-3xl font-black mb-3">Message Sent!</h4>
-                    <p className="text-foreground/50 font-medium leading-relaxed max-w-sm mx-auto">Your ticket has been logged. We&apos;ll notify you via email when an agent responds.</p>
+                    <h4 className="text-3xl font-black mb-3">Request Sent!</h4>
+                    <p className="text-foreground/50 font-medium leading-relaxed max-w-sm mx-auto">Your request has been received. We&apos;ll notify you via email when we respond.</p>
                 </motion.div>
             ) : (
                 <div className="space-y-6">
@@ -102,12 +102,12 @@ export function SupportForm({ orders = [], onClose }: SupportFormProps) {
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-[10px] font-black text-foreground/40 uppercase tracking-[0.2em] ml-2">Link to Order (Optional)</label>
+                        <label className="text-[10px] font-black text-foreground/40 uppercase tracking-[0.2em] ml-2">Related Order (Optional)</label>
                         <div className="relative group">
                             <ShoppingBag className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-foreground/20 z-10 pointer-events-none" />
                             <Select value={orderId} onValueChange={setOrderId}>
                                 <SelectTrigger className="w-full rounded-2xl border-border bg-card-bg/20 pl-16 pr-6 py-5 h-auto font-bold focus:border-primary transition-all shadow-inner dark:shadow-none text-left text-foreground">
-                                    <SelectValue placeholder="General Assistance" />
+                                    <SelectValue placeholder="General Help" />
                                 </SelectTrigger>
                                 <SelectContent className="rounded-2xl border-border bg-card-bg backdrop-blur-2xl">
                                     <SelectItem
@@ -116,7 +116,7 @@ export function SupportForm({ orders = [], onClose }: SupportFormProps) {
                                     >
                                         <div className="flex items-center gap-3">
                                             <MessageCircle className="h-4 w-4 text-primary shrink-0" />
-                                            <span>General Assistance</span>
+                                            <span>General Help</span>
                                         </div>
                                     </SelectItem>
                                     {orders.map((order) => (
@@ -157,7 +157,7 @@ export function SupportForm({ orders = [], onClose }: SupportFormProps) {
                         onClick={handleSubmit}
                         className="w-full py-6 rounded-2xl bg-primary text-white font-black text-lg uppercase tracking-[0.2em] shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-4 disabled:opacity-50 disabled:grayscale"
                     >
-                        Open Support Ticket
+                        Send Request
                         <Send className="h-5 w-5" />
                     </button>
                 </div>

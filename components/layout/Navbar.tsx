@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { Menu, LayoutDashboard, LogOut, Shield, Zap, Globe, ArrowRight, Star, ShieldCheck } from "lucide-react";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { Logo } from "@/components/ui/Logo";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -25,8 +24,8 @@ export default function Navbar() {
     }, [pathname, scrolledSection]);
 
     const navLinks = useMemo(() => [
-        { name: "Exchange", href: "/#home", icon: Zap },
-        { name: "Live Market", href: "/#market", icon: Globe },
+        { name: "Buy & Sell", href: "/#home", icon: Zap },
+        { name: "Price Tracker", href: "/#market", icon: Globe },
         { name: "Features", href: "/#how-it-works", icon: ShieldCheck },
         { name: "Security", href: "/#security", icon: Shield },
         { name: "Testimonials", href: "/#testimonials", icon: Star },
@@ -98,9 +97,6 @@ export default function Navbar() {
 
                     {/* User Actions */}
                     <div className="flex items-center gap-3">
-                        <div className="hidden md:block">
-                            <ThemeToggle />
-                        </div>
                         {session ? (
                             <div className="flex items-center gap-2">
                                 <Link
@@ -164,7 +160,6 @@ export default function Navbar() {
                                         <div className="p-4 pb-10 flex flex-col gap-4">
                                             <div className="flex items-center justify-between px-2">
                                                 <span className="text-[10px] font-black uppercase tracking-widest opacity-40">Menu Navigation</span>
-                                                <ThemeToggle />
                                             </div>
 
                                             <div className="grid grid-cols-1 gap-2">

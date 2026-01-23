@@ -66,13 +66,13 @@ export function DirectEmailModal({ isOpen, onClose, user }: DirectEmailModalProp
         <Modal
             isOpen={isOpen}
             onClose={onClose}
-            title="Compose Email"
-            description={`Sending a direct administrative email to ${user?.name}.`}
+            title="Send Email"
+            description={`Send a direct email to ${user?.name}.`}
         >
             <div className="space-y-6">
                 <AnimatePresence>
                     {isLoading && (
-                        <Loading message="Dispatching secure communication..." />
+                        <Loading message="Sending email..." />
                     )}
                 </AnimatePresence>
 
@@ -97,7 +97,7 @@ export function DirectEmailModal({ isOpen, onClose, user }: DirectEmailModalProp
                         transition={{ delay: 0.1 }}
                         className="p-4 rounded-2xl bg-white/5 dark:bg-white/5 border border-white/10 dark:border-white/10 transition-all hover:bg-white/10 dark:hover:bg-white/10"
                     >
-                        <p className="text-[10px] font-black uppercase tracking-widest text-foreground/40 mb-2 ml-1">Send As</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-foreground/40 mb-2 ml-1">From</p>
                         <Select value={fromType} onValueChange={(value: "admin" | "support" | "finance" | "noreply") => setFromType(value)}>
                             <SelectTrigger className="w-full bg-transparent border-none p-0 h-auto font-bold text-sm text-primary hover:text-primary/80 transition-colors focus:ring-0 shadow-none">
                                 <SelectValue />
@@ -149,12 +149,12 @@ export function DirectEmailModal({ isOpen, onClose, user }: DirectEmailModalProp
                         className="flex-2 py-4 rounded-2xl bg-primary text-white font-bold shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:scale-100 disabled:shadow-none"
                     >
                         <Send className="h-4 w-4" />
-                        <span>Send Official Email</span>
+                        <span>Send Email</span>
                     </button>
                 </div>
 
                 <p className="text-[10px] text-center text-foreground/20 font-medium">
-                    This email will be sent from the chosen official address.
+                    This email will be sent from the selected address.
                 </p>
             </div>
         </Modal>

@@ -24,7 +24,7 @@ export function TicketSearch() {
         <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/50" />
             <Input
-                placeholder="Search tickets by ID, email or subject..."
+                placeholder="Search by ID, email or subject..."
                 className="pl-9 w-full md:w-[300px] bg-white/5 border-white/10"
                 onChange={(e) => handleSearch(e.target.value)}
                 defaultValue={searchParams.get('q')?.toString()}

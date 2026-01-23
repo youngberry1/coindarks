@@ -87,7 +87,7 @@ export function UserManagementList({ users }: UserManagementListProps) {
                     <div className="absolute inset-0 bg-primary/5 blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 rounded-[32px]" />
                     <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-foreground/20 group-focus-within:text-primary transition-all duration-500" />
                     <input
-                        placeholder="IDENTIFY NODE BY NAME OR EMAIL RECALL..."
+                        placeholder="SEARCH MEMBERS BY NAME OR EMAIL..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full pl-16 pr-8 h-18 rounded-[32px] glass border border-white/5 focus:border-primary/30 focus:outline-none transition-all font-black text-xs uppercase tracking-[0.2em] relative z-10"
@@ -97,7 +97,7 @@ export function UserManagementList({ users }: UserManagementListProps) {
                 <div className="h-18 px-8 rounded-[32px] glass border border-white/5 flex items-center gap-4 text-foreground/20 shrink-0">
                     <Activity className="h-5 w-5 text-primary" />
                     <span className="text-[10px] font-black uppercase tracking-[0.2em] tabular-nums whitespace-nowrap">
-                        {filteredUsers.length} Units Resolved
+                        {filteredUsers.length} Members Found
                     </span>
                 </div>
             </div>
@@ -107,11 +107,11 @@ export function UserManagementList({ users }: UserManagementListProps) {
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="border-b border-white/5 bg-white/2">
-                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Master Identity</th>
-                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Registry Status</th>
-                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Authorization</th>
-                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Registry Date</th>
-                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em] text-right">Sequence</th>
+                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Member Profile</th>
+                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Verification Status</th>
+                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Role / Access</th>
+                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Join Date</th>
+                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em] text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
@@ -157,7 +157,7 @@ export function UserManagementList({ users }: UserManagementListProps) {
                                         )}>
                                             {user.kyc_status === 'APPROVED' && <ShieldCheck className="h-3.5 w-3.5" />}
                                             {user.kyc_status === 'PENDING' && <Activity className="h-3.5 w-3.5 animate-pulse" />}
-                                            {user.kyc_status === 'UNSUBMITTED' ? 'Awaiting Data' : user.kyc_status}
+                                            {user.kyc_status === 'UNSUBMITTED' ? 'Awaiting Submission' : user.kyc_status}
                                         </div>
                                     </td>
                                     <td className="px-10 py-8">
@@ -185,7 +185,7 @@ export function UserManagementList({ users }: UserManagementListProps) {
                                                         ? "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white border border-emerald-500/20"
                                                         : "bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white border border-red-500/20"
                                                 )}
-                                                title={user.status === 'BANNED' ? "Revoke Access Ban" : "Authorize Node Ban"}
+                                                title={user.status === 'BANNED' ? "Activate Member" : "De-activate Member"}
                                             >
                                                 <Ban className="h-5 w-5" />
                                             </button>
@@ -199,22 +199,22 @@ export function UserManagementList({ users }: UserManagementListProps) {
                                                     </button>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end" className="w-[200px] p-2 rounded-3xl glass backdrop-blur-3xl border-white/10">
-                                                    <DropdownMenuLabel className="px-3 pb-2 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40">Node Control</DropdownMenuLabel>
+                                                    <DropdownMenuLabel className="px-3 pb-2 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40">Member Controls</DropdownMenuLabel>
                                                     <DropdownMenuItem asChild className="rounded-2xl h-12 mb-1 px-3 current-shadow focus:bg-primary transition-colors cursor-pointer">
                                                         <Link href={`/admin/users/${user.id}`} className="flex items-center w-full">
                                                             <Eye className="mr-3 h-4 w-4" />
-                                                            <span className="font-black text-xs uppercase tracking-tight">Audit Profile</span>
+                                                            <span className="font-black text-xs uppercase tracking-tight">View Profile</span>
                                                         </Link>
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem
                                                         className="rounded-2xl h-12 mb-1 px-3 focus:bg-white/10 transition-colors cursor-pointer"
                                                         onClick={() => {
                                                             navigator.clipboard.writeText(user.id);
-                                                            toast.success("Registry ID Captured");
+                                                            toast.success("Member ID Copied");
                                                         }}
                                                     >
                                                         <Copy className="mr-3 h-4 w-4" />
-                                                        <span className="font-black text-xs uppercase tracking-tight">Capture ID</span>
+                                                        <span className="font-black text-xs uppercase tracking-tight">Copy Member ID</span>
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem
                                                         className="rounded-2xl h-12 mb-1 px-3 focus:bg-primary transition-colors cursor-pointer"
@@ -228,7 +228,7 @@ export function UserManagementList({ users }: UserManagementListProps) {
                                                         }}
                                                     >
                                                         <Mail className="mr-3 h-4 w-4" />
-                                                        <span className="font-black text-xs uppercase tracking-tight">Relay Email</span>
+                                                        <span className="font-black text-xs uppercase tracking-tight">Send Email</span>
                                                     </DropdownMenuItem>
                                                     <DropdownMenuSeparator className="bg-white/5 my-2" />
                                                     <DropdownMenuItem
@@ -242,7 +242,7 @@ export function UserManagementList({ users }: UserManagementListProps) {
                                                         }}
                                                     >
                                                         <Ban className="mr-3 h-4 w-4" />
-                                                        {user.status === 'BANNED' ? "Authorize Node" : "De-authorize Node"}
+                                                        {user.status === 'BANNED' ? "Activate Member" : "De-activate Member"}
                                                     </DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
@@ -292,15 +292,15 @@ export function UserManagementList({ users }: UserManagementListProps) {
                                     <DropdownMenuItem asChild>
                                         <Link href={`/admin/users/${user.id}`} className="cursor-pointer">
                                             <Eye className="mr-3 h-4 w-4" />
-                                            <span className="font-black text-[10px] uppercase tracking-widest">Audit Profile</span>
+                                            <span className="font-black text-[10px] uppercase tracking-widest">View Profile</span>
                                         </Link>
                                     </DropdownMenuItem>
                                     <DropdownMenuItem onClick={() => {
                                         navigator.clipboard.writeText(user.id);
-                                        toast.success("ID Captured");
+                                        toast.success("ID Copied");
                                     }}>
                                         <Copy className="mr-3 h-4 w-4" />
-                                        <span className="font-black text-[10px] uppercase tracking-widest">Capture ID</span>
+                                        <span className="font-black text-[10px] uppercase tracking-widest">Copy ID</span>
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
@@ -308,7 +308,7 @@ export function UserManagementList({ users }: UserManagementListProps) {
 
                         <div className="relative z-10 grid grid-cols-2 gap-6 p-6 rounded-[32px] bg-white/3 border border-white/5">
                             <div className="space-y-2">
-                                <p className="text-[9px] text-foreground/30 font-black uppercase tracking-[0.2em]">Compliance</p>
+                                <p className="text-[9px] text-foreground/30 font-black uppercase tracking-[0.2em]">Verification</p>
                                 <div className={cn(
                                     "inline-flex items-center px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] border shadow-2xl",
                                     user.kyc_status === 'APPROVED' ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/10" :
@@ -319,7 +319,7 @@ export function UserManagementList({ users }: UserManagementListProps) {
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <p className="text-[9px] text-foreground/30 font-black uppercase tracking-[0.2em]">Authorization</p>
+                                <p className="text-[9px] text-foreground/30 font-black uppercase tracking-[0.2em]">Role / Access</p>
                                 <div className={cn(
                                     "inline-flex items-center px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] border shadow-2xl",
                                     user.role === 'ADMIN' ? "bg-primary/20 text-primary border-primary/20" : "bg-white/5 text-foreground/30"
@@ -343,7 +343,7 @@ export function UserManagementList({ users }: UserManagementListProps) {
                                         : "bg-red-500/10 text-red-500 border-red-500/20"
                                 )}
                             >
-                                {user.status === 'BANNED' ? "Authorize" : "Ban Node"}
+                                {user.status === 'BANNED' ? "Activate" : "De-activate"}
                             </button>
                         </div>
                     </div>
@@ -355,13 +355,13 @@ export function UserManagementList({ users }: UserManagementListProps) {
                 onClose={() => setIsBanModalOpen(false)}
                 onConfirm={handleToggleStatus}
                 isLoading={isLoading}
-                title={selectedUser?.status === 'BANNED' ? "Authorize Registry Node?" : "Terminate Node Access?"}
+                title={selectedUser?.status === 'BANNED' ? "Activate Member?" : "De-activate Member?"}
                 description={
                     selectedUser?.status === 'BANNED'
-                        ? `Are you sure you want to re-authorize ${selectedUser?.email} for institutional infrastructure access?`
-                        : `Are you sure you want to terminate ${selectedUser?.email}'s access? All active bridge cycles will be suspended immediately.`
+                        ? `Are you sure you want to re-activate ${selectedUser?.email}'s account and restore their access to the platform?`
+                        : `Are you sure you want to de-activate ${selectedUser?.email}'s account? This will restrict their access to the platform.`
                 }
-                confirmText={selectedUser?.status === 'BANNED' ? "Authorize Node" : "Terminate Node"}
+                confirmText={selectedUser?.status === 'BANNED' ? "Activate Member" : "De-activate Member"}
                 variant={selectedUser?.status === 'BANNED' ? "success" : "destructive"}
             />
 

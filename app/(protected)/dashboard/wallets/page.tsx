@@ -11,8 +11,8 @@ import { Wallet as WalletIcon, ShieldCheck, CreditCard } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const metadata: Metadata = {
-    title: "My Wallets | CoinDarks",
-    description: "Manage your saved crypto and fiat accounts.",
+    title: "My Accounts | CoinDarks",
+    description: "Manage your saved deposit and payment accounts.",
 };
 
 export default async function WalletsPage(props: { searchParams: Promise<{ tab?: string }> }) {
@@ -36,8 +36,8 @@ export default async function WalletsPage(props: { searchParams: Promise<{ tab?:
         <div className="space-y-6 md:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-2xl md:text-3xl font-black tracking-tight mb-2">My Wallets</h1>
-                    <p className="text-sm md:text-base text-foreground/50 font-medium">Manage your external wallets and payment beneficiaries.</p>
+                    <h1 className="text-2xl md:text-3xl font-black tracking-tight mb-2">My Accounts</h1>
+                    <p className="text-sm md:text-base text-foreground/50 font-medium">Manage your external deposit points and payment destinations.</p>
                 </div>
 
                 <div className="flex items-center gap-3">
@@ -45,7 +45,7 @@ export default async function WalletsPage(props: { searchParams: Promise<{ tab?:
                         <ShieldCheck className="h-5 w-5 text-primary shrink-0" />
                         <div>
                             <p className="text-[10px] font-black text-foreground/40 uppercase tracking-widest leading-none mb-1">Security</p>
-                            <p className="text-sm font-bold">Whitelisted Only</p>
+                            <p className="text-sm font-bold">Verified Only</p>
                         </div>
                     </div>
                 </div>
@@ -64,7 +64,7 @@ export default async function WalletsPage(props: { searchParams: Promise<{ tab?:
                             value="fiat"
                             className="flex-1 md:flex-none px-4 md:px-6 py-3 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-[10px] md:text-xs uppercase tracking-widest transition-all"
                         >
-                            Fiat Accounts
+                            Bank & Mobile
                         </TabsTrigger>
                     </TabsList>
 
@@ -76,9 +76,9 @@ export default async function WalletsPage(props: { searchParams: Promise<{ tab?:
 
                             <div className="relative">
                                 <div className="mb-8 md:mb-10">
-                                    <h3 className="text-lg md:text-xl font-bold mb-3">Saved Crypto Addresses</h3>
+                                    <h3 className="text-lg md:text-xl font-bold mb-3">Saved Crypto Wallets</h3>
                                     <p className="text-sm text-foreground/40 font-medium max-w-lg">
-                                        Add your destination wallet addresses here (e.g. your TrustWallet or Binance deposit address). These will be available when you <strong>BUY</strong> crypto.
+                                        Add your destination wallets here (e.g. your TrustWallet or Binance deposit address). These will be available when you <strong>BUY</strong> assets.
                                     </p>
                                 </div>
 
@@ -95,9 +95,9 @@ export default async function WalletsPage(props: { searchParams: Promise<{ tab?:
 
                             <div className="relative">
                                 <div className="mb-8 md:mb-10">
-                                    <h3 className="text-lg md:text-xl font-bold mb-3">Saved Fiat Accounts</h3>
+                                    <h3 className="text-lg md:text-xl font-bold mb-3">Saved Bank & Mobile Accounts</h3>
                                     <p className="text-sm text-foreground/40 font-medium max-w-lg">
-                                        Add your Bank or Mobile Money accounts here. These will be available when you <strong>SELL</strong> crypto to receive payment.
+                                        Add your Bank or Mobile Money accounts here. These will be available when you <strong>SELL</strong> assets to receive payment.
                                     </p>
                                 </div>
 

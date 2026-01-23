@@ -7,7 +7,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Lock, ArrowRight, ShieldAlert, CheckCircle2, Eye, EyeOff, Sparkles } from "lucide-react";
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { resendVerification } from "@/actions/resend-verification";
 import { checkVerification } from "@/actions/check-verification";
 import { login } from "@/actions/login";
@@ -129,9 +128,6 @@ function LoginContent() {
             <div className="absolute inset-0 bg-mesh opacity-30 -z-10" />
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 blur-[160px] rounded-full -z-10 animate-pulse-slow" />
 
-            <div className="absolute top-8 right-8 z-50">
-                <ThemeToggle />
-            </div>
 
             <motion.div
                 initial={{ opacity: 0, y: 20, scale: 0.98 }}

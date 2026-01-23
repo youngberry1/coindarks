@@ -9,7 +9,7 @@ import {
 import { KYCReviewList } from "@/components/admin/KYCReviewList";
 
 export const metadata: Metadata = {
-    title: "Verification Base | CoinDarks Admin",
+    title: "Identity Checks | CoinDarks Admin",
     description: "Institutional identity verification and compliance review.",
 };
 
@@ -65,15 +65,15 @@ export default async function AdminKYCPage() {
                 <div className="space-y-4">
                     <div className="flex items-center gap-3">
                         <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/40">Compliance Node : Identity Verification</span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/40">Security Hub : Identity Checks</span>
                     </div>
                     <h1 className="text-5xl sm:text-7xl font-black tracking-tight leading-none uppercase">
-                        Verification <br />
-                        <span className="text-gradient leading-relaxed">Base.</span>
+                        Identity <br />
+                        <span className="text-gradient leading-relaxed">Checks.</span>
                     </h1>
                     <p className="text-xl text-foreground/50 font-medium max-w-2xl leading-relaxed">
-                        Institutional review of identity credentials. verify node authenticity,
-                        audit document fidelity, and authorize infrastructure access.
+                        Review of member identity credentials. verify authenticity,
+                        audit document correctness, and authorize platform access.
                     </p>
                 </div>
 
@@ -83,8 +83,8 @@ export default async function AdminKYCPage() {
                             <Clock className="h-6 w-6" />
                         </div>
                         <div>
-                            <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em] leading-none mb-1.5">Processing Queue</p>
-                            <p className="text-xl font-black tabular-nums">{pendingKYC?.length || 0} Pending Units</p>
+                            <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em] leading-none mb-1.5">Review Queue</p>
+                            <p className="text-xl font-black tabular-nums">{pendingKYC?.length || 0} Pending Checks</p>
                         </div>
                     </div>
                 </div>
@@ -101,8 +101,8 @@ export default async function AdminKYCPage() {
                         <div className="space-y-4">
                             <h3 className="text-3xl font-black uppercase tracking-tight">Queue Synchronized</h3>
                             <p className="text-lg text-foreground/40 max-w-sm font-medium leading-relaxed">
-                                All identity verification cycles have been successfully processed.
-                                The registry is current and verified.
+                                All identity check cycles have been successfully processed.
+                                The member registry is current.
                             </p>
                         </div>
                     </div>

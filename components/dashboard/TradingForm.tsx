@@ -5,7 +5,6 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import {
     CheckCircle2,
     Wallet,
-    Info,
     ArrowDown,
     Landmark,
     ArrowUpRight
@@ -282,12 +281,12 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                     depositAddress: result.depositAddress || null,
                     amounts: result.amounts || { crypto: 0, fiat: 0 }
                 });
-                toast.success("Order confirmed successfully.");
+                toast.success("Trade confirmed successfully.");
             } else {
-                toast.error(result.error || "Order execution failed");
+                toast.error(result.error || "Trade execution failed");
             }
         } catch {
-            toast.error("Fatal Terminal Error");
+            toast.error("Exchange Error");
         } finally {
             setIsSubmitting(false);
         }
@@ -301,35 +300,35 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="w-full max-w-3xl bg-[#16191E] border border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl space-y-8"
+                className="w-full max-w-4xl bg-[#16191E] border border-white/5 rounded-[2.5rem] p-8 md:p-14 shadow-2xl space-y-8"
             >
                 <div className="text-center space-y-6">
-                    <div className="mx-auto h-20 w-20 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 border border-emerald-500/20">
+                    <div className="mx-auto h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
                         <CheckCircle2 className="h-10 w-10" />
                     </div>
                     <div className="space-y-1">
-                        <h2 className="text-2xl font-black tracking-tight text-white uppercase italic">Transaction Initialized</h2>
-                        <p className="text-[10px] font-black tracking-[0.3em] text-white/40 uppercase">ORDER ID: {orderSuccess.id}</p>
+                        <h2 className="text-2xl font-black tracking-tight text-white uppercase italic">Exchange Started</h2>
+                        <p className="text-[10px] font-black tracking-[0.3em] text-white/40 uppercase">TRADE NUMBER: {orderSuccess.id}</p>
                     </div>
                 </div>
 
                 <div className="bg-[#0D0F12] rounded-2xl p-6 border border-white/5 space-y-4">
                     <div className="flex justify-between items-center text-xs font-bold">
-                        <span className="text-white/30 uppercase tracking-widest">Sent Amount</span>
+                        <span className="text-white/30 uppercase tracking-widest">You Send</span>
                         <span className="text-white font-mono">{type === 'BUY' ? `${fiat.symbol}${orderSuccess.amounts.fiat.toLocaleString()}` : `${orderSuccess.amounts.crypto} ${asset.id}`}</span>
                     </div>
                     <div className="flex justify-between items-center text-xs font-bold border-t border-white/5 pt-4">
-                        <span className="text-emerald-500/50 uppercase tracking-widest">Expected Return</span>
-                        <span className="text-emerald-500 font-mono italic">{type === 'BUY' ? `${orderSuccess.amounts.crypto} ${asset.id}` : `${fiat.symbol}${orderSuccess.amounts.fiat.toLocaleString()}`}</span>
+                        <span className="text-primary/50 uppercase tracking-widest">Estimated Receive</span>
+                        <span className="text-primary font-mono italic">{type === 'BUY' ? `${orderSuccess.amounts.crypto} ${asset.id}` : `${fiat.symbol}${orderSuccess.amounts.fiat.toLocaleString()}`}</span>
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 gap-4">
                     <Link href="/dashboard/orders" className="flex items-center justify-center w-full py-5 bg-white/5 border border-white/5 rounded-xl text-[10px] font-black uppercase tracking-[0.3em] text-white/60 hover:text-white hover:bg-white/10 transition-all">
-                        View Order Details
+                        View Trade Details
                     </Link>
-                    <button onClick={() => { setOrderSuccess(null); setAmountFiat(""); setAmountCrypto(""); }} className="flex items-center justify-center w-full py-5 bg-emerald-500 text-black rounded-xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-emerald-400 transition-all shadow-[0_0_20px_rgba(16,185,129,0.2)]">
-                        New Exchange
+                    <button onClick={() => { setOrderSuccess(null); setAmountFiat(""); setAmountCrypto(""); }} className="flex items-center justify-center w-full py-5 bg-primary text-black rounded-xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-primary/90 transition-all shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+                        New Trade
                     </button>
                 </div>
             </motion.div>
@@ -337,7 +336,7 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
     }
 
     return (
-        <div className="w-full max-w-3xl space-y-6">
+        <div className="w-full max-w-4xl space-y-6">
             <AnimatePresence>
                 {isSubmitting && <Loading message="PROCESSING..." />}
             </AnimatePresence>
@@ -345,9 +344,9 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
             {/* Nexus Terminal Core */}
             <div className="bg-[#16191E] border border-white/10 rounded-[2.5rem] p-1 shadow-2xl relative overflow-hidden group">
                 {/* Decorative Edge Glow */}
-                <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-emerald-500/20 to-transparent" />
+                <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-primary/20 to-transparent" />
 
-                <div className="bg-[#0D0F12] rounded-[2.2rem] p-8 space-y-8">
+                <div className="bg-[#0D0F12] rounded-[2.2rem] p-6 md:p-10 space-y-8">
                     {/* Header: Toggle & Stats */}
                     <div className="flex items-center justify-between">
                         <div className="flex bg-[#16191E] p-1.5 rounded-2xl border border-white/5">
@@ -355,20 +354,20 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                                 onClick={() => setType('BUY')}
                                 className={cn(
                                     "px-8 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all",
-                                    type === 'BUY' ? "bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.3)]" : "text-white/30 hover:text-white/60"
+                                    type === 'BUY' ? "bg-primary text-black shadow-[0_0_15px_rgba(16,185,129,0.3)]" : "text-white/30 hover:text-white/60"
                                 )}
-                            >Buy Assets</button>
+                            >Buy Crypto</button>
                             <button
                                 onClick={() => setType('SELL')}
                                 className={cn(
                                     "px-8 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all",
-                                    type === 'SELL' ? "bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.3)]" : "text-white/30 hover:text-white/60"
+                                    type === 'SELL' ? "bg-primary text-black shadow-[0_0_15px_rgba(16,185,129,0.3)]" : "text-white/30 hover:text-white/60"
                                 )}
-                            >Sell Assets</button>
+                            >Sell Crypto</button>
                         </div>
                         <div className="flex items-center gap-3">
                             <div className="flex flex-col items-end">
-                                <span className="text-[10px] font-black text-emerald-500/50 uppercase tracking-widest tabular-nums">{refreshCountdown}S</span>
+                                <span className="text-[10px] font-black text-primary/50 uppercase tracking-widest tabular-nums">{refreshCountdown}S</span>
                                 <span className="text-[8px] font-bold text-white/10 uppercase italic">Update</span>
                             </div>
                         </div>
@@ -381,9 +380,9 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                                 <div className="h-6 w-6 relative shrink-0">
                                     <CryptoIcon symbol={asset.id} iconUrl={asset.icon} />
                                 </div>
-                                <span className="text-[9px] font-black uppercase tracking-widest text-white/20">{asset.id} Market Trend</span>
+                                <span className="text-[9px] font-black uppercase tracking-widest text-white/20">Live {asset.id} Feed</span>
                             </div>
-                            <span className="text-[10px] font-mono text-emerald-500 font-bold flex items-center gap-1">
+                            <span className="text-[10px] font-mono text-primary font-bold flex items-center gap-1">
                                 <ArrowUpRight className="h-3 w-3" />
                                 2.45%
                             </span>
@@ -395,13 +394,13 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                         {/* Block 1: Input */}
                         <div className="bg-[#16191E] rounded-[1.8rem] p-6 border border-white/5 hover:border-white/10 transition-colors">
                             <div className="flex justify-between items-center mb-6">
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">Select Source</span>
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">Choose Currency</span>
                                 <AssetSelector
                                     value={type === 'BUY' ? fiat.id : asset.id}
                                     onChange={(val) => type === 'BUY' ? setFiat(FIAT.find(f => f.id === val)!) : setAsset(supportedAssets.find(a => a.id === val)!)}
                                     options={type === 'BUY' ? FIAT : supportedAssets}
                                     type={type === 'BUY' ? "FIAT" : "CRYPTO"}
-                                    className="h-10 bg-[#0D0F12] border-white/5 hover:border-emerald-500/30"
+                                    className="h-10 bg-[#0D0F12] border-white/5 hover:border-primary/30"
                                 />
                             </div>
                             <div className="flex flex-col space-y-1">
@@ -412,27 +411,27 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                                     placeholder="0.00"
                                     className="w-full bg-transparent text-5xl font-black outline-none placeholder:text-white/5 text-white tracking-tighter"
                                 />
-                                <span className="text-[10px] font-bold text-white/10 uppercase tracking-widest">Estimate Amount</span>
+                                <span className="text-[10px] font-bold text-white/10 uppercase tracking-widest">Initial Amount</span>
                             </div>
                         </div>
 
                         {/* Mid Divider Arrow */}
                         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
                             <div className="h-12 w-12 rounded-full border border-white/10 flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
-                                <ArrowDown className="h-4 w-4 text-emerald-500" />
+                                <ArrowDown className="h-4 w-4 text-primary" />
                             </div>
                         </div>
 
                         {/* Block 2: Output */}
                         <div className="bg-[#16191E] rounded-[1.8rem] p-6 border border-white/5 hover:border-white/10 transition-colors">
                             <div className="flex justify-between items-center mb-6">
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">Estimated Return</span>
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">You Receive</span>
                                 <AssetSelector
                                     value={type === 'BUY' ? asset.id : fiat.id}
                                     onChange={(val) => type === 'BUY' ? setAsset(supportedAssets.find(a => a.id === val)!) : setFiat(FIAT.find(f => f.id === val)!)}
                                     options={type === 'BUY' ? supportedAssets : FIAT}
                                     type={type === 'BUY' ? "CRYPTO" : "FIAT"}
-                                    className="h-10 bg-[#0D0F12] border-white/5 hover:border-emerald-500/30"
+                                    className="h-10 bg-[#0D0F12] border-white/5 hover:border-primary/30"
                                 />
                             </div>
                             <div className="flex flex-col space-y-1">
@@ -441,11 +440,11 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                                     value={type === 'BUY' ? amountCrypto : amountFiat}
                                     readOnly
                                     placeholder="0.00"
-                                    className="w-full bg-transparent text-5xl font-black outline-none placeholder:text-white/5 text-emerald-500 tracking-tighter"
+                                    className="w-full bg-transparent text-5xl font-black outline-none placeholder:text-white/5 text-primary tracking-tighter"
                                 />
                                 <div className="flex justify-between items-center">
-                                    <span className="text-[10px] font-bold text-white/10 uppercase tracking-widest">Projected Payout</span>
-                                    <span className="text-[10px] font-mono text-emerald-500/50 font-bold">
+                                    <span className="text-[10px] font-bold text-white/10 uppercase tracking-widest">Expected Result</span>
+                                    <span className="text-[10px] font-mono text-primary/50 font-bold">
                                         {isLoading ? "REFRESHING..." : `RATE: ${displayRate?.toLocaleString() ?? '---'}`}
                                     </span>
                                 </div>
@@ -465,7 +464,7 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                                 readOnly={type === 'SELL'}
                                 onFocus={() => setShowWalletDropdown(true)}
                                 onBlur={() => setTimeout(() => setShowWalletDropdown(false), 200)}
-                                placeholder={type === 'BUY' ? `Enter ${asset.id} wallet address` : "Choose bank account"}
+                                placeholder={type === 'BUY' ? `Enter your ${asset.id} wallet` : "Choose bank account"}
                                 className="w-full bg-[#16191E] border border-white/5 rounded-2xl py-6 pl-14 pr-6 text-[11px] font-black uppercase tracking-widest placeholder:text-white/10 focus:outline-none focus:border-emerald-500/30 transition-all text-white"
                             />
 
@@ -477,10 +476,10 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                                         exit={{ opacity: 0, y: 10 }}
                                         className="absolute bottom-full left-0 right-0 mb-3 bg-[#16191E] border border-white/10 rounded-[2rem] shadow-2xl z-50 overflow-hidden max-h-60 overflow-y-auto"
                                     >
-                                        <div className="p-4 border-b border-white/5 text-[9px] font-black uppercase tracking-[0.2em] text-white/20">Saved Destination Points</div>
+                                        <div className="p-4 border-b border-white/5 text-[9px] font-black uppercase tracking-[0.2em] text-white/20">Saved Wallets & Accounts</div>
                                         {savedWallets.map(w => (
                                             <button key={w.id} onMouseDown={() => setReceivingAddress(w.address)} className="w-full text-left p-5 hover:bg-white/5 transition-colors border-b border-white/5 last:border-0 group/wallet">
-                                                <div className="font-black text-[10px] text-white/60 group-hover/wallet:text-emerald-500 transition-colors uppercase tracking-widest">{w.name}</div>
+                                                <div className="font-black text-[10px] text-white/60 group-hover/wallet:text-primary transition-colors uppercase tracking-widest">{w.name}</div>
                                                 <div className="text-[10px] font-mono text-white/20 mt-1 truncate">{w.address}</div>
                                             </button>
                                         ))}
@@ -500,22 +499,22 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
 
                         {!isAvailable || isRateMissing ? (
                             <button disabled className="w-full py-6 rounded-2xl bg-white/5 border border-white/5 text-white/20 font-black text-[11px] uppercase tracking-[0.4em] cursor-not-allowed italic">
-                                Pair Currently Offline
+                                Market Currently Closed
                             </button>
                         ) : (
                             <button
                                 onClick={handleSubmit}
                                 disabled={isSubmitting || !!error || !amountFiat || !receivingAddress || !displayRate}
-                                className="w-full py-6 rounded-2xl bg-emerald-500 text-black font-black text-[11px] uppercase tracking-[0.4em] transition-all shadow-[0_10px_40px_rgba(16,185,129,0.2)] hover:bg-emerald-400 hover:scale-[1.01] active:scale-[0.98] disabled:opacity-20 disabled:grayscale"
+                                className="w-full py-6 rounded-2xl bg-primary text-black font-black text-[11px] uppercase tracking-[0.4em] transition-all shadow-[0_10px_40px_rgba(16,185,129,0.2)] hover:bg-primary/90 hover:scale-[1.01] active:scale-[0.98] disabled:opacity-20 disabled:grayscale"
                             >
-                                {isSubmitting ? "Finalizing..." : `Confirm ${type} Order`}
+                                {isSubmitting ? "Finalizing..." : `Confirm ${type} Trade`}
                             </button>
                         )}
                     </div>
 
                     <div className="flex justify-center border-t border-white/5 pt-6">
-                        <Link href="/dashboard/support" className="flex items-center gap-3 text-[9px] font-black uppercase tracking-[0.3em] text-white/20 hover:text-emerald-500 transition-colors">
-                            <Info className="h-3 w-3" /> Secure Node Status: Active
+                        <Link href="/dashboard/support" className="flex items-center gap-3 text-[9px] font-black uppercase tracking-[0.3em] text-white/20 hover:text-primary transition-colors">
+                            <ArrowUpRight className="h-3 w-3" /> System Status: Online
                         </Link>
                     </div>
                 </div>

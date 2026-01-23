@@ -34,9 +34,9 @@ export function AdminSettingsTabs({ user, wallets, rates }: AdminSettingsTabsPro
     const activeTab = searchParams.get("tab") || "system";
 
     const tabs = [
-        { id: "system", name: "System Matrix", icon: Settings },
-        { id: "general", name: "Master Identity", icon: UserIcon },
-        { id: "security", name: "Security Cipher", icon: Lock },
+        { id: "system", name: "General Rules", icon: Settings },
+        { id: "general", name: "Profile Details", icon: UserIcon },
+        { id: "security", name: "Security Settings", icon: Lock },
     ];
 
     const setTab = (id: string) => {
@@ -78,7 +78,7 @@ export function AdminSettingsTabs({ user, wallets, rates }: AdminSettingsTabsPro
 
                 <div className="h-14 px-8 rounded-[32px] glass border border-white/5 items-center gap-4 text-foreground/20 hidden lg:flex">
                     <Activity className="h-4 w-4 text-primary animate-pulse" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">{activeTab.toUpperCase()} PROTOCOL ACTIVE</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">{activeTab.toUpperCase()} ACTIVE</span>
                 </div>
             </div>
 

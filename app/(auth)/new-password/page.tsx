@@ -7,7 +7,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Lock, ArrowRight, CheckCircle2, AlertCircle, Eye, EyeOff } from "lucide-react";
 import { newPassword } from "@/actions/new-password";
 import { PasswordStrength } from "@/components/auth/PasswordStrength";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { Loading } from "@/components/ui/Loading";
 import { Logo } from "@/components/ui/Logo";
 
@@ -54,9 +53,6 @@ function NewPasswordContent() {
             <div className="absolute inset-0 bg-mesh opacity-30 -z-10" />
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 blur-[160px] rounded-full -z-10 animate-pulse-slow" />
 
-            <div className="absolute top-8 right-8 z-50">
-                <ThemeToggle />
-            </div>
 
             <motion.div
                 initial={{ opacity: 0, y: 30, scale: 0.98 }}

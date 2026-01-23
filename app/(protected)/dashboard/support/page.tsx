@@ -10,8 +10,8 @@ import { CreateTicketDialog } from "@/components/dashboard/CreateTicketDialog";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 
 export const metadata: Metadata = {
-    title: "Support Hub | CoinDarks",
-    description: "Get assistance with your trades and account.",
+    title: "Help Center | CoinDarks",
+    description: "Get help with your exchanges, accounts, and more.",
 };
 
 interface TicketItem {
@@ -44,8 +44,8 @@ export default async function UserSupportPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-black tracking-tight mb-2">My Support Tickets</h1>
-                    <p className="text-foreground/50 font-medium">Track your requests and get help.</p>
+                    <h1 className="text-3xl font-black tracking-tight mb-2">My Help Requests</h1>
+                    <p className="text-foreground/50 font-medium">Track your open requests and get help.</p>
                 </div>
                 <CreateTicketDialog orders={recentOrders || []} />
             </div>
@@ -97,8 +97,8 @@ export default async function UserSupportPage() {
                 ) : (
                     <div className="p-12 text-center border border-dashed border-white/10 rounded-[32px]">
                         <MessageSquare className="h-10 w-10 text-foreground/20 mx-auto mb-3" />
-                        <h3 className="text-lg font-bold mb-2">No Active Tickets</h3>
-                        <p className="text-foreground/40 font-medium mb-6">You don&apos;t have any open support requests.</p>
+                        <h3 className="text-lg font-bold mb-2">No Open Requests</h3>
+                        <p className="text-foreground/40 font-medium mb-6">You haven&apos;t submitted any help requests yet.</p>
                     </div>
                 )}
             </div>

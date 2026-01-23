@@ -84,7 +84,7 @@ export default async function DashboardPage() {
                 <div className="space-y-4">
                     <div className="flex items-center gap-3">
                         <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/40">Secure Session : Active</span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/40">Platform Status : Online</span>
                     </div>
                     <h1 className="text-5xl sm:text-7xl font-black tracking-tight leading-none uppercase">
                         Welcome, <br />
@@ -92,7 +92,7 @@ export default async function DashboardPage() {
                     </h1>
                     <p className="text-xl text-foreground/50 font-medium max-w-2xl leading-relaxed">
                         {isAdmin
-                            ? "Overview of platform operations and system management."
+                            ? "Overview of platform health and management."
                             : "Your central hub for fast crypto exchanges and account management."}
                     </p>
                 </div>
@@ -141,8 +141,8 @@ export default async function DashboardPage() {
                                 "text-3xl font-black tracking-tight uppercase leading-none",
                                 kycStatus === 'REJECTED' ? 'text-red-500' : 'text-amber-500'
                             )}>
-                                {kycStatus === 'PENDING' ? 'Verification Under Review' :
-                                    kycStatus === 'REJECTED' ? 'Verification Rejected' :
+                                {kycStatus === 'PENDING' ? 'Identity Under Review' :
+                                    kycStatus === 'REJECTED' ? 'Identity Check Failed' :
                                         'Verification Required'}
                             </h3>
                             <p className="text-lg text-foreground/60 font-medium leading-relaxed max-w-4xl">
@@ -161,8 +161,8 @@ export default async function DashboardPage() {
                             )}
                         >
                             {kycStatus === 'PENDING' ? 'Under Review' :
-                                kycStatus === 'REJECTED' ? 'Restart Process' :
-                                    'Start Verification'}
+                                kycStatus === 'REJECTED' ? 'Try Again' :
+                                    'Verify Identity'}
                             {kycStatus !== 'PENDING' && <ChevronRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />}
                         </Link>
                     </div>
@@ -178,13 +178,13 @@ export default async function DashboardPage() {
                             <RefreshCcw className="h-8 w-8 text-primary" />
                         </div>
                         <span className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.3em]">
-                            {isAdmin ? "Total Platform Trades" : "Order History"}
+                            {isAdmin ? "Platform Transactions" : "Recent Trades"}
                         </span>
                     </div>
                     <div className="space-y-1">
                         <p className="text-6xl font-black tracking-tighter">{isAdmin ? totalPlatformOrders : (orders?.length || 0)}</p>
                         <p className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em]">
-                            {isAdmin ? "Trades Successfully Completed" : "Total Orders Processed"}
+                            {isAdmin ? "Trades Successfully Completed" : "Recent Orders Processed"}
                         </p>
                     </div>
                 </div>
@@ -207,7 +207,7 @@ export default async function DashboardPage() {
                             )}
                         </div>
                         <span className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.3em]">
-                            {isAdmin ? "Access Level" : "Account Status"}
+                            {isAdmin ? "Control Level" : "Account Status"}
                         </span>
                     </div>
                     <div className="space-y-1">
@@ -217,10 +217,10 @@ export default async function DashboardPage() {
                                 kycStatus === 'PENDING' ? 'text-amber-500' :
                                     kycStatus === 'REJECTED' ? 'text-red-500' : 'text-foreground')
                         )}>
-                            {isAdmin ? "Administrator" : (kycStatus === 'APPROVED' ? 'Verified Account' : kycStatus === 'UNSUBMITTED' ? 'Standard Account' : kycStatus)}
+                            {isAdmin ? "Platform Admin" : (kycStatus === 'APPROVED' ? 'Fully Verified' : kycStatus === 'UNSUBMITTED' ? 'Standard Account' : kycStatus)}
                         </p>
                         <p className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em]">
-                            {isAdmin ? "Full Platform Controls" : "Current Verification Tier"}
+                            {isAdmin ? "Complete control over platform" : "Identity Verification Status"}
                         </p>
                     </div>
                 </div>
@@ -231,10 +231,10 @@ export default async function DashboardPage() {
                         <div className="h-16 w-16 rounded-[24px] bg-secondary/10 border border-secondary/20 flex items-center justify-center transition-transform duration-700 group-hover:rotate-12 group-hover:scale-110 shadow-2xl shadow-secondary/10">
                             <Globe className="h-8 w-8 text-secondary" />
                         </div>
-                        <span className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.3em]">Market Rates</span>
+                        <span className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.3em]">Market Feed</span>
                     </div>
                     <div className="space-y-4">
-                        <p className="text-4xl font-black tracking-tight uppercase">Active Grid</p>
+                        <p className="text-4xl font-black tracking-tight uppercase">Live Rates</p>
                         <Link href="/#market" className="group/link inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-secondary hover:text-secondary/80 transition-colors">
                             View Price Indexes <ExternalLink className="h-3 w-3 group-hover/link:translate-x-1 group-hover/link:-translate-y-1 transition-transform" />
                         </Link>
@@ -253,7 +253,7 @@ export default async function DashboardPage() {
                     {!isAdmin && (
                         <div className="glass-card p-10 rounded-[48px] border border-white/5 space-y-8">
                             <div className="flex items-center justify-between">
-                                <h3 className="text-sm font-black uppercase tracking-[0.3em]">Recent Support</h3>
+                                <h3 className="text-sm font-black uppercase tracking-[0.3em]">Recent Help</h3>
                                 <Link href="/dashboard/support" className="text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary/70 transition-colors">
                                     View All
                                 </Link>
@@ -298,9 +298,9 @@ export default async function DashboardPage() {
                         <div className="space-y-4">
                             {!isAdmin ? (
                                 [
-                                    { name: "Order History", href: "/dashboard/orders" },
-                                    { name: "My Verification", href: "/dashboard/settings?tab=verification" },
-                                    { name: "Support Center", href: "/dashboard/support" }
+                                    { name: "Trade History", href: "/dashboard/orders" },
+                                    { name: "Identity Status", href: "/dashboard/settings?tab=verification" },
+                                    { name: "Help Center", href: "/dashboard/support" }
                                 ].map((link) => (
                                     <Link
                                         key={link.href}
@@ -312,9 +312,9 @@ export default async function DashboardPage() {
                                 ))
                             ) : (
                                 [
-                                    { name: "KYC Verifications", href: "/admin/kyc" },
-                                    { name: "Order Management", href: "/admin/orders" },
-                                    { name: "User Management", href: "/admin/users" }
+                                    { name: "Identity Checks", href: "/admin/kyc" },
+                                    { name: "Global Transactions", href: "/admin/orders" },
+                                    { name: "Member List", href: "/admin/users" }
                                 ].map((link) => (
                                     <Link
                                         key={link.href}

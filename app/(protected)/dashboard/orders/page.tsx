@@ -17,8 +17,8 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-    title: "My Orders | CoinDarks",
-    description: "View and track your crypto exchange history.",
+    title: "Trade History | CoinDarks",
+    description: "View and track your previous trades.",
 };
 
 export default async function UserOrdersPage({
@@ -62,9 +62,9 @@ export default async function UserOrdersPage({
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-black tracking-tight mb-2">My Orders</h1>
+                    <h1 className="text-3xl font-black tracking-tight mb-2">Trade History</h1>
                     <p className="text-foreground/50 font-medium">
-                        Track your cryptocurrency purchases and sales in real-time.
+                        View your past asset purchases and sales.
                     </p>
                 </div>
 
@@ -79,8 +79,8 @@ export default async function UserOrdersPage({
                             className="flex items-center gap-2 px-6 py-4 rounded-2xl bg-primary text-white font-bold shadow-xl shadow-primary/20 hover:scale-[1.02] transition-all whitespace-nowrap"
                         >
                             <ShoppingBag className="h-5 w-5" />
-                            <span className="hidden md:inline">New Trade</span>
-                            <span className="md:hidden">New</span>
+                            <span className="hidden md:inline">Start Trade</span>
+                            <span className="md:hidden">Start</span>
                         </Link>
                     )}
                 </div>
@@ -91,13 +91,13 @@ export default async function UserOrdersPage({
                     <div className="h-20 w-20 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-6 text-foreground/10">
                         <History className="h-10 w-10" />
                     </div>
-                    <h2 className="text-2xl font-black mb-3">No orders found</h2>
+                    <h2 className="text-2xl font-black mb-3">No Trades Yet</h2>
                     <p className="text-foreground/40 font-medium max-w-sm mx-auto mb-8">
-                        {params.q ? `No orders matching "${params.q}"` : "You haven't made any trades yet. Start your crypto journey by making your first purchase."}
+                        {params.q ? `No results matching "${params.q}"` : "Once you start trading, your history will appear here. Begin your journey by making your first purchase."}
                     </p>
                     {isKycApproved && !params.q && (
                         <Link href="/dashboard/exchange" className="inline-flex items-center gap-2 text-primary font-bold hover:gap-3 transition-all">
-                            Buy Crypto Now <ArrowRight className="h-4 w-4" />
+                            Start Trade <ArrowRight className="h-4 w-4" />
                         </Link>
                     )}
                     {params.q && (
@@ -142,7 +142,7 @@ export default async function UserOrdersPage({
                                     </div>
                                     <div className="text-right hidden sm:block">
                                         <p className="text-sm font-black text-foreground">{order.amount_fiat} {order.fiat_currency}</p>
-                                        <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-wider">Cost</p>
+                                        <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-wider">Price Paid</p>
                                     </div>
                                     <div className={cn(
                                         "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2",
@@ -166,7 +166,7 @@ export default async function UserOrdersPage({
                                     <p className="text-sm font-black">{order.amount_crypto} {order.asset}</p>
                                 </div>
                                 <div>
-                                    <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest mb-1">Cost</p>
+                                    <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest mb-1">Price Paid</p>
                                     <p className="text-sm font-black">{order.amount_fiat} {order.fiat_currency}</p>
                                 </div>
                             </div>
