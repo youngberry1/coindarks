@@ -103,7 +103,7 @@ export function UserManagementList({ users }: UserManagementListProps) {
             </div>
 
             {/* Desktop Table Registry */}
-            <div className="hidden md:block overflow-hidden rounded-[48px] border border-white/5 glass shadow-2xl">
+            <div className="hidden lg:block overflow-hidden rounded-[48px] border border-white/5 glass shadow-2xl">
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="border-b border-white/5 bg-white/2">
@@ -255,15 +255,15 @@ export function UserManagementList({ users }: UserManagementListProps) {
                 </table>
             </div>
 
-            {/* Mobile Registry Grid */}
-            <div className="md:hidden space-y-6">
+            {/* Mobile/Tablet Registry Grid */}
+            <div className="lg:hidden space-y-6">
                 {filteredUsers.map((user) => (
-                    <div key={user.id} className="p-8 rounded-[40px] border border-white/5 glass space-y-8 relative overflow-hidden group">
+                    <div key={user.id} className="p-4 sm:p-6 rounded-[28px] sm:rounded-[32px] border border-white/5 glass space-y-4 sm:space-y-6 relative overflow-hidden group">
                         <div className="absolute inset-0 bg-primary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                         <div className="relative z-10 flex items-center justify-between">
-                            <div className="flex items-center gap-5">
-                                <div className="h-16 w-16 rounded-[24px] bg-white/5 border border-white/5 flex items-center justify-center text-primary shrink-0 relative overflow-hidden shadow-2xl">
+                            <div className="flex items-center gap-3 sm:gap-4">
+                                <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl sm:rounded-[20px] bg-white/5 border border-white/5 flex items-center justify-center text-primary shrink-0 relative overflow-hidden shadow-2xl">
                                     {user.profile_image ? (
                                         <Image
                                             src={user.profile_image}
@@ -273,19 +273,19 @@ export function UserManagementList({ users }: UserManagementListProps) {
                                             unoptimized
                                         />
                                     ) : (
-                                        <span className="font-black text-2xl">{user.first_name?.[0]}</span>
+                                        <span className="font-black text-xl sm:text-2xl">{user.first_name?.[0]}</span>
                                     )}
                                 </div>
-                                <div className="min-w-0 space-y-1">
-                                    <p className="text-lg font-black tracking-tight uppercase leading-none">{user.first_name} {user.last_name}</p>
-                                    <p className="text-[10px] text-foreground/30 font-black uppercase tracking-[0.2em] truncate">{user.email}</p>
+                                <div className="min-w-0 space-y-0.5 sm:space-y-1">
+                                    <p className="text-sm sm:text-base font-black tracking-tight uppercase leading-none">{user.first_name} {user.last_name}</p>
+                                    <p className="text-[9px] sm:text-[10px] text-foreground/30 font-black uppercase tracking-[0.2em] truncate">{user.email}</p>
                                 </div>
                             </div>
 
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <button className="h-12 w-12 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center active:scale-95 transition-all">
-                                        <MoreHorizontal className="h-5 w-5 opacity-40" />
+                                    <button className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl sm:rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center active:scale-95 transition-all">
+                                        <MoreHorizontal className="h-4 w-4 sm:h-5 sm:w-5 opacity-40" />
                                     </button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" className="w-[180px] p-2 glass backdrop-blur-3xl border-white/10 rounded-2xl">
@@ -306,11 +306,11 @@ export function UserManagementList({ users }: UserManagementListProps) {
                             </DropdownMenu>
                         </div>
 
-                        <div className="relative z-10 grid grid-cols-2 gap-6 p-6 rounded-[32px] bg-white/3 border border-white/5">
-                            <div className="space-y-2">
-                                <p className="text-[9px] text-foreground/30 font-black uppercase tracking-[0.2em]">Verification</p>
+                        <div className="relative z-10 grid grid-cols-2 gap-3 sm:gap-4 p-4 sm:p-5 rounded-[20px] sm:rounded-[24px] bg-white/3 border border-white/5">
+                            <div className="space-y-1 sm:space-y-1.5">
+                                <p className="text-[8px] sm:text-[9px] text-foreground/30 font-black uppercase tracking-[0.2em]">Verification</p>
                                 <div className={cn(
-                                    "inline-flex items-center px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] border shadow-2xl",
+                                    "inline-flex items-center px-3 sm:px-4 py-1 sm:py-1.5 rounded-lg sm:rounded-xl text-[8px] sm:text-[9px] font-black uppercase tracking-[0.2em] border shadow-2xl",
                                     user.kyc_status === 'APPROVED' ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/10" :
                                         user.kyc_status === 'PENDING' ? "bg-amber-500/10 text-amber-500 border-amber-500/10" :
                                             "bg-white/5 text-foreground/20 border-white/5"
@@ -318,10 +318,10 @@ export function UserManagementList({ users }: UserManagementListProps) {
                                     {user.kyc_status}
                                 </div>
                             </div>
-                            <div className="space-y-2">
-                                <p className="text-[9px] text-foreground/30 font-black uppercase tracking-[0.2em]">Role / Access</p>
+                            <div className="space-y-1 sm:space-y-1.5">
+                                <p className="text-[8px] sm:text-[9px] text-foreground/30 font-black uppercase tracking-[0.2em]">Role / Access</p>
                                 <div className={cn(
-                                    "inline-flex items-center px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] border shadow-2xl",
+                                    "inline-flex items-center px-3 sm:px-4 py-1 sm:py-1.5 rounded-lg sm:rounded-xl text-[8px] sm:text-[9px] font-black uppercase tracking-[0.2em] border shadow-2xl",
                                     user.role === 'ADMIN' ? "bg-primary/20 text-primary border-primary/20" : "bg-white/5 text-foreground/30"
                                 )}>
                                     {user.role}
@@ -330,14 +330,14 @@ export function UserManagementList({ users }: UserManagementListProps) {
                         </div>
 
                         <div className="relative z-10 flex items-center justify-between">
-                            <p className="text-[10px] text-foreground/20 font-black uppercase tracking-[0.2em]">Joined {new Date(user.created_at).toLocaleDateString()}</p>
+                            <p className="text-[9px] sm:text-[10px] text-foreground/20 font-black uppercase tracking-[0.15em] sm:tracking-[0.2em]">Joined {new Date(user.created_at).toLocaleDateString()}</p>
                             <button
                                 onClick={() => {
                                     setSelectedUser(user);
                                     setIsBanModalOpen(true);
                                 }}
                                 className={cn(
-                                    "h-12 px-6 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border transition-all duration-300",
+                                    "h-10 sm:h-11 px-4 sm:px-5 rounded-xl sm:rounded-2xl text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] border transition-all duration-300",
                                     user.status === 'BANNED'
                                         ? "bg-emerald-500 text-white border-emerald-500/30"
                                         : "bg-red-500/10 text-red-500 border-red-500/20"

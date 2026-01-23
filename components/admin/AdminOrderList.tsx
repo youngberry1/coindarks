@@ -194,7 +194,7 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                                                 >
                                                     <SelectValue placeholder="Status" />
                                                 </SelectTrigger>
-                                                <SelectContent className="rounded-2xl glass border-white/10 p-2 z-100">
+                                                <SelectContent className="rounded-2xl bg-[#16191E] border-white/10 p-2 z-100">
                                                     <SelectItem value="PENDING" className="rounded-xl h-11 text-[10px] font-bold uppercase tracking-widest focus:bg-blue-500/10 focus:text-blue-500 mb-1 cursor-pointer">Pending</SelectItem>
                                                     <SelectItem value="PROCESSING" className="rounded-xl h-11 text-[10px] font-bold uppercase tracking-widest focus:bg-amber-500/10 focus:text-amber-500 mb-1 cursor-pointer">Processing</SelectItem>
                                                     <SelectItem value="COMPLETED" className="rounded-xl h-11 text-[10px] font-bold uppercase tracking-widest focus:bg-emerald-500/10 focus:text-emerald-500 mb-1 cursor-pointer">Completed</SelectItem>
@@ -262,7 +262,7 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                                 )}>
                                     <SelectValue placeholder="Status" />
                                 </SelectTrigger>
-                                <SelectContent className="glass border-white/10 rounded-2xl z-100 p-1">
+                                <SelectContent className="bg-[#16191E] border-white/10 rounded-2xl z-100 p-1">
                                     <SelectItem value="PENDING" className="rounded-xl h-10 text-[9px] font-bold uppercase tracking-widest">PENDING</SelectItem>
                                     <SelectItem value="PROCESSING" className="rounded-xl h-10 text-[9px] font-bold uppercase tracking-widest">PROCESSING</SelectItem>
                                     <SelectItem value="COMPLETED" className="rounded-xl h-10 text-[9px] font-bold uppercase tracking-widest">COMPLETED</SelectItem>
