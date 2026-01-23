@@ -24,6 +24,15 @@ export function Loading({
         return () => clearTimeout(timeout);
     }, []);
 
+    useEffect(() => {
+        if (fullScreen) {
+            document.body.style.overflow = "hidden";
+            return () => {
+                document.body.style.overflow = "unset";
+            };
+        }
+    }, [fullScreen]);
+
     const content = (
         <motion.div
             initial={{ opacity: 0 }}
