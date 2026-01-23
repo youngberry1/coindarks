@@ -126,7 +126,7 @@ export async function createOrder(data: {
         // 5. Create Order
         const orderNumber = generateOrderId();
 
-        const { error } = await supabaseAdmin
+        const { data: newOrder, error } = await supabaseAdmin
             .from('orders')
             .insert({
                 order_number: orderNumber,
@@ -139,9 +139,11 @@ export async function createOrder(data: {
                 receiving_address: data.receiving_address,
                 // store deposit_address? if schema allows. For now we just return it.
                 status: 'PENDING'
-            });
+            })
+            .select()
+            .single();
 
-        if (error) throw error;
+        if (error || !newOrder) throw error;
 
         // Send Confirmation Email (Non-blocking)
         try {
@@ -168,6 +170,7 @@ export async function createOrder(data: {
         return {
             success: true,
             orderNumber,
+            orderId: newOrder.id, // UUID
             depositAddress: deposit_address,
             amounts: { crypto: amount_crypto, fiat: amount_fiat }
         };

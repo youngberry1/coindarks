@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useEffect } from "react";
 
 interface LoadingSpinnerProps {
     className?: string;
@@ -68,8 +69,16 @@ export function PageLoading() {
 }
 
 export function Loading({ message }: { message?: string }) {
+    useEffect(() => {
+        // Prevent scrolling when loading overlay is active
+        document.body.style.overflow = "hidden";
+        return () => {
+            document.body.style.overflow = "unset";
+        };
+    }, []);
+
     return (
-        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-9999 flex items-center justify-center">
             <div className="flex flex-col items-center gap-4">
                 <LoadingSpinner size="lg" />
                 {message && (

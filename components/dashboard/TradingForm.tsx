@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import {
     CheckCircle2,
@@ -81,6 +82,7 @@ const Sparkline = ({ color = "#10B981" }: { color?: string }) => {
 };
 
 export function TradingForm({ initialInventory, supportedAssets }: TradingFormProps) {
+    const router = useRouter();
     const [type, setType] = useState<'BUY' | 'SELL'>('BUY');
     const [asset, setAsset] = useState(supportedAssets[0]);
     const [fiat, setFiat] = useState(FIAT[0]);
@@ -100,7 +102,8 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
 
     // Success State
     const [orderSuccess, setOrderSuccess] = useState<{
-        id: string;
+        id: string; // The human-readable ID (e.g. CD-...)
+        orderId?: string; // The UUID for navigation
         depositAddress: string | null;
         amounts: { crypto: number, fiat: number }
     } | null>(null);
@@ -281,10 +284,15 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
             if (result.success) {
                 setOrderSuccess({
                     id: result.orderNumber!,
+                    orderId: result.orderId,
                     depositAddress: result.depositAddress || null,
                     amounts: result.amounts || { crypto: 0, fiat: 0 }
                 });
                 toast.success("Trade confirmed successfully.");
+                // Redirect immediately to the order details page
+                if (result.orderId) {
+                    router.push(`/dashboard/orders/${result.orderId}`);
+                }
             } else {
                 toast.error(result.error || "Trade execution failed");
             }
@@ -327,7 +335,7 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                 </div>
 
                 <div className="grid grid-cols-1 gap-4">
-                    <Link href="/dashboard/orders" className="flex items-center justify-center w-full py-5 bg-white/5 border border-white/5 rounded-xl text-[10px] font-black uppercase tracking-[0.3em] text-white/60 hover:text-white hover:bg-white/10 transition-all">
+                    <Link href={orderSuccess.orderId ? `/dashboard/orders/${orderSuccess.orderId}` : "/dashboard/orders"} className="flex items-center justify-center w-full py-5 bg-white/5 border border-white/5 rounded-xl text-[10px] font-black uppercase tracking-[0.3em] text-white/60 hover:text-white hover:bg-white/10 transition-all">
                         View Trade Details
                     </Link>
                     <button onClick={() => { setOrderSuccess(null); setAmountFiat(""); setAmountCrypto(""); }} className="flex items-center justify-center w-full py-5 bg-primary text-black rounded-xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-primary/90 transition-all shadow-[0_0_20px_rgba(16,185,129,0.2)]">
