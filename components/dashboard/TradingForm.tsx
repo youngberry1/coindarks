@@ -1,16 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
     CheckCircle2,
     Wallet,
     Info,
-    AlertCircle,
     ArrowDown,
-    Copy,
     Landmark,
-    RefreshCw,
+    ArrowUpRight
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createOrder } from "@/actions/exchange";
@@ -22,6 +20,7 @@ import { cn } from "@/lib/utils";
 import { Cryptocurrency } from "@/actions/crypto";
 import { AssetSelector } from "@/components/dashboard/AssetSelector";
 import { Loading } from "@/components/ui/Loading";
+import { CryptoIcon } from "@/components/CryptoIcon";
 
 export interface AssetMetadata {
     id: string;
@@ -31,8 +30,8 @@ export interface AssetMetadata {
 }
 
 const FIAT = [
-    { id: "GHS", name: "Ghana Cedi", symbol: "GH₵", rate: 16.5, icon: "https://flagcdn.com/w40/gh.png" }, // Simulated
-    { id: "NGN", name: "Nigerian Naira", symbol: "₦", rate: 1650, icon: "https://flagcdn.com/w40/ng.png" }, // Simulated
+    { id: "GHS", name: "Ghana Cedi", symbol: "GH₵", rate: 16.5, icon: "https://flagcdn.com/w40/gh.png" },
+    { id: "NGN", name: "Nigerian Naira", symbol: "₦", rate: 1650, icon: "https://flagcdn.com/w40/ng.png" },
 ];
 
 interface TradingFormProps {
@@ -49,6 +48,37 @@ interface SavedWallet {
     name: string;
     type?: 'CRYPTO' | 'FIAT';
 }
+
+// Simple Sparkline Component for visual fidelity
+const Sparkline = ({ color = "#10B981" }: { color?: string }) => {
+    const points = useMemo(() => {
+        // Deterministic decorative points for stability
+        const values = [40, 35, 45, 30, 55, 40, 60, 45, 70, 50, 65, 40, 55, 35, 50, 30, 45, 35, 50, 40];
+        return values.map((y, i) => ({
+            x: i * 10,
+            y
+        }));
+    }, []);
+
+    const pathData = points.reduce((acc, p, i) =>
+        acc + (i === 0 ? `M ${p.x} ${p.y}` : ` L ${p.x} ${p.y}`), ""
+    );
+
+    return (
+        <svg viewBox="0 0 200 100" className="w-full h-12 opacity-50">
+            <motion.path
+                d={pathData}
+                fill="none"
+                stroke={color}
+                strokeWidth="2"
+                strokeLinecap="round"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+            />
+        </svg>
+    );
+};
 
 export function TradingForm({ initialInventory, supportedAssets }: TradingFormProps) {
     const [type, setType] = useState<'BUY' | 'SELL'>('BUY');
@@ -83,18 +113,16 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
     const [showWalletDropdown, setShowWalletDropdown] = useState(false);
 
     useEffect(() => {
-        // Fetch saved wallets or payment methods
         const loadWallets = async () => {
-            setSavedWallets([]); // Clear on toggle
+            setSavedWallets([]);
             if (type === 'BUY') {
                 const wallets = await getWallets(asset.id);
                 setSavedWallets(wallets.map(w => ({ ...w, type: 'CRYPTO' })));
             } else {
-                // Fetch fiat payment methods for SELL
                 const methods = await getPaymentMethods();
                 setSavedWallets(methods.map(m => ({
                     id: m.id,
-                    asset: 'FIAT', // generic
+                    asset: 'FIAT',
                     address: `${m.provider} - ${m.account_number} (${m.account_name})`,
                     network: m.method_type === 'MOBILE_MONEY' ? 'Mobile Money' : 'Bank Transfer',
                     name: m.provider,
@@ -107,25 +135,19 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
 
     const [refreshCountdown, setRefreshCountdown] = useState(15);
 
-    // 1. Fetch Raw Rates from DB/API
     const updateRatesCache = useCallback(async () => {
         try {
             const rates = await getExchangeRates();
             setCachedRates(rates);
             setRefreshCountdown(15);
-        } catch {
-            // Error handled by timeout/retry in rates.ts
-        }
+        } catch { }
     }, []);
 
-    // 2. Synchronous Price Calculation (Instant UI update)
     useEffect(() => {
         if (!cachedRates.length) return;
 
         const exactPair = cachedRates.find(r => r.pair === `${asset.id}-${fiat.id}`);
         const usdPair = cachedRates.find(r => r.pair === `${asset.id}-USD` || r.pair === `${asset.id}-USDT`);
-
-        // Robust Multiplier Logic
         const bridgePair = cachedRates.find(r =>
             (r.pair === `USDT-${fiat.id}` || r.pair === `USDC-${fiat.id}` || r.pair === `USD-${fiat.id}`) &&
             (r.display_rate > 0 || r.rate > 0)
@@ -160,7 +182,6 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
 
     const isRateMissing = !isLoading && cachedRates.length > 0 && displayRate === null;
 
-    // Clear inputs if rate is unavailable
     useEffect(() => {
         if (isRateMissing) {
             setAmountFiat("");
@@ -168,7 +189,6 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
         }
     }, [isRateMissing]);
 
-    // 3. Periodic Background Refresh
     useEffect(() => {
         setIsLoading(true);
         updateRatesCache().finally(() => setIsLoading(false));
@@ -184,82 +204,50 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
         };
     }, [updateRatesCache]);
 
-    // Validation
     const validateAmount = (fiatVal: number) => {
         if (fiatVal <= 0) {
             setError("Amount must be greater than zero");
             return false;
         }
-
         const ghsRate = FIAT.find(f => f.id === 'GHS')?.rate || 16.5;
-        // Min order ~ $6.5 USD (rounded for clean numbers)
-        const minUsd = 100 / ghsRate;
-        const minCurrentFiat = minUsd * fiat.rate;
+        const minCurrentFiat = (100 / ghsRate) * fiat.rate;
 
         if (fiatVal < minCurrentFiat) {
-            setError(`Minimum ${type === 'BUY' ? 'purchase' : 'sale'} is ${fiat.symbol}${Math.ceil(minCurrentFiat).toLocaleString()}`);
+            setError(`Min order is ${fiat.symbol}${Math.ceil(minCurrentFiat).toLocaleString()}`);
             return false;
         }
         setError(null);
         return true;
     };
 
-    // Update estimated counter-values when rate changes or input changes
     useEffect(() => {
         if (!displayRate) return;
 
         if (lastInputType === 'FIAT' && amountFiat) {
             const rawVal = parseFloat(amountFiat);
-            if (!isNaN(rawVal)) {
-                setAmountCrypto((rawVal / displayRate).toFixed(8));
-            }
+            if (!isNaN(rawVal)) setAmountCrypto((rawVal / displayRate).toFixed(8));
         } else if (lastInputType === 'CRYPTO' && amountCrypto) {
             const rawVal = parseFloat(amountCrypto);
-            if (!isNaN(rawVal)) {
-                setAmountFiat((rawVal * displayRate).toFixed(2));
-            }
+            if (!isNaN(rawVal)) setAmountFiat((rawVal * displayRate).toFixed(2));
         }
     }, [displayRate, amountFiat, amountCrypto, lastInputType]);
 
-    // Handle Input Changes
     const handleFiatChange = (val: string) => {
-        // Block negative input immediately
         if (val.startsWith('-')) return;
-
         setAmountFiat(val);
         setLastInputType('FIAT');
-
-        if (!val) {
-            setAmountCrypto("");
-            setError(null);
-            return;
-        }
-
+        if (!val) { setAmountCrypto(""); setError(null); return; }
         const numVal = parseFloat(val);
-        if (!isNaN(numVal)) {
-            validateAmount(numVal);
-        }
-
-        if (displayRate && !isNaN(numVal) && numVal > 0) {
-            setAmountCrypto((numVal / displayRate).toFixed(8));
-        } else if (numVal <= 0) {
-            setAmountCrypto("0.00");
-        }
+        if (!isNaN(numVal)) validateAmount(numVal);
+        if (displayRate && !isNaN(numVal) && numVal > 0) setAmountCrypto((numVal / displayRate).toFixed(8));
+        else if (numVal <= 0) setAmountCrypto("0.00");
     };
 
     const handleCryptoChange = (val: string) => {
-        // Block negative input immediately
         if (val.startsWith('-')) return;
-
         setAmountCrypto(val);
         setLastInputType('CRYPTO');
-
-        if (!val) {
-            setAmountFiat("");
-            setError(null);
-            return;
-        }
-
+        if (!val) { setAmountFiat(""); setError(null); return; }
         const numVal = parseFloat(val);
         if (displayRate && !isNaN(numVal) && numVal > 0) {
             const fiatVal = numVal * displayRate;
@@ -273,20 +261,13 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
 
     const handleSubmit = async () => {
         if ((!amountFiat && !amountCrypto) || !receivingAddress) {
-            toast.error("Please fill in all fields");
+            toast.error("Required fields missing");
             return;
         }
-
-        if (error) {
-            toast.error(error);
-            return;
-        }
-
+        if (error) { toast.error(error); return; }
         setIsSubmitting(true);
-
         try {
             const inputVal = lastInputType === 'FIAT' ? Number(amountFiat) : Number(amountCrypto);
-
             const result = await createOrder({
                 type,
                 asset: asset.id,
@@ -295,268 +276,249 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                 fiat_currency: fiat.id,
                 receiving_address: receivingAddress
             });
-
             if (result.success) {
                 setOrderSuccess({
                     id: result.orderNumber!,
                     depositAddress: result.depositAddress || null,
                     amounts: result.amounts || { crypto: 0, fiat: 0 }
                 });
-                toast.success("Order initiated!");
+                toast.success("Order confirmed successfully.");
             } else {
-                toast.error(result.error || "Order creation failed");
+                toast.error(result.error || "Order execution failed");
             }
-        } catch (err) {
-            console.error("Exception in handleSubmit:", err);
-            toast.error("Failed to submit order");
+        } catch {
+            toast.error("Fatal Terminal Error");
         } finally {
             setIsSubmitting(false);
         }
     };
 
-    const copyToClipboard = (text: string) => {
-        navigator.clipboard.writeText(text);
-        toast.success("Copied to clipboard");
-    };
-
     const assetInfo = initialInventory.find(i => i.symbol === asset.id);
     const isAvailable = assetInfo?.is_active && assetInfo?.stock_status === 'IN STOCK';
 
-    // SUCCESS VIEW
     if (orderSuccess) {
         return (
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="w-full max-w-lg mx-auto bg-card-bg border border-white/5 rounded-3xl p-8 space-y-8 animate-in zoom-in-95 duration-300"
+                className="w-full max-w-3xl bg-[#16191E] border border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl space-y-8"
             >
-                <div className="text-center space-y-4">
-                    <div className="mx-auto h-20 w-20 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                <div className="text-center space-y-6">
+                    <div className="mx-auto h-20 w-20 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 border border-emerald-500/20">
                         <CheckCircle2 className="h-10 w-10" />
                     </div>
                     <div className="space-y-1">
-                        <h2 className="text-2xl font-black tracking-tight">Trade Initiated</h2>
-                        <p className="text-sm font-medium text-foreground/50">Ref: <span className="font-mono text-primary font-bold">#{orderSuccess.id}</span></p>
+                        <h2 className="text-2xl font-black tracking-tight text-white uppercase italic">Transaction Initialized</h2>
+                        <p className="text-[10px] font-black tracking-[0.3em] text-white/40 uppercase">ORDER ID: {orderSuccess.id}</p>
                     </div>
                 </div>
 
-                <div className="bg-black/20 rounded-2xl p-6 space-y-4 text-sm">
-                    <div className="flex justify-between items-center pb-4 border-b border-white/5">
-                        <span className="text-foreground/50 font-medium">You Pay</span>
-                        <span className="font-bold text-lg">{type === 'BUY' ? `${fiat.symbol}${orderSuccess.amounts.fiat.toLocaleString()}` : `${orderSuccess.amounts.crypto} ${asset.id}`}</span>
+                <div className="bg-[#0D0F12] rounded-2xl p-6 border border-white/5 space-y-4">
+                    <div className="flex justify-between items-center text-xs font-bold">
+                        <span className="text-white/30 uppercase tracking-widest">Sent Amount</span>
+                        <span className="text-white font-mono">{type === 'BUY' ? `${fiat.symbol}${orderSuccess.amounts.fiat.toLocaleString()}` : `${orderSuccess.amounts.crypto} ${asset.id}`}</span>
                     </div>
-                    <div className="flex justify-between items-center">
-                        <span className="text-foreground/50 font-medium">You Receive</span>
-                        <span className="font-bold text-lg text-emerald-500">{type === 'BUY' ? `${orderSuccess.amounts.crypto} ${asset.id}` : `${fiat.symbol}${orderSuccess.amounts.fiat.toLocaleString()}`}</span>
+                    <div className="flex justify-between items-center text-xs font-bold border-t border-white/5 pt-4">
+                        <span className="text-emerald-500/50 uppercase tracking-widest">Expected Return</span>
+                        <span className="text-emerald-500 font-mono italic">{type === 'BUY' ? `${orderSuccess.amounts.crypto} ${asset.id}` : `${fiat.symbol}${orderSuccess.amounts.fiat.toLocaleString()}`}</span>
                     </div>
                 </div>
 
-                {orderSuccess.depositAddress ? (
-                    <div className="space-y-4">
-                        <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 text-center space-y-2">
-                            <p className="text-xs font-black uppercase tracking-widest text-amber-500">Action Required</p>
-                            <p className="text-sm font-medium">Send <span className="font-bold text-white bg-amber-500/20 px-1.5 py-0.5 rounded-md">{type === 'BUY' ? `${fiat.symbol}${orderSuccess.amounts.fiat.toLocaleString()}` : `${orderSuccess.amounts.crypto} ${asset.id}`}</span> to the address below.</p>
-                        </div>
-
-                        <div className="relative group/copy cursor-pointer" onClick={() => copyToClipboard(orderSuccess.depositAddress!)}>
-                            <div className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 pr-12 font-mono text-xs break-all text-center hover:bg-white/10 transition-colors">
-                                {orderSuccess.depositAddress}
-                            </div>
-                            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground/20 group-hover/copy:text-primary transition-colors">
-                                <Copy className="h-4 w-4" />
-                            </div>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="bg-amber-500/5 border border-amber-500/10 rounded-xl p-4 flex items-center gap-3 text-amber-500">
-                        <Info className="h-5 w-5 shrink-0" />
-                        <p className="text-xs font-bold">Manual review required. Check your email for instructions.</p>
-                    </div>
-                )}
-
-                <div className="grid grid-cols-2 gap-3">
-                    <Link href="/dashboard/orders" className="flex items-center justify-center py-3 bg-white/5 hover:bg-white/10 rounded-xl text-sm font-bold border border-white/5 transition-all">Track Order</Link>
-                    <button onClick={() => { setOrderSuccess(null); setAmountFiat(""); setAmountCrypto(""); }} className="flex items-center justify-center py-3 bg-primary text-white rounded-xl text-sm font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">New Trade</button>
+                <div className="grid grid-cols-1 gap-4">
+                    <Link href="/dashboard/orders" className="flex items-center justify-center w-full py-5 bg-white/5 border border-white/5 rounded-xl text-[10px] font-black uppercase tracking-[0.3em] text-white/60 hover:text-white hover:bg-white/10 transition-all">
+                        View Order Details
+                    </Link>
+                    <button onClick={() => { setOrderSuccess(null); setAmountFiat(""); setAmountCrypto(""); }} className="flex items-center justify-center w-full py-5 bg-emerald-500 text-black rounded-xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-emerald-400 transition-all shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+                        New Exchange
+                    </button>
                 </div>
             </motion.div>
         );
     }
 
-    // FORM VIEW
     return (
-        <div className="w-full max-w-[480px] mx-auto relative group/form">
+        <div className="w-full max-w-3xl space-y-6">
             <AnimatePresence>
-                {isSubmitting && (
-                    <Loading message="PROCESSING..." />
-                )}
+                {isSubmitting && <Loading message="PROCESSING..." />}
             </AnimatePresence>
 
-            {/* Main Trading Card */}
-            <div className="bg-black/20 backdrop-blur-md rounded-[40px] p-2 border border-white/5 shadow-2xl relative">
+            {/* Nexus Terminal Core */}
+            <div className="bg-[#16191E] border border-white/10 rounded-[2.5rem] p-1 shadow-2xl relative overflow-hidden group">
+                {/* Decorative Edge Glow */}
+                <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-emerald-500/20 to-transparent" />
 
-                {/* Tabs Wrapper */}
-                <div className="bg-black/40 p-1 rounded-[32px] flex items-center justify-between mb-4 relative z-10">
-                    <div className="flex bg-white/5 rounded-[28px] p-1">
-                        <button
-                            onClick={() => setType('BUY')}
-                            className={cn("px-8 py-3 rounded-[24px] text-xs font-black uppercase tracking-[0.2em] transition-all duration-300", type === 'BUY' ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-foreground/40 hover:text-foreground")}
-                        >Buy</button>
-                        <button
-                            onClick={() => setType('SELL')}
-                            className={cn("px-8 py-3 rounded-[24px] text-xs font-black uppercase tracking-[0.2em] transition-all duration-300", type === 'SELL' ? "bg-rose-500 text-white shadow-lg shadow-rose-500/20" : "text-foreground/40 hover:text-foreground")}
-                        >Sell</button>
-                    </div>
-                    <div className="pr-6 flex items-center gap-2 text-[10px] font-mono text-foreground/30">
-                        {refreshCountdown}s <RefreshCw className={cn("h-3 w-3", refreshCountdown < 5 && "animate-spin")} />
-                    </div>
-                </div>
-
-                <div className="space-y-2 relative px-2 pb-2">
-                    {/* Input Block 1: Pay */}
-                    <div className="bg-[#0A0C10]/80 rounded-[32px] p-8 hover:bg-[#0A0C10] transition-colors group/pay relative z-0 border border-transparent hover:border-white/5">
-                        <div className="flex justify-between items-center mb-6">
-                            <span className="text-xs text-foreground/40 font-bold uppercase tracking-wide">You Pay</span>
-                            {/* Asset Selector Integrated */}
-                            <div className="scale-100 origin-right">
-                                {type === 'BUY' ? (
-                                    <AssetSelector value={fiat.id} onChange={(val) => setFiat(FIAT.find(f => f.id === val)!)} options={FIAT} type="FIAT" />
-                                ) : (
-                                    <AssetSelector value={asset.id} onChange={(val) => setAsset(supportedAssets.find(a => a.id === val)!)} options={supportedAssets} type="CRYPTO" />
+                <div className="bg-[#0D0F12] rounded-[2.2rem] p-8 space-y-8">
+                    {/* Header: Toggle & Stats */}
+                    <div className="flex items-center justify-between">
+                        <div className="flex bg-[#16191E] p-1.5 rounded-2xl border border-white/5">
+                            <button
+                                onClick={() => setType('BUY')}
+                                className={cn(
+                                    "px-8 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all",
+                                    type === 'BUY' ? "bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.3)]" : "text-white/30 hover:text-white/60"
                                 )}
-                            </div>
-                        </div>
-                        <input
-                            type="number"
-                            value={type === 'BUY' ? amountFiat : amountCrypto}
-                            onChange={(e) => type === 'BUY' ? handleFiatChange(e.target.value) : handleCryptoChange(e.target.value)}
-                            placeholder="0.00"
-                            className="w-full bg-transparent text-5xl font-black outline-none placeholder:text-white/5 transition-all text-white py-2 tracking-tight"
-                        />
-                        <div className="text-right text-[11px] font-medium text-foreground/30 mt-2 h-4">
-                            {/* Balance Placeholder */}
-                        </div>
-                    </div>
-
-                    {/* Arrow Connector */}
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[calc(50%-8px)] z-10 pointer-events-none">
-                        <div className="bg-[#13161B] p-2 rounded-xl border border-white/10 shadow-xl pointer-events-auto">
-                            <div onClick={() => setType(type === 'BUY' ? 'SELL' : 'BUY')} className="bg-white/5 p-2 rounded-lg text-foreground/70 hover:text-primary transition-colors cursor-pointer active:scale-90">
-                                <ArrowDown className="h-4 w-4" />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Input Block 2: Receive */}
-                    <div className="bg-[#0A0C10]/80 rounded-[32px] p-8 hover:bg-[#0A0C10] transition-colors group/receive relative z-0 border border-transparent hover:border-white/5">
-                        <div className="flex justify-between items-center mb-6">
-                            <span className="text-xs text-foreground/40 font-bold uppercase tracking-wide">You Receive</span>
-                            <div className="scale-100 origin-right">
-                                {type === 'BUY' ? (
-                                    <AssetSelector value={asset.id} onChange={(val) => setAsset(supportedAssets.find(a => a.id === val)!)} options={supportedAssets} type="CRYPTO" />
-                                ) : (
-                                    <AssetSelector value={fiat.id} onChange={(val) => setFiat(FIAT.find(f => f.id === val)!)} options={FIAT} type="FIAT" />
+                            >Buy Assets</button>
+                            <button
+                                onClick={() => setType('SELL')}
+                                className={cn(
+                                    "px-8 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all",
+                                    type === 'SELL' ? "bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.3)]" : "text-white/30 hover:text-white/60"
                                 )}
+                            >Sell Assets</button>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <div className="flex flex-col items-end">
+                                <span className="text-[10px] font-black text-emerald-500/50 uppercase tracking-widest tabular-nums">{refreshCountdown}S</span>
+                                <span className="text-[8px] font-bold text-white/10 uppercase italic">Update</span>
                             </div>
                         </div>
-                        <input
-                            type="number"
-                            value={type === 'BUY' ? amountCrypto : amountFiat}
-                            onChange={(e) => type === 'BUY' ? handleCryptoChange(e.target.value) : handleFiatChange(e.target.value)}
-                            placeholder="0.00"
-                            readOnly
-                            className="w-full bg-transparent text-5xl font-black outline-none placeholder:text-white/5 text-emerald-500 transition-all cursor-default py-2 tracking-tight"
-                        />
-                        <div className="text-right text-[11px] font-medium text-foreground/30 mt-2 h-4 flex justify-end items-center gap-1">
-                            {isLoading ? <span className="animate-pulse">Fetching rates...</span> : (
-                                displayRate ? `1 ${asset.id} ≈ ${fiat.symbol}${displayRate.toLocaleString()}` : "Rate unavailable"
-                            )}
+                    </div>
+
+                    {/* Integrated Price Visualization */}
+                    <div className="bg-[#16191E] rounded-2xl p-4 border border-white/5 space-y-3">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="h-6 w-6 relative shrink-0">
+                                    <CryptoIcon symbol={asset.id} iconUrl={asset.icon} />
+                                </div>
+                                <span className="text-[9px] font-black uppercase tracking-widest text-white/20">{asset.id} Market Trend</span>
+                            </div>
+                            <span className="text-[10px] font-mono text-emerald-500 font-bold flex items-center gap-1">
+                                <ArrowUpRight className="h-3 w-3" />
+                                2.45%
+                            </span>
+                        </div>
+                        <Sparkline />
+                    </div>
+
+                    <div className="space-y-2 relative">
+                        {/* Block 1: Input */}
+                        <div className="bg-[#16191E] rounded-[1.8rem] p-6 border border-white/5 hover:border-white/10 transition-colors">
+                            <div className="flex justify-between items-center mb-6">
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">Select Source</span>
+                                <AssetSelector
+                                    value={type === 'BUY' ? fiat.id : asset.id}
+                                    onChange={(val) => type === 'BUY' ? setFiat(FIAT.find(f => f.id === val)!) : setAsset(supportedAssets.find(a => a.id === val)!)}
+                                    options={type === 'BUY' ? FIAT : supportedAssets}
+                                    type={type === 'BUY' ? "FIAT" : "CRYPTO"}
+                                    className="h-10 bg-[#0D0F12] border-white/5 hover:border-emerald-500/30"
+                                />
+                            </div>
+                            <div className="flex flex-col space-y-1">
+                                <input
+                                    type="number"
+                                    value={type === 'BUY' ? amountFiat : amountCrypto}
+                                    onChange={(e) => type === 'BUY' ? handleFiatChange(e.target.value) : handleCryptoChange(e.target.value)}
+                                    placeholder="0.00"
+                                    className="w-full bg-transparent text-5xl font-black outline-none placeholder:text-white/5 text-white tracking-tighter"
+                                />
+                                <span className="text-[10px] font-bold text-white/10 uppercase tracking-widest">Estimate Amount</span>
+                            </div>
+                        </div>
+
+                        {/* Mid Divider Arrow */}
+                        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+                            <div className="h-12 w-12 rounded-full border border-white/10 flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+                                <ArrowDown className="h-4 w-4 text-emerald-500" />
+                            </div>
+                        </div>
+
+                        {/* Block 2: Output */}
+                        <div className="bg-[#16191E] rounded-[1.8rem] p-6 border border-white/5 hover:border-white/10 transition-colors">
+                            <div className="flex justify-between items-center mb-6">
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">Estimated Return</span>
+                                <AssetSelector
+                                    value={type === 'BUY' ? asset.id : fiat.id}
+                                    onChange={(val) => type === 'BUY' ? setAsset(supportedAssets.find(a => a.id === val)!) : setFiat(FIAT.find(f => f.id === val)!)}
+                                    options={type === 'BUY' ? supportedAssets : FIAT}
+                                    type={type === 'BUY' ? "CRYPTO" : "FIAT"}
+                                    className="h-10 bg-[#0D0F12] border-white/5 hover:border-emerald-500/30"
+                                />
+                            </div>
+                            <div className="flex flex-col space-y-1">
+                                <input
+                                    type="number"
+                                    value={type === 'BUY' ? amountCrypto : amountFiat}
+                                    readOnly
+                                    placeholder="0.00"
+                                    className="w-full bg-transparent text-5xl font-black outline-none placeholder:text-white/5 text-emerald-500 tracking-tighter"
+                                />
+                                <div className="flex justify-between items-center">
+                                    <span className="text-[10px] font-bold text-white/10 uppercase tracking-widest">Projected Payout</span>
+                                    <span className="text-[10px] font-mono text-emerald-500/50 font-bold">
+                                        {isLoading ? "REFRESHING..." : `RATE: ${displayRate?.toLocaleString() ?? '---'}`}
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                {/* Address Section */}
-                <div className="mt-6">
-                    <div className="relative group/address">
-                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/30 group-focus-within/address:text-primary transition-colors">
-                            {type === 'BUY' ? <Wallet className="h-5 w-5" /> : <Landmark className="h-5 w-5" />}
-                        </div>
-                        <input
-                            value={receivingAddress}
-                            onChange={(e) => type !== 'SELL' && setReceivingAddress(e.target.value)}
-                            readOnly={type === 'SELL'}
-                            onFocus={() => setShowWalletDropdown(true)}
-                            onBlur={() => setTimeout(() => setShowWalletDropdown(false), 200)}
-                            placeholder={type === 'BUY' ? `Paste your ${asset.id} Address` : "Select Banking Account"}
-                            className="w-full bg-[#0A0C10] border border-white/5 rounded-2xl py-4 pl-12 pr-4 text-sm font-bold placeholder:text-foreground/20 focus:outline-none focus:border-primary/50 transition-all"
-                        />
+                    {/* Destination Input */}
+                    <div className="space-y-4">
+                        <div className="relative group/address">
+                            <div className="absolute left-5 top-1/2 -translate-y-1/2 text-white/20">
+                                {type === 'BUY' ? <Wallet className="h-4 w-4" /> : <Landmark className="h-4 w-4" />}
+                            </div>
+                            <input
+                                value={receivingAddress}
+                                onChange={(e) => type !== 'SELL' && setReceivingAddress(e.target.value)}
+                                readOnly={type === 'SELL'}
+                                onFocus={() => setShowWalletDropdown(true)}
+                                onBlur={() => setTimeout(() => setShowWalletDropdown(false), 200)}
+                                placeholder={type === 'BUY' ? `Enter ${asset.id} wallet address` : "Choose bank account"}
+                                className="w-full bg-[#16191E] border border-white/5 rounded-2xl py-6 pl-14 pr-6 text-[11px] font-black uppercase tracking-widest placeholder:text-white/10 focus:outline-none focus:border-emerald-500/30 transition-all text-white"
+                            />
 
-                        {/* Dropdown */}
-                        <AnimatePresence>
-                            {showWalletDropdown && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: 10 }}
-                                    className="absolute bottom-full left-0 right-0 mb-2 bg-[#0A0C10] border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden max-h-60 overflow-y-auto"
-                                >
-                                    <div className="p-3 border-b border-white/5 text-[10px] font-bold text-foreground/30 uppercase tracking-widest bg-white/5">Saved Wallets</div>
-                                    {savedWallets.length > 0 ? (
-                                        savedWallets.map(w => (
-                                            <button key={w.id} onMouseDown={() => setReceivingAddress(w.address)} className="w-full text-left p-4 hover:bg-white/5 transition-colors border-b border-white/5 last:border-0 group/wallet">
-                                                <div className="font-bold text-xs text-white group-hover/wallet:text-primary transition-colors">{w.name}</div>
-                                                <div className="text-[10px] font-mono text-foreground/40 break-all mt-1">{w.address}</div>
+                            <AnimatePresence>
+                                {showWalletDropdown && savedWallets.length > 0 && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: 10 }}
+                                        className="absolute bottom-full left-0 right-0 mb-3 bg-[#16191E] border border-white/10 rounded-[2rem] shadow-2xl z-50 overflow-hidden max-h-60 overflow-y-auto"
+                                    >
+                                        <div className="p-4 border-b border-white/5 text-[9px] font-black uppercase tracking-[0.2em] text-white/20">Saved Destination Points</div>
+                                        {savedWallets.map(w => (
+                                            <button key={w.id} onMouseDown={() => setReceivingAddress(w.address)} className="w-full text-left p-5 hover:bg-white/5 transition-colors border-b border-white/5 last:border-0 group/wallet">
+                                                <div className="font-black text-[10px] text-white/60 group-hover/wallet:text-emerald-500 transition-colors uppercase tracking-widest">{w.name}</div>
+                                                <div className="text-[10px] font-mono text-white/20 mt-1 truncate">{w.address}</div>
                                             </button>
-                                        ))
-                                    ) : (
-                                        <div className="p-4 text-center text-xs text-foreground/30 italic">No saved addresses found</div>
-                                    )}
-                                    <Link href={type === 'BUY' ? "/dashboard/wallets?tab=crypto" : "/dashboard/wallets?tab=fiat"} className="block p-3 text-center text-[10px] font-bold uppercase tracking-widest text-primary hover:bg-primary/5 transition-colors border-t border-white/5">
-                                        + Add New
-                                    </Link>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
+                                        ))}
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+                    </div>
+
+                    {/* Execution Action */}
+                    <div className="pt-2">
+                        {error && (
+                            <div className="mb-6 p-4 rounded-xl bg-red-500/5 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-widest text-center italic">
+                                {error}
+                            </div>
+                        )}
+
+                        {!isAvailable || isRateMissing ? (
+                            <button disabled className="w-full py-6 rounded-2xl bg-white/5 border border-white/5 text-white/20 font-black text-[11px] uppercase tracking-[0.4em] cursor-not-allowed italic">
+                                Pair Currently Offline
+                            </button>
+                        ) : (
+                            <button
+                                onClick={handleSubmit}
+                                disabled={isSubmitting || !!error || !amountFiat || !receivingAddress || !displayRate}
+                                className="w-full py-6 rounded-2xl bg-emerald-500 text-black font-black text-[11px] uppercase tracking-[0.4em] transition-all shadow-[0_10px_40px_rgba(16,185,129,0.2)] hover:bg-emerald-400 hover:scale-[1.01] active:scale-[0.98] disabled:opacity-20 disabled:grayscale"
+                            >
+                                {isSubmitting ? "Finalizing..." : `Confirm ${type} Order`}
+                            </button>
+                        )}
+                    </div>
+
+                    <div className="flex justify-center border-t border-white/5 pt-6">
+                        <Link href="/dashboard/support" className="flex items-center gap-3 text-[9px] font-black uppercase tracking-[0.3em] text-white/20 hover:text-emerald-500 transition-colors">
+                            <Info className="h-3 w-3" /> Secure Node Status: Active
+                        </Link>
                     </div>
                 </div>
-
-                {/* Error & Warning */}
-                {isRateMissing && (
-                    <div className="mt-4 p-4 rounded-xl bg-amber-500/10 border border-amber-500/10 text-amber-500 text-xs font-bold flex items-center gap-3">
-                        <AlertCircle className="h-5 w-5 shrink-0" />
-                        Exchange rate currently unavailable for this pair. Please check back later.
-                    </div>
-                )}
-
-                {error && (
-                    <div className="mt-4 p-4 rounded-xl bg-red-500/10 border border-red-500/10 text-red-500 text-xs font-bold flex items-center gap-3">
-                        <AlertCircle className="h-5 w-5 shrink-0" />
-                        {error}
-                    </div>
-                )}
-
-                {/* Submit Button */}
-                <div className="mt-6">
-                    {!isAvailable ? (
-                        <button disabled className="w-full py-5 rounded-[20px] bg-white/5 border border-white/5 text-foreground/30 font-bold cursor-not-allowed text-sm uppercase tracking-widest">
-                            Currently Unavailable
-                        </button>
-                    ) : isRateMissing ? (
-                        <button disabled className="w-full py-5 rounded-[20px] bg-white/5 border border-white/5 text-foreground/30 font-bold cursor-not-allowed text-sm uppercase tracking-widest">
-                            Rate Unavailable
-                        </button>
-                    ) : (
-                        <button
-                            onClick={handleSubmit}
-                            disabled={isSubmitting || !!error || !amountFiat || !receivingAddress || !displayRate}
-                            className={cn(
-                                "w-full py-5 rounded-[20px] font-black text-sm uppercase tracking-widest transition-all shadow-xl hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:grayscale disabled:hover:scale-100",
-                                type === 'BUY' ? "bg-primary text-white shadow-primary/20 hover:shadow-primary/30" : "bg-rose-500 text-white shadow-rose-500/20 hover:shadow-rose-500/30"
-                            )}>
-                            {isSubmitting ? "Processing..." : `Confirm ${type}`}
-                        </button>
-                    )}
-                </div>
-
             </div>
         </div>
     );

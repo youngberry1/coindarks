@@ -14,6 +14,7 @@ export type ExchangeRate = {
     sell_margin: number;
     is_automated: boolean;
     display_rate: number; // The final rate shown to user (Base +/- Margin)
+    percent_change_24h: number;
 };
 
 export async function getExchangeRates(): Promise<ExchangeRate[]> {
@@ -59,7 +60,7 @@ export async function getExchangeRates(): Promise<ExchangeRate[]> {
     if (ids.size > 0) {
         const idString = Array.from(ids).join(',');
         const currencyString = Array.from(currencies).join(',');
-        const url = `${COINGECKO_API_URL}?ids=${idString}&vs_currencies=${currencyString}`;
+        const url = `${COINGECKO_API_URL}?ids=${idString}&vs_currencies=${currencyString}&include_24hr_change=true`;
         const options = COINGECKO_API_KEY ? { headers: { 'x-cg-demo-api-key': COINGECKO_API_KEY } } : {};
 
         // Robust Fetch Helper with Timeout & Retry
@@ -138,7 +139,8 @@ export async function getExchangeRates(): Promise<ExchangeRate[]> {
             buy_margin: Number(r.buy_margin),
             sell_margin: Number(r.sell_margin),
             is_automated: r.is_automated,
-            display_rate: displayRate
+            display_rate: displayRate,
+            percent_change_24h: coingeckoId && apiRates[coingeckoId] ? (apiRates[coingeckoId][`${quoteLower}_24h_change`] || 0) : 0
         };
     });
 }
@@ -177,7 +179,7 @@ export async function createRatePair(pair: string): Promise<{ success?: string; 
     revalidatePath('/admin/settings');
 
     // Transform to match RateData structure (basic)
-    return { success: "Pair added", rate: { ...newRate, display_rate: 0 } as ExchangeRate };
+    return { success: "Pair added", rate: { ...newRate, display_rate: 0, percent_change_24h: 0 } as ExchangeRate };
 }
 
 export async function deleteRatePair(pair: string) {
