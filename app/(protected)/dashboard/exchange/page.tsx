@@ -80,21 +80,24 @@ export default async function ExchangePage() {
             <div className="fixed inset-0 pointer-events-none">
                 <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20%_20%,rgba(var(--primary), 0.02)_0%,transparent_50%)]" />
                 <div className="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(circle_at_80%_80%,rgba(var(--primary), 0.02)_0%,transparent_50%)]" />
-                <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.03] mix-blend-overlay" />
+                <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay" />
             </div>
 
-            <div className="relative z-10 w-full max-w-[1800px] mx-auto p-4 lg:px-6 lg:py-8 space-y-8">
+            <div className="relative z-10 w-full max-w-[1800px] mx-auto p-4 lg:px-6 lg:py-8 space-y-6 sm:space-y-8">
                 {/* Top Statistics Bar (Nexus Header) */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                     {stats.map((stat, i) => (
-                        <div key={i} className="bg-[#16191E] border border-white/5 rounded-2xl p-4 md:p-6 flex flex-col justify-between group hover:bg-[#1C2127] transition-colors">
-                            <div className="flex items-center justify-between mb-2">
-                                <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest">{stat.label}</span>
-                                {stat.icon}
+                        <div key={i} className="bg-[#16191E] border border-white/5 rounded-2xl p-3.5 sm:p-6 flex flex-col justify-between group hover:bg-[#1C2127] transition-colors overflow-hidden">
+                            <div className="flex items-center justify-between mb-2 gap-2">
+                                <span className="text-[9px] sm:text-[10px] font-bold text-white/30 uppercase tracking-widest truncate">{stat.label}</span>
+                                <div className="shrink-0">{stat.icon}</div>
                             </div>
-                            <div className="flex items-end justify-between">
-                                <span className="text-xl font-black tabular-nums">{stat.value}</span>
-                                <span className={stat.trend.startsWith('+') || stat.trend === 'LIVE' || stat.trend === 'ONLINE' || stat.trend === '100%' ? "text-[10px] text-primary font-bold" : "text-[10px] text-red-500 font-bold"}>{stat.trend}</span>
+                            <div className="flex items-end justify-between gap-1 overflow-hidden">
+                                <span className="text-lg sm:text-xl font-black tabular-nums truncate">{stat.value}</span>
+                                <span className={cn(
+                                    "text-[9px] sm:text-[10px] font-bold shrink-0",
+                                    stat.trend.startsWith('+') || stat.trend === 'LIVE' || stat.trend === 'ONLINE' || stat.trend === '100%' ? "text-primary" : "text-red-500"
+                                )}>{stat.trend}</span>
                             </div>
                         </div>
                     ))}

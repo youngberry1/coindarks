@@ -241,35 +241,39 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                     <div key={order.id} className="px-5 py-6 sm:px-8 sm:py-8 rounded-2xl md:rounded-3xl border border-white/5 glass space-y-5 sm:space-y-8 relative overflow-hidden group w-full min-w-0">
                         <div className="absolute inset-0 bg-primary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                        <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
+                        <div className="relative z-10 flex flex-col xs:flex-row xs:items-center justify-between gap-4">
                             <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
-                                <span className="font-mono text-[9px] sm:text-[10px] font-black text-foreground/30 bg-white/5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl border border-white/5">#{order.order_number}</span>
+                                <span className="font-mono text-[9px] sm:text-[10px] font-black text-foreground/30 bg-white/5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl border border-white/5 truncate max-w-[120px] xs:max-w-none">
+                                    #{order.order_number}
+                                </span>
                                 <div className={cn(
-                                    "px-3 sm:px-4 py-1 sm:py-1.5 rounded-lg sm:rounded-xl text-[8px] sm:text-[9px] font-black uppercase tracking-[0.2em] border",
+                                    "px-3 sm:px-4 py-1 sm:py-1.5 rounded-lg sm:rounded-xl text-[8px] sm:text-[9px] font-black uppercase tracking-[0.2em] border shrink-0",
                                     order.type === 'BUY' ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/10" : "bg-rose-500/10 text-rose-500 border-rose-500/10"
                                 )}>
                                     {order.type}
                                 </div>
                             </div>
-                            <Select
-                                disabled={updatingId === order.id}
-                                onValueChange={(val) => handleStatusUpdate(order.id, val)}
-                                defaultValue={order.status}
-                            >
-                                <SelectTrigger className={cn(
-                                    "h-10 w-[120px] rounded-2xl border text-[9px] font-black uppercase tracking-[0.2em]",
-                                    getStatusColor(order.status)
-                                )}>
-                                    <SelectValue placeholder="Status" />
-                                </SelectTrigger>
-                                <SelectContent className="bg-[#16191E] border-white/10 rounded-2xl z-100 p-1">
-                                    <SelectItem value="PENDING" className="rounded-xl h-10 text-[9px] font-bold uppercase tracking-widest">PENDING</SelectItem>
-                                    <SelectItem value="PROCESSING" className="rounded-xl h-10 text-[9px] font-bold uppercase tracking-widest">PROCESSING</SelectItem>
-                                    <SelectItem value="COMPLETED" className="rounded-xl h-10 text-[9px] font-bold uppercase tracking-widest">COMPLETED</SelectItem>
-                                    <SelectItem value="CANCELLED" className="rounded-xl h-10 text-[9px] font-bold uppercase tracking-widest">CANCELLED</SelectItem>
-                                    <SelectItem value="REFUNDED" className="rounded-xl h-10 text-[9px] font-bold uppercase tracking-widest">REFUNDED</SelectItem>
-                                </SelectContent>
-                            </Select>
+                            <div className="flex-1 xs:flex-none flex justify-end">
+                                <Select
+                                    disabled={updatingId === order.id}
+                                    onValueChange={(val) => handleStatusUpdate(order.id, val)}
+                                    defaultValue={order.status}
+                                >
+                                    <SelectTrigger className={cn(
+                                        "h-10 w-full xs:w-[130px] rounded-2xl border text-[9px] font-black uppercase tracking-[0.2em] shadow-lg",
+                                        getStatusColor(order.status)
+                                    )}>
+                                        <SelectValue placeholder="Status" />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-[#16191E] border-white/10 rounded-2xl z-100 p-1">
+                                        <SelectItem value="PENDING" className="rounded-xl h-10 text-[9px] font-bold uppercase tracking-widest">PENDING</SelectItem>
+                                        <SelectItem value="PROCESSING" className="rounded-xl h-10 text-[9px] font-bold uppercase tracking-widest">PROCESSING</SelectItem>
+                                        <SelectItem value="COMPLETED" className="rounded-xl h-10 text-[9px] font-bold uppercase tracking-widest">COMPLETED</SelectItem>
+                                        <SelectItem value="CANCELLED" className="rounded-xl h-10 text-[9px] font-bold uppercase tracking-widest">CANCELLED</SelectItem>
+                                        <SelectItem value="REFUNDED" className="rounded-xl h-10 text-[9px] font-bold uppercase tracking-widest">REFUNDED</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
                         </div>
 
                         <div className="relative z-10 flex items-center gap-3 sm:gap-5 p-4 sm:p-6 rounded-[20px] sm:rounded-[32px] bg-white/3 border border-white/5">
@@ -278,27 +282,29 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                             </div>
                             <div className="min-w-0 flex-1">
                                 <p className="text-sm sm:text-base font-black tracking-tight uppercase leading-none truncate mb-1">{order.users.first_name} {order.users.last_name}</p>
-                                <p className="text-[10px] text-foreground/30 font-black uppercase tracking-wider truncate overflow-hidden">{order.users.email}</p>
+                                <p className="text-[10px] text-foreground/30 font-black uppercase tracking-wider truncate block overflow-hidden">{order.users.email}</p>
                             </div>
                         </div>
 
-                        <div className="relative z-10 flex flex-col sm:flex-row justify-between items-end gap-6">
-                            <div className="space-y-3">
+                        <div className="relative z-10 flex flex-col sm:flex-row justify-between items-end gap-6 sm:gap-8">
+                            <div className="space-y-3 w-full sm:w-auto overflow-hidden">
                                 <div className="flex items-center gap-2">
                                     <Sparkles className="h-3.5 w-3.5 text-primary opacity-30" />
                                     <span className="text-[10px] font-black uppercase tracking-widest text-foreground/40">{order.asset} TRADE DETAILS</span>
                                 </div>
-                                <div>
-                                    <div>
-                                        <p className="text-2xl sm:text-3xl font-black tabular-nums tracking-tighter leading-none mb-1">{formatCryptoAmount(order.amount_crypto, order.asset)} <span className="text-base sm:text-lg opacity-30">{order.asset}</span></p>
-                                        <p className="text-[10px] sm:text-[11px] text-foreground/30 font-black uppercase tracking-[0.2em]">≈ {order.amount_fiat.toLocaleString()} {order.fiat_currency}</p>
-                                    </div>
+                                <div className="truncate">
+                                    <p className="text-2xl sm:text-3xl font-black tabular-nums tracking-tighter leading-none mb-1 truncate min-w-0">
+                                        {formatCryptoAmount(order.amount_crypto, order.asset)} <span className="text-base sm:text-lg opacity-30">{order.asset}</span>
+                                    </p>
+                                    <p className="text-[10px] sm:text-[11px] text-foreground/30 font-black uppercase tracking-[0.2em] leading-none">
+                                        ≈ {order.amount_fiat.toLocaleString()} {order.fiat_currency}
+                                    </p>
                                 </div>
                             </div>
-                            <div className="flex gap-3">
+                            <div className="flex gap-3 w-full sm:w-auto">
                                 <button
                                     onClick={() => copyAddress(order.receiving_address, order.id)}
-                                    className="h-14 w-14 rounded-2xl glass border border-white/5 text-foreground/30 hover:text-primary transition-all flex items-center justify-center active:scale-90 shadow-2xl"
+                                    className="flex-1 sm:flex-none h-16 w-full sm:w-16 rounded-3xl glass border border-white/5 text-foreground/30 hover:text-primary transition-all flex items-center justify-center active:scale-90 shadow-2xl shrink-0"
                                 >
                                     {copiedId === order.id ? (
                                         <CheckCircle2 className="h-6 w-6 text-emerald-500" />
@@ -309,7 +315,7 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                                 {order.type === 'BUY' && (
                                     <button
                                         onClick={() => openExplorer(order.receiving_address)}
-                                        className="h-14 w-14 rounded-2xl glass border border-white/5 text-foreground/30 hover:text-primary transition-all flex items-center justify-center active:scale-90 shadow-2xl"
+                                        className="flex-1 sm:flex-none h-16 w-full sm:w-16 rounded-3xl glass border border-white/5 text-foreground/30 hover:text-primary transition-all flex items-center justify-center active:scale-90 shadow-2xl shrink-0"
                                     >
                                         <ExternalLink className="h-6 w-6" />
                                     </button>
