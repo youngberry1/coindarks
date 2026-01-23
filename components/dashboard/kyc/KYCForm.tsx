@@ -11,18 +11,37 @@ import {
     CheckCircle2,
     X,
     ChevronRight,
-    Check
+    Check,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { submitKYC } from "@/actions/kyc";
 import { Loading } from "@/components/ui/Loading";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const STEPS = ["ID Type", "Details", "Upload Photos", "Complete"];
 
 export function KYCForm() {
     const [currentStep, setCurrentStep] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
+    const [isRedirecting, setIsRedirecting] = useState(false);
+    const router = useRouter();
+
+    // Auto-redirect effect when step 3 (Complete) is reached
+    useEffect(() => {
+        if (currentStep === 3) {
+            const timer = setTimeout(() => {
+                setIsRedirecting(true);
+                // Short delay to show redirecting state before actual push
+                setTimeout(() => {
+                    router.push("/dashboard");
+                }, 1500);
+            }, 2000); // 2 seconds delay before starting redirect sequence
+
+            return () => clearTimeout(timer);
+        }
+    }, [currentStep, router]);
 
     // Form State
     const [formData, setFormData] = useState({
@@ -39,6 +58,17 @@ export function KYCForm() {
         selfie: "",
     });
 
+
+
+    // Cleanup object URLs to avoid memory leaks
+    useEffect(() => {
+        return () => {
+            Object.values(previews).forEach(url => {
+                if (url) URL.revokeObjectURL(url);
+            });
+        };
+    }, [previews]);
+
     const handleNext = () => setCurrentStep(prev => Math.min(prev + 1, STEPS.length - 1));
     const handleBack = () => setCurrentStep(prev => Math.max(prev - 1, 0));
 
@@ -46,20 +76,32 @@ export function KYCForm() {
         const file = acceptedFiles[0];
         if (!file) return;
 
+        // Revoke old preview if exists
+        if (previews[id]) {
+            URL.revokeObjectURL(previews[id]);
+        }
+
+        const blobUrl = URL.createObjectURL(file);
         setFormData(prev => ({ ...prev, [`${id}Image`]: file }));
-        setPreviews(prev => ({ ...prev, [id]: URL.createObjectURL(file) }));
-    }, []);
+        setPreviews(prev => ({ ...prev, [id]: blobUrl }));
+    }, [previews]);
 
     const onDropRejected = useCallback((id: 'front' | 'back' | 'selfie', fileRejections: FileRejection[]) => {
         const rejection = fileRejections[0];
         if (rejection) {
             const error = rejection.errors[0];
             if (error.code === 'file-too-large') {
-                toast.error(`${id.toUpperCase()} image is too large. Max size is 5MB.`);
+                toast.error("File is too large. Please upload an image smaller than 5MB.");
             } else if (error.code === 'file-invalid-type') {
-                toast.error(`${id.toUpperCase()} file type is not supported. Use JPG, PNG or WebP.`);
+                // Check if it's a video file by extension for a more specific error
+                const isVideo = rejection.file.type.startsWith('video/');
+                if (isVideo) {
+                    toast.error("Video files are not allowed. Please upload a clear image (JPG, PNG).");
+                } else {
+                    toast.error("Unsupported file type. Please stick to JPG, PNG, or WebP images.");
+                }
             } else {
-                toast.error(`Error uploading ${id.toUpperCase()}: ${error.message}`);
+                toast.error(`Error uploading image: ${error.message}`);
             }
         }
     }, []);
@@ -282,9 +324,17 @@ export function KYCForm() {
                                 <h1 className="text-3xl font-black mb-3 text-emerald-500">Submission Received!</h1>
                                 <p className="text-foreground/50 font-medium max-w-sm mx-auto">Your verification is being processed. You will be notified via email once our team reviews your documents.</p>
                             </div>
-                            <Link href="/dashboard" className="inline-flex px-10 py-4 rounded-2xl bg-white/5 border border-white/10 font-bold hover:bg-white/10 transition-all">
-                                Return to Dashboard
-                            </Link>
+
+                            {isRedirecting ? (
+                                <div className="flex flex-col items-center gap-3 animate-pulse">
+                                    <div className="h-5 w-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                                    <p className="text-sm font-bold text-primary">Redirecting back to dashboard...</p>
+                                </div>
+                            ) : (
+                                <Link href="/dashboard" className="inline-flex px-10 py-4 rounded-2xl bg-white/5 border border-white/10 font-bold hover:bg-white/10 transition-all">
+                                    Return to Dashboard
+                                </Link>
+                            )}
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -309,21 +359,34 @@ function ImageUpload({
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
         onDropRejected: onRejected,
-        accept: { 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] },
+        accept: { 'image/jpeg': [], 'image/png': [], 'image/webp': [] },
         maxFiles: 1,
         multiple: false,
         maxSize: 5 * 1024 * 1024 // 5MB
     });
 
-    if (preview) {
+    const [hasError, setHasError] = useState(false);
+
+    // Reset error state when preview changes
+    if (preview && hasError) {
+        setHasError(false);
+    }
+
+    if (preview && !hasError) {
         return (
-            <div className="relative aspect-video rounded-3xl overflow-hidden border border-white/10 group">
+            <div className="relative aspect-video rounded-3xl overflow-hidden border border-white/10 group bg-black/20">
                 <Image
                     src={preview}
                     alt={label}
                     fill
                     className="object-cover"
                     unoptimized
+                    onError={() => {
+                        setHasError(true);
+                        // Also notify parent to remove the bad file
+                        onRemove();
+                        toast.error("Failed to load image preview. The file might be corrupted.");
+                    }}
                 />
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
                     <button onClick={onRemove} className="p-3 rounded-full bg-red-500 text-white hover:scale-110 transition-all">
@@ -343,6 +406,7 @@ function ImageUpload({
             </div>
             <p className="font-bold mb-1">{label}</p>
             <p className="text-xs text-foreground/40 font-medium">Drag & drop or click to upload</p>
+            <p className="text-[10px] text-foreground/30 mt-2">Max 5MB • JPG, PNG, WebP</p>
         </div>
     );
 }
