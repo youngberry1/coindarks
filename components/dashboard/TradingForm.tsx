@@ -18,8 +18,9 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Cryptocurrency } from "@/actions/crypto";
 import { AssetSelector } from "@/components/dashboard/AssetSelector";
-import { Loading } from "@/components/ui/Loading";
+import { Loading } from "@/components/ui/LoadingSpinner";
 import { CryptoIcon } from "@/components/CryptoIcon";
+import { getCryptoPrecision } from "@/lib/formatters";
 
 export interface AssetMetadata {
     id: string;
@@ -224,7 +225,8 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
 
         if (lastInputType === 'FIAT' && amountFiat) {
             const rawVal = parseFloat(amountFiat);
-            if (!isNaN(rawVal)) setAmountCrypto((rawVal / displayRate).toFixed(8));
+            const precision = getCryptoPrecision(asset.id);
+            if (!isNaN(rawVal)) setAmountCrypto((rawVal / displayRate).toFixed(precision));
         } else if (lastInputType === 'CRYPTO' && amountCrypto) {
             const rawVal = parseFloat(amountCrypto);
             if (!isNaN(rawVal)) setAmountFiat((rawVal * displayRate).toFixed(2));
@@ -238,7 +240,8 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
         if (!val) { setAmountCrypto(""); setError(null); return; }
         const numVal = parseFloat(val);
         if (!isNaN(numVal)) validateAmount(numVal);
-        if (displayRate && !isNaN(numVal) && numVal > 0) setAmountCrypto((numVal / displayRate).toFixed(8));
+        const precision = getCryptoPrecision(asset.id);
+        if (displayRate && !isNaN(numVal) && numVal > 0) setAmountCrypto((numVal / displayRate).toFixed(precision));
         else if (numVal <= 0) setAmountCrypto("0.00");
     };
 
@@ -338,7 +341,7 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
     return (
         <div className="w-full max-w-4xl space-y-6">
             <AnimatePresence>
-                {isSubmitting && <Loading message="PROCESSING..." />}
+                {isSubmitting && <Loading />}
             </AnimatePresence>
 
             {/* Nexus Terminal Core */}
@@ -469,20 +472,48 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                             />
 
                             <AnimatePresence>
-                                {showWalletDropdown && savedWallets.length > 0 && (
+                                {showWalletDropdown && (
                                     <motion.div
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, y: 10 }}
                                         className="absolute bottom-full left-0 right-0 mb-3 bg-[#16191E] border border-white/10 rounded-[2rem] shadow-2xl z-50 overflow-hidden max-h-60 overflow-y-auto"
                                     >
-                                        <div className="p-4 border-b border-white/5 text-[9px] font-black uppercase tracking-[0.2em] text-white/20">Saved Wallets & Accounts</div>
-                                        {savedWallets.map(w => (
-                                            <button key={w.id} onMouseDown={() => setReceivingAddress(w.address)} className="w-full text-left p-5 hover:bg-white/5 transition-colors border-b border-white/5 last:border-0 group/wallet">
-                                                <div className="font-black text-[10px] text-white/60 group-hover/wallet:text-primary transition-colors uppercase tracking-widest">{w.name}</div>
-                                                <div className="text-[10px] font-mono text-white/20 mt-1 truncate">{w.address}</div>
-                                            </button>
-                                        ))}
+                                        {savedWallets.length > 0 ? (
+                                            <>
+                                                <div className="p-4 border-b border-white/5 text-[9px] font-black uppercase tracking-[0.2em] text-white/20">
+                                                    {type === 'BUY' ? 'Saved Wallets' : 'Saved Accounts'}
+                                                </div>
+                                                {savedWallets.map(w => (
+                                                    <button key={w.id} onMouseDown={() => setReceivingAddress(w.address)} className="w-full text-left p-5 hover:bg-white/5 transition-colors border-b border-white/5 group/wallet">
+                                                        <div className="font-black text-[10px] text-white/60 group-hover/wallet:text-primary transition-colors uppercase tracking-widest">{w.name}</div>
+                                                        <div className="text-[10px] font-mono text-white/20 mt-1 truncate">{w.address}</div>
+                                                    </button>
+                                                ))}
+                                                <Link
+                                                    href={type === 'BUY' ? '/dashboard/wallets' : '/dashboard/settings'}
+                                                    className="w-full text-center p-5 hover:bg-primary/5 transition-colors border-t border-white/5 text-primary text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2"
+                                                >
+                                                    <ArrowUpRight className="h-3 w-3" />
+                                                    {type === 'BUY' ? 'Add New Wallet' : 'Add Payment Method'}
+                                                </Link>
+                                            </>
+                                        ) : (
+                                            <div className="p-8 text-center space-y-4">
+                                                <div className="text-[10px] text-white/40 font-medium leading-relaxed">
+                                                    {type === 'BUY'
+                                                        ? `No ${asset.id} wallets saved yet.`
+                                                        : 'No payment methods saved yet.'}
+                                                </div>
+                                                <Link
+                                                    href={type === 'BUY' ? '/dashboard/wallets' : '/dashboard/settings'}
+                                                    className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary/10 hover:bg-primary/20 border border-primary/20 rounded-xl text-primary text-[10px] font-black uppercase tracking-widest transition-all"
+                                                >
+                                                    <ArrowUpRight className="h-3 w-3" />
+                                                    {type === 'BUY' ? 'Add Your First Wallet' : 'Add Payment Method'}
+                                                </Link>
+                                            </div>
+                                        )}
                                     </motion.div>
                                 )}
                             </AnimatePresence>

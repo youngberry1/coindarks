@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { CheckCircle2, Copy, Info, Clock, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { formatCryptoAmount } from "@/lib/formatters";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -106,16 +107,16 @@ export function OrderDetailsCard({ order, paymentMethods = [] }: OrderDetailsCar
                         <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest">You Send</p>
                         <p className="font-bold text-primary">
                             {order.type === 'BUY'
-                                ? `${order.fiat_currency === 'GHS' ? 'GH₵' : '₦'}${order.amount_fiat} `
-                                : `${order.amount_crypto} ${order.asset} `}
+                                ? `${order.fiat_currency === 'GHS' ? 'GH₵' : '₦'}${order.amount_fiat.toLocaleString()} `
+                                : `${formatCryptoAmount(order.amount_crypto, order.asset)} ${order.asset} `}
                         </p>
                     </div>
                     <div className="text-right">
                         <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest">You Receive</p>
                         <p className="font-bold text-emerald-500">
                             {order.type === 'BUY'
-                                ? `${order.amount_crypto} ${order.asset} `
-                                : `${order.fiat_currency === 'GHS' ? 'GH₵' : '₦'}${order.amount_fiat} `}
+                                ? `${formatCryptoAmount(order.amount_crypto, order.asset)} ${order.asset} `
+                                : `${order.fiat_currency === 'GHS' ? 'GH₵' : '₦'}${order.amount_fiat.toLocaleString()} `}
                         </p>
                     </div>
                 </div>
@@ -129,8 +130,8 @@ export function OrderDetailsCard({ order, paymentMethods = [] }: OrderDetailsCar
                             <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl space-y-1">
                                 <p className="text-xs text-amber-500 font-bold">1. Send EXACTLY <span className="text-foreground">
                                     {order.type === 'BUY'
-                                        ? `${order.fiat_currency === 'GHS' ? 'GH₵' : '₦'}${order.amount_fiat} `
-                                        : `${order.amount_crypto} ${order.asset} `}
+                                        ? `${order.fiat_currency === 'GHS' ? 'GH₵' : '₦'}${order.amount_fiat.toLocaleString()} `
+                                        : `${formatCryptoAmount(order.amount_crypto, order.asset)} ${order.asset} `}
                                 </span></p>
                                 <p className="text-[10px] text-amber-500/80 font-medium">Sending a different amount may delay your exchange.</p>
                             </div>

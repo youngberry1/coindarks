@@ -14,6 +14,7 @@ import {
     Sparkles
 } from "lucide-react";
 import { updateOrderStatus } from "@/actions/admin";
+import { formatCryptoAmount } from "@/lib/formatters";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
@@ -175,7 +176,7 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                                         </div>
                                     </td>
                                     <td className="px-6 py-8">
-                                        <p className="text-sm font-black tabular-nums tracking-tight mb-1">{order.amount_crypto} {order.asset}</p>
+                                        <p className="text-sm font-black tabular-nums tracking-tight mb-1">{formatCryptoAmount(order.amount_crypto, order.asset)} {order.asset}</p>
                                         <p className="text-[10px] text-foreground/30 font-black uppercase tracking-widest leading-none">≈ {order.amount_fiat.toLocaleString()} {order.fiat_currency}</p>
                                     </td>
                                     <td className="px-6 py-8">
@@ -288,7 +289,10 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                                     <span className="text-[10px] font-black uppercase tracking-widest text-foreground/40">{order.asset} TRADE DETAILS</span>
                                 </div>
                                 <div>
-                                    <p className="text-2xl sm:text-3xl font-black tabular-nums tracking-tighter leading-none mb-1">{order.amount_crypto} <span className="text-base sm:text-lg opacity-30">{order.asset}</span></p>
+                                    <div>
+                                        <p className="text-2xl sm:text-3xl font-black tabular-nums tracking-tighter leading-none mb-1">{formatCryptoAmount(order.amount_crypto, order.asset)} <span className="text-base sm:text-lg opacity-30">{order.asset}</span></p>
+                                        <p className="text-[10px] sm:text-[11px] text-foreground/30 font-black uppercase tracking-[0.2em]">≈ {order.amount_fiat.toLocaleString()} {order.fiat_currency}</p>
+                                    </div>
                                     <p className="text-[10px] sm:text-[11px] text-foreground/30 font-black uppercase tracking-[0.2em]">≈ {order.amount_fiat.toLocaleString()} {order.fiat_currency}</p>
                                 </div>
                             </div>

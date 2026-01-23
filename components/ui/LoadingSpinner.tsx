@@ -66,3 +66,22 @@ export function PageLoading() {
         </div>
     );
 }
+
+export function Loading({ message }: { message?: string }) {
+    return (
+        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
+            <div className="flex flex-col items-center gap-4">
+                <LoadingSpinner size="lg" />
+                {message && (
+                    <motion.p
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-[10px] font-black uppercase tracking-[0.3em] text-foreground/30"
+                    >
+                        {message}
+                    </motion.p>
+                )}
+            </div>
+        </div>
+    );
+}
