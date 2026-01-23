@@ -57,8 +57,9 @@ export function DashboardSidebar({ user }: SidebarProps) {
 
     const adminLinks = [
         { name: "Platform Controls", href: "/admin", icon: LayoutDashboard },
+        { name: "Asset Inventory", href: "/admin/inventory", icon: Package },
         { name: "Identity Checks", href: "/admin/kyc", icon: ShieldCheck },
-        { name: "Global Transactions", href: "/admin/orders", icon: Package },
+        { name: "Global Transactions", href: "/admin/orders", icon: Activity },
         { name: "Member List", href: "/admin/users", icon: Users },
         { name: "Support Desk", href: "/admin/support", icon: Mail },
         { name: "Documentation", href: "/admin/docs", icon: BookOpen },

@@ -102,10 +102,14 @@
   --ring: oklch(0.62 0.14 160 / 0.4);
   
   /* Refined Glass */
-  --radius: 1.25rem;
-  --glass-bg: rgba(18, 20, 24, 0.6);
-  --glass-border: rgba(255, 255, 255, 0.04);
+  --radius: 1rem; /* Reduced from 1.25rem */
+  --glass-bg: rgba(22, 25, 30, 0.8); /* More solid */
+  --glass-border: rgba(255, 255, 255, 0.08); /* Stronger border */
   --selection: oklch(0.62 0.14 160 / 0.3);
+  
+  /* New Clean Card System */
+  --card-clean: rgba(22, 25, 30, 0.95);
+  --border-subtle: rgba(255, 255, 255, 0.08);
 }
 
 .dark {
@@ -133,16 +137,18 @@
   --input: oklch(1 0 0 / 8%);
   --ring: oklch(0.62 0.14 160 / 0.4);
   
-  --glass-bg: rgba(18, 20, 24, 0.6);
-  --glass-border: rgba(255, 255, 255, 0.04);
+  --glass-bg: rgba(22, 25, 30, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.08);
   --selection: oklch(0.62 0.14 160 / 0.3);
+  
+  --card-clean: rgba(22, 25, 30, 0.95);
+  --border-subtle: rgba(255, 255, 255, 0.08);
 }
 
 html,
 body {
   width: 100%;
   overflow-x: hidden;
-  margin-right: calc(100vw - 100%);
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
@@ -154,11 +160,18 @@ body {
   scroll-padding-top: 120px;
 }
 
-/* Glassmorphism V2 */
+/* Clean Card System - Replaces Glassmorphism */
 .glass {
+  background: var(--card-clean);
+  backdrop-filter: none;
+  border: 1px solid var(--border-subtle);
+}
+
+/* Optional: lighter glass variant */
+.glass-light {
   background: var(--glass-bg);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(10px) saturate(150%);
+  -webkit-backdrop-filter: blur(10px) saturate(150%);
   border: 1px solid var(--glass-border);
 }
 

@@ -40,18 +40,17 @@ export default async function ProtectedLayout({
 
     return (
         <div className="flex min-h-screen bg-background text-foreground relative overflow-hidden">
-            {/* Atmosphere Layer */}
-            <div className="fixed inset-0 bg-mesh opacity-[0.15] -z-10" />
-            <div className="fixed top-[-10%] right-[-10%] w-[80%] h-[80%] bg-primary/5 blur-[160px] rounded-full -z-10 animate-pulse-slow" />
-            <div className="fixed bottom-[-10%] left-[-10%] w-[60%] h-[60%] bg-secondary/5 blur-[140px] rounded-full -z-10 animate-pulse-slow" />
-            <div className="fixed inset-0 bg-[url('/noise.png')] opacity-[0.03] pointer-events-none -z-10" />
+            {/* Clean Atmosphere Layer */}
+            <div className="fixed inset-0 bg-mesh opacity-[0.08] -z-10" />
+            <div className="fixed top-[-10%] right-[-10%] w-[80%] h-[80%] bg-primary/3 blur-[120px] rounded-full -z-10" />
+            <div className="fixed bottom-[-10%] left-[-10%] w-[60%] h-[60%] bg-secondary/3 blur-[100px] rounded-full -z-10" />
 
             {/* Sidebar component */}
             <DashboardSidebar user={sidebarUser} />
 
             {/* Main content area */}
-            <main className="flex-1 lg:ml-80 relative pt-24 lg:pt-0 min-h-screen">
-                <div className="max-w-7xl mx-auto p-4 md:p-10 lg:p-14 animate-in fade-in duration-700">
+            <main className="flex-1 lg:ml-80 relative pt-24 lg:pt-0 min-h-screen overflow-y-auto">
+                <div className="max-w-7xl mx-auto px-4 py-6 md:px-6 md:py-8 lg:px-10 lg:py-12 animate-in fade-in duration-700">
                     {children}
                 </div>
             </main>
