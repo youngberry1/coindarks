@@ -127,7 +127,7 @@ export function AssetSelector({ value, onChange, options, type, className }: Ass
                                                 />
                                             </div>
                                         ) : option.icon ? (
-                                            <div className="h-10 w-10 relative shrink-0 overflow-hidden rounded-full border border-white/5 group-hover/item:border-emerald-500/30 transition-colors">
+                                            <div className="h-10 w-10 relative shrink-0 overflow-hidden rounded-full border border-white/5 group-hover/item:border-emerald-500/30 transition-colors bg-white/5">
                                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                                 <img src={option.icon} alt={option.name} className="h-full w-full object-cover" />
                                             </div>

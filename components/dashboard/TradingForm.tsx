@@ -396,14 +396,14 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                     <div className="space-y-3 relative">
                         {/* Block 1: Input */}
                         <div className="bg-white/3 rounded-3xl p-6 sm:p-8 border border-white/5 hover:border-white/10 transition-colors">
-                            <div className="flex justify-between items-center mb-6">
+                            <div className="flex flex-col xs:flex-row xs:justify-between xs:items-center gap-2 mb-6">
                                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">Choose Currency</span>
                                 <AssetSelector
                                     value={type === 'BUY' ? fiat.id : asset.id}
                                     onChange={(val) => type === 'BUY' ? setFiat(FIAT.find(f => f.id === val)!) : setAsset(supportedAssets.find(a => a.id === val)!)}
                                     options={type === 'BUY' ? FIAT : supportedAssets}
                                     type={type === 'BUY' ? "FIAT" : "CRYPTO"}
-                                    className="h-10 bg-black/20 border-white/5 hover:border-primary/30"
+                                    className="h-10 bg-black/20 border-white/5 hover:border-primary/30 w-full xs:w-auto"
                                 />
                             </div>
                             <div className="flex flex-col space-y-2">
@@ -430,14 +430,14 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
 
                         {/* Block 2: Output */}
                         <div className="bg-white/3 rounded-3xl p-6 sm:p-8 border border-white/5 hover:border-white/10 transition-colors">
-                            <div className="flex justify-between items-center mb-6">
+                            <div className="flex flex-col xs:flex-row xs:justify-between xs:items-center gap-2 mb-6">
                                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">You Receive</span>
                                 <AssetSelector
                                     value={type === 'BUY' ? asset.id : fiat.id}
                                     onChange={(val) => type === 'BUY' ? setAsset(supportedAssets.find(a => a.id === val)!) : setFiat(FIAT.find(f => f.id === val)!)}
                                     options={type === 'BUY' ? supportedAssets : FIAT}
                                     type={type === 'BUY' ? "CRYPTO" : "FIAT"}
-                                    className="h-10 bg-black/20 border-white/5 hover:border-primary/30"
+                                    className="h-10 bg-black/20 border-white/5 hover:border-primary/30 w-full xs:w-auto"
                                 />
                             </div>
                             <div className="flex flex-col space-y-2">
