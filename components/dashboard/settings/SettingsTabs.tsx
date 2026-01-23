@@ -41,7 +41,7 @@ export function SettingsTabs({ user, role }: SettingsTabsProps) {
     const setTab = (id: string) => {
         const params = new URLSearchParams(searchParams);
         params.set("tab", id);
-        router.push(`/dashboard/settings?${params.toString()}`);
+        router.replace(`/dashboard/settings?${params.toString()}`, { scroll: false });
     };
 
     return (
@@ -64,7 +64,7 @@ export function SettingsTabs({ user, role }: SettingsTabsProps) {
                                 <motion.div
                                     layoutId="active-tab-bg"
                                     className="absolute inset-0 bg-primary/10 border border-primary/20 rounded-xl -z-10"
-                                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                    transition={{ type: "spring", bounce: 0.15, duration: 0.25 }}
                                 />
                             )}
                         </button>
@@ -77,10 +77,9 @@ export function SettingsTabs({ user, role }: SettingsTabsProps) {
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={activeTab}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.2 }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.1 }}
                     >
                         {activeTab === "general" && <GeneralSettings user={user} />}
                         {activeTab === "security" && <SecuritySettings />}
