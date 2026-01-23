@@ -6,6 +6,7 @@ import { PasswordStrength } from "@/components/auth/PasswordStrength";
 import { updatePassword } from "@/actions/settings";
 import { Loading } from "@/components/ui/Loading";
 import { AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 
 export function SecuritySettings() {
     const [currentPassword, setCurrentPassword] = useState("");
@@ -71,6 +72,11 @@ export function SecuritySettings() {
                 setPassword("");
                 setConfirmPassword("");
 
+                // Show success toast
+                toast.success("Password updated successfully!", {
+                    description: "Your account security has been enhanced."
+                });
+
                 // Keep success state for 5 seconds then go back to idle
                 setTimeout(() => {
                     if (status === "success") setStatus("idle");
@@ -78,15 +84,24 @@ export function SecuritySettings() {
             } else {
                 if (result.error === "Current password is incorrect") {
                     setFieldErrors({ current: "The password you entered is incorrect." });
+                    toast.error("Incorrect password", {
+                        description: "Please check your current password and try again."
+                    });
                 } else {
                     setStatus("error");
                     setMessage(result.error || "Failed to update password");
+                    toast.error("Password update failed", {
+                        description: result.error || "An error occurred while updating your password."
+                    });
                 }
             }
         } catch (err: unknown) {
             console.error("Password update error:", err);
             setStatus("error");
             setMessage("A technical error occurred. Please try again.");
+            toast.error("Technical error", {
+                description: "Please try again or contact support if the issue persists."
+            });
         } finally {
             setIsLoading(false);
         }
