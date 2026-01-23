@@ -125,16 +125,18 @@ export function DashboardSidebar({ user }: SidebarProps) {
                         <Link
                             key={link.href}
                             href={link.href}
+                            prefetch={true}
                             onClick={() => onClose?.()}
                             className={cn(
-                                "flex items-center gap-4 px-5 py-4 rounded-[24px] transition-all duration-300 group relative",
+                                "flex items-center gap-4 px-5 py-4 rounded-[24px] transition-all duration-150 group relative",
                                 isActive
                                     ? "bg-primary text-white shadow-2xl shadow-primary/30 active-card"
                                     : "text-foreground/40 hover:bg-white/5 hover:text-foreground"
                             )}
+                            style={{ willChange: 'transform' }}
                         >
                             <link.icon className={cn(
-                                "h-5 w-5 transition-all duration-500 group-hover:scale-110 shrink-0",
+                                "h-5 w-5 transition-all duration-200 group-hover:scale-110 shrink-0",
                                 isActive ? "text-white scale-110" : "text-foreground/30 group-hover:text-primary"
                             )} />
                             <span className="font-black text-[13px] tracking-tight whitespace-nowrap">{link.name}</span>
@@ -143,6 +145,7 @@ export function DashboardSidebar({ user }: SidebarProps) {
                                 <motion.div
                                     layoutId="nav-indicator"
                                     className="ml-auto"
+                                    transition={{ type: "spring", bounce: 0.2, duration: 0.3 }}
                                 >
                                     <div className="h-5 w-5 rounded-lg bg-white/20 flex items-center justify-center">
                                         <ChevronRight className="h-3 w-3 text-white" />
@@ -160,10 +163,12 @@ export function DashboardSidebar({ user }: SidebarProps) {
                             <Link
                                 key={link.href}
                                 href={link.href}
+                                prefetch={true}
                                 onClick={() => onClose?.()}
-                                className="flex items-center gap-4 px-5 py-4 rounded-[24px] text-foreground/40 hover:bg-white/5 hover:text-foreground transition-all duration-300 group"
+                                className="flex items-center gap-4 px-5 py-4 rounded-[24px] text-foreground/40 hover:bg-white/5 hover:text-foreground transition-all duration-150 group"
+                                style={{ willChange: 'transform' }}
                             >
-                                <link.icon className="h-5 w-5 text-foreground/20 group-hover:text-primary transition-colors" />
+                                <link.icon className="h-5 w-5 text-foreground/20 group-hover:text-primary transition-colors duration-200" />
                                 <span className="font-black text-[13px] tracking-tight">{link.name}</span>
                             </Link>
                         ))}

@@ -1,12 +1,12 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
+import { memo, useMemo } from "react";
 import {
     User as UserIcon,
     Lock,
     ShieldCheck,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 import { GeneralSettings } from "@/components/dashboard/settings/GeneralSettings";
 import { SecuritySettings } from "@/components/dashboard/settings/SecuritySettings";
 import { VerificationSettings } from "@/components/dashboard/settings/VerificationSettings";
@@ -23,6 +23,11 @@ interface SettingsTabsProps {
     };
     role?: string;
 }
+
+// Memoized tab content components
+const MemoizedGeneralSettings = memo(GeneralSettings);
+const MemoizedSecuritySettings = memo(SecuritySettings);
+const MemoizedVerificationSettings = memo(VerificationSettings);
 
 export function SettingsTabs({ user, role }: SettingsTabsProps) {
     const searchParams = useSearchParams();
@@ -44,10 +49,18 @@ export function SettingsTabs({ user, role }: SettingsTabsProps) {
         router.replace(`/dashboard/settings?${params.toString()}`, { scroll: false });
     };
 
+    // Memoize tab content to prevent unnecessary re-renders
+    const generalContent = useMemo(() => <MemoizedGeneralSettings user={user} />, [user]);
+    const securityContent = useMemo(() => <MemoizedSecuritySettings />, []);
+    const verificationContent = useMemo(() => <MemoizedVerificationSettings user={user} />, [user]);
+
     return (
         <div className="space-y-8">
             {/* Tab Navigation */}
-            <div className="flex items-center gap-1 p-1 md:p-1.5 rounded-xl md:rounded-2xl bg-white/5 border border-white/10 w-full md:w-fit overflow-x-auto max-w-full no-scrollbar">
+            <div
+                className="flex items-center gap-1 p-1 md:p-1.5 rounded-xl md:rounded-2xl bg-white/5 border border-white/10 w-full md:w-fit overflow-x-auto max-w-full no-scrollbar"
+                style={{ willChange: 'transform' }}
+            >
                 {tabs.map((tab) => {
                     const isActive = activeTab === tab.id;
                     const Icon = tab.icon;
@@ -57,14 +70,17 @@ export function SettingsTabs({ user, role }: SettingsTabsProps) {
                             onClick={() => setTab(tab.id)}
                             className={`flex items-center gap-2 px-3 md:px-6 py-2 md:py-2.5 rounded-lg md:rounded-xl text-xs md:text-sm font-bold transition-all relative shrink-0 whitespace-nowrap ${isActive ? "text-primary" : "text-foreground/40 hover:text-foreground hover:bg-white/5"
                                 }`}
+                            style={{ willChange: 'transform' }}
                         >
                             <Icon className="h-4 w-4" />
                             <span>{tab.name}</span>
                             {isActive && (
-                                <motion.div
-                                    layoutId="active-tab-bg"
+                                <div
                                     className="absolute inset-0 bg-primary/10 border border-primary/20 rounded-xl -z-10"
-                                    transition={{ type: "spring", bounce: 0.15, duration: 0.25 }}
+                                    style={{
+                                        willChange: 'transform',
+                                        transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)'
+                                    }}
                                 />
                             )}
                         </button>
@@ -72,20 +88,37 @@ export function SettingsTabs({ user, role }: SettingsTabsProps) {
                 })}
             </div>
 
-            {/* Content Area */}
+            {/* Content Area - All tabs force-mounted for instant switching */}
             <div className="mt-8">
-                <AnimatePresence mode="wait">
-                    <motion.div
-                        key={activeTab}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.1 }}
+                <div
+                    style={{
+                        display: activeTab === "general" ? "block" : "none",
+                        willChange: 'opacity',
+                        contain: 'layout style paint',
+                    }}
+                >
+                    {generalContent}
+                </div>
+                <div
+                    style={{
+                        display: activeTab === "security" ? "block" : "none",
+                        willChange: 'opacity',
+                        contain: 'layout style paint',
+                    }}
+                >
+                    {securityContent}
+                </div>
+                {!isAdmin && (
+                    <div
+                        style={{
+                            display: activeTab === "verification" ? "block" : "none",
+                            willChange: 'opacity',
+                            contain: 'layout style paint',
+                        }}
                     >
-                        {activeTab === "general" && <GeneralSettings user={user} />}
-                        {activeTab === "security" && <SecuritySettings />}
-                        {activeTab === "verification" && <VerificationSettings user={user} />}
-                    </motion.div>
-                </AnimatePresence>
+                        {verificationContent}
+                    </div>
+                )}
             </div>
         </div>
     );
