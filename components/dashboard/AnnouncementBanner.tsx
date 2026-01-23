@@ -79,8 +79,9 @@ export function AnnouncementBanner({ announcements }: AnnouncementBannerProps) {
                             initial={{ opacity: 0, scale: 0.98, y: -20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
+                            transition={{ duration: 0.4, ease: "easeOut" }}
                             className={cn(
-                                "relative overflow-hidden p-6 sm:p-8 rounded-[40px] border shadow-2xl group transition-all duration-500",
+                                "relative overflow-hidden p-5 md:p-8 rounded-[32px] md:rounded-[40px] border shadow-2xl group transition-all duration-500",
                                 severityConfig.bg,
                                 severityConfig.glow
                             )}
@@ -124,7 +125,7 @@ export function AnnouncementBanner({ announcements }: AnnouncementBannerProps) {
                                             })}
                                         </span>
                                     </div>
-                                    <p className="text-base text-foreground/60 font-medium leading-relaxed max-w-5xl">
+                                    <p className="text-sm md:text-base text-foreground/60 font-medium leading-relaxed max-w-5xl">
                                         {announcement.content}
                                     </p>
                                 </div>
