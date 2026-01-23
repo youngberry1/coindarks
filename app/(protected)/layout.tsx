@@ -4,6 +4,8 @@ import { DashboardSidebar } from "@/components/layout/DashboardSidebar";
 import { SupportWidget } from "@/components/dashboard/SupportWidget";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 
+import { AdminNotificationListener } from "@/components/admin/AdminNotificationListener";
+
 export default async function ProtectedLayout({
     children,
 }: {
@@ -47,6 +49,9 @@ export default async function ProtectedLayout({
 
             {/* Sidebar component */}
             <DashboardSidebar user={sidebarUser} />
+
+            {/* Admin Notifications Listener */}
+            {isAdmin && <AdminNotificationListener />}
 
             {/* Main content area */}
             <main className="flex-1 2xl:ml-80 relative pt-24 2xl:pt-0 min-h-screen overflow-y-auto">
