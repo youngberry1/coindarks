@@ -31,12 +31,15 @@ export function AnnouncementBanner({ announcements }: AnnouncementBannerProps) {
         localStorage.setItem("dismissed_announcements", JSON.stringify(nextDismissed));
     };
 
-    if (!mounted || visibleAnnouncements.length === 0) return null;
+    // We don't return null here anymore, we render the AnimatePresence
+    // which handles the "empty" state with exit animations if needed,
+    // or simply renders nothing if criteria aren't met.
+    // However, to prevent a static "pop" we rely on the mounted check inside the JSX.
 
     return (
         <div className="space-y-6 mb-12">
-            <AnimatePresence mode="popLayout">
-                {visibleAnnouncements.map((announcement) => {
+            <AnimatePresence mode="popLayout" initial={false}>
+                {visibleAnnouncements.length > 0 && mounted && visibleAnnouncements.map((announcement) => {
                     const severityConfig = {
                         URGENT: {
                             bg: "bg-red-500/10 border-red-500/20",
@@ -76,68 +79,72 @@ export function AnnouncementBanner({ announcements }: AnnouncementBannerProps) {
                     return (
                         <motion.div
                             key={announcement.id}
-                            initial={{ opacity: 0, scale: 0.98, y: -20 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
-                            transition={{ duration: 0.4, ease: "easeOut" }}
-                            className={cn(
-                                "relative overflow-hidden p-5 md:p-8 rounded-[32px] md:rounded-[40px] border shadow-2xl group transition-all duration-500",
-                                severityConfig.bg,
-                                severityConfig.glow
-                            )}
+                            initial={{ opacity: 0, height: 0, scale: 0.98, marginTop: 0 }}
+                            animate={{ opacity: 1, height: "auto", scale: 1, marginTop: 0 }}
+                            exit={{ opacity: 0, height: 0, scale: 0.95, marginTop: 0 }}
+                            transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }} // Smooth "easeOutExpo" like curve
+                            className="overflow-hidden" // Essential for height animation
                         >
-                            {/* Decorative background element */}
-                            <div className={cn(
-                                "absolute -top-12 -right-12 h-48 w-48 blur-[80px] opacity-20 transition-all duration-1000 group-hover:scale-110",
-                                severityConfig.iconColor.replace("text-", "bg-")
-                            )} />
-
-                            <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-6 sm:gap-8">
+                            <div
+                                className={cn(
+                                    "relative overflow-hidden p-5 md:p-8 rounded-[32px] md:rounded-[40px] border shadow-2xl group transition-all duration-500 mb-6", // moved mb-6 here to animate with height
+                                    severityConfig.bg,
+                                    severityConfig.glow
+                                )}
+                            >
+                                {/* Decorative background element */}
                                 <div className={cn(
-                                    "h-14 w-14 rounded-2xl flex items-center justify-center shrink-0 border transition-transform duration-500 group-hover:rotate-6",
-                                    severityConfig.accentBg,
-                                    announcement.severity === 'URGENT' ? 'border-red-500/20' :
-                                        announcement.severity === 'WARNING' ? 'border-amber-500/20' :
-                                            'border-white/5'
-                                )}>
-                                    <Icon className={cn("h-7 w-7", severityConfig.iconColor)} />
-                                </div>
+                                    "absolute -top-12 -right-12 h-48 w-48 blur-[80px] opacity-20 transition-all duration-1000 group-hover:scale-110",
+                                    severityConfig.iconColor.replace("text-", "bg-")
+                                )} />
 
-                                <div className="flex-1 space-y-2">
-                                    <div className="flex items-center gap-3">
-                                        <div className={cn(
-                                            "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border",
-                                            severityConfig.accentBg,
-                                            announcement.severity === 'URGENT' ? 'border-red-500/20' :
-                                                announcement.severity === 'WARNING' ? 'border-amber-500/20' :
-                                                    'border-white/5'
-                                        )}>
-                                            {announcement.severity === 'URGENT' ? 'Critical Link' :
-                                                announcement.severity === 'WARNING' ? 'Protocol Notice' :
-                                                    'Master Relay'}
-                                        </div>
-                                        <div className="h-1 w-1 rounded-full bg-white/10" />
-                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/20">
-                                            {new Date(announcement.created_at).toLocaleDateString(undefined, {
-                                                month: 'short',
-                                                day: 'numeric',
-                                                year: 'numeric'
-                                            })}
-                                        </span>
+                                <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-6 sm:gap-8">
+                                    <div className={cn(
+                                        "h-14 w-14 rounded-2xl flex items-center justify-center shrink-0 border transition-transform duration-500 group-hover:rotate-6",
+                                        severityConfig.accentBg,
+                                        announcement.severity === 'URGENT' ? 'border-red-500/20' :
+                                            announcement.severity === 'WARNING' ? 'border-amber-500/20' :
+                                                'border-white/5'
+                                    )}>
+                                        <Icon className={cn("h-7 w-7", severityConfig.iconColor)} />
                                     </div>
-                                    <p className="text-sm md:text-base text-foreground/60 font-medium leading-relaxed max-w-5xl">
-                                        {announcement.content}
-                                    </p>
-                                </div>
 
-                                <div className="flex items-center gap-4 shrink-0">
-                                    <button
-                                        onClick={() => handleDismiss(announcement.id)}
-                                        className="h-12 w-12 rounded-2xl bg-white/5 border border-white/5 text-foreground/20 hover:text-foreground hover:bg-white/10 hover:border-white/10 transition-all active:scale-90 flex items-center justify-center group/btn"
-                                        aria-label="Acknowledge and dismiss"
-                                    >
-                                        <X className="h-5 w-5 group-hover/btn:rotate-90 transition-transform duration-500" />
-                                    </button>
+                                    <div className="flex-1 space-y-2">
+                                        <div className="flex items-center gap-3">
+                                            <div className={cn(
+                                                "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border",
+                                                severityConfig.accentBg,
+                                                announcement.severity === 'URGENT' ? 'border-red-500/20' :
+                                                    announcement.severity === 'WARNING' ? 'border-amber-500/20' :
+                                                        'border-white/5'
+                                            )}>
+                                                {announcement.severity === 'URGENT' ? 'Critical Link' :
+                                                    announcement.severity === 'WARNING' ? 'Protocol Notice' :
+                                                        'Master Relay'}
+                                            </div>
+                                            <div className="h-1 w-1 rounded-full bg-white/10" />
+                                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/20">
+                                                {new Date(announcement.created_at).toLocaleDateString(undefined, {
+                                                    month: 'short',
+                                                    day: 'numeric',
+                                                    year: 'numeric'
+                                                })}
+                                            </span>
+                                        </div>
+                                        <p className="text-sm md:text-base text-foreground/60 font-medium leading-relaxed max-w-5xl">
+                                            {announcement.content}
+                                        </p>
+                                    </div>
+
+                                    <div className="flex items-center gap-4 shrink-0">
+                                        <button
+                                            onClick={() => handleDismiss(announcement.id)}
+                                            className="h-12 w-12 rounded-2xl bg-white/5 border border-white/5 text-foreground/20 hover:text-foreground hover:bg-white/10 hover:border-white/10 transition-all active:scale-90 flex items-center justify-center group/btn"
+                                            aria-label="Acknowledge and dismiss"
+                                        >
+                                            <X className="h-5 w-5 group-hover/btn:rotate-90 transition-transform duration-500" />
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </motion.div>

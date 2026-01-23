@@ -40,7 +40,7 @@ export function Loading({
             exit={{ opacity: 0 }}
             className={cn(
                 "flex flex-col items-center justify-center overflow-hidden",
-                fullScreen ? "fixed inset-0 z-99999 bg-background/80 backdrop-blur-md h-screen w-screen" : "relative p-4 sm:p-8 md:p-12 w-full min-h-[200px]",
+                fullScreen ? "fixed inset-0 z-99999 bg-black/90 backdrop-blur-xl h-screen w-screen" : "relative p-4 sm:p-8 md:p-12 w-full min-h-[200px]",
                 className
             )}
         >
@@ -50,13 +50,13 @@ export function Loading({
                     <motion.div
                         animate={{ rotate: 360 }}
                         transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
-                        className="w-full h-full rounded-full border-[3px] sm:border-4 border-primary/10 border-t-primary shadow-[0_0_20px_rgba(59,130,246,0.2)]"
+                        className="w-full h-full rounded-full border-[3px] sm:border-4 border-white/10 border-t-white shadow-[0_0_20px_rgba(255,255,255,0.2)]"
                     />
                     {/* Inner pulse for extra depth */}
                     <motion.div
                         animate={{ scale: [0.8, 1.1, 0.8], opacity: [0.3, 0.6, 0.3] }}
                         transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                        className="absolute inset-0 rounded-full bg-primary/5 -z-10"
+                        className="absolute inset-0 rounded-full bg-white/5 -z-10"
                     />
                 </div>
 
@@ -65,7 +65,7 @@ export function Loading({
                     <motion.p
                         initial={{ opacity: 0, y: 5 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="text-xs sm:text-sm md:text-base font-bold text-foreground/50 tracking-widest uppercase text-center max-w-xs sm:max-w-sm md:max-w-md animate-pulse px-4"
+                        className="text-xs sm:text-sm md:text-base font-bold text-white tracking-widest uppercase text-center max-w-xs sm:max-w-sm md:max-w-md animate-pulse px-4"
                     >
                         {message}
                     </motion.p>

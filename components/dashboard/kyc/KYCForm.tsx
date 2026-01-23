@@ -60,14 +60,12 @@ export function KYCForm() {
 
 
 
-    // Cleanup object URLs to avoid memory leaks
-    useEffect(() => {
-        return () => {
-            Object.values(previews).forEach(url => {
-                if (url) URL.revokeObjectURL(url);
-            });
-        };
-    }, [previews]);
+    // Track active URLs for cleanup
+    // Removed activeUrlsRef as we are switching to Data URLs which are managed by JS garbage collector automatically
+    // No manual cleanup needed for base64 strings
+
+    // Cleanup object URLs to avoid memory leaks ONLY on unmount
+
 
     const handleNext = () => setCurrentStep(prev => Math.min(prev + 1, STEPS.length - 1));
     const handleBack = () => setCurrentStep(prev => Math.max(prev - 1, 0));
@@ -76,15 +74,19 @@ export function KYCForm() {
         const file = acceptedFiles[0];
         if (!file) return;
 
-        // Revoke old preview if exists
-        if (previews[id]) {
-            URL.revokeObjectURL(previews[id]);
-        }
+        // Use FileReader for maximum compatibility (especially on mobile/Android)
+        // Blob URLs can sometimes be finicky or get revoked prematurely on mobile browsers.
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const result = e.target?.result as string;
+            if (result) {
+                setPreviews(prev => ({ ...prev, [id]: result }));
+            }
+        };
+        reader.readAsDataURL(file);
 
-        const blobUrl = URL.createObjectURL(file);
         setFormData(prev => ({ ...prev, [`${id}Image`]: file }));
-        setPreviews(prev => ({ ...prev, [id]: blobUrl }));
-    }, [previews]);
+    }, []);
 
     const onDropRejected = useCallback((id: 'front' | 'back' | 'selfie', fileRejections: FileRejection[]) => {
         const rejection = fileRejections[0];
@@ -121,17 +123,25 @@ export function KYCForm() {
             if (formData.backImage) submitData.append("back", formData.backImage);
             if (formData.selfieImage) submitData.append("selfie", formData.selfieImage);
 
+            // Debug: Check payload keys
+            console.log("Submitting KYC Data Keys:", Array.from(submitData.keys()));
+
             const result = await submitKYC(submitData);
 
             if (result.success) {
                 toast.success("KYC Submitted Successfully!");
                 setCurrentStep(3); // Complete
             } else {
+                console.error("Server returned error:", result.error);
                 toast.error(result.error || "Submission failed");
             }
         } catch (error) {
-            console.error("KYC Client Error:", error);
-            toast.error("An error occurred during submission.");
+            console.error("KYC Client Error Detailed:", error);
+            if (error instanceof Error) {
+                toast.error(`Error: ${error.message}`);
+            } else {
+                toast.error("An unexpected error occurred.");
+            }
         } finally {
             setIsLoading(false);
         }
@@ -359,7 +369,14 @@ function ImageUpload({
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
         onDropRejected: onRejected,
-        accept: { 'image/jpeg': [], 'image/png': [], 'image/webp': [] },
+        // Explicit MIME types with extensions help Android/Mobile pickers launch faster and more reliably
+        accept: {
+            'image/jpeg': ['.jpeg', '.jpg'],
+            'image/png': ['.png'],
+            'image/webp': ['.webp'],
+            'image/heic': ['.heic'],
+            'image/heif': ['.heif']
+        },
         maxFiles: 1,
         multiple: false,
         maxSize: 5 * 1024 * 1024 // 5MB
@@ -388,8 +405,8 @@ function ImageUpload({
                         toast.error("Failed to load image preview. The file might be corrupted.");
                     }}
                 />
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
-                    <button onClick={onRemove} className="p-3 rounded-full bg-red-500 text-white hover:scale-110 transition-all">
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center gap-4">
+                    <button onClick={onRemove} className="p-3 rounded-full bg-red-500 text-white shadow-lg hover:scale-110 active:scale-90 transition-all">
                         <X className="h-5 w-5" />
                     </button>
                 </div>
