@@ -202,9 +202,9 @@ export function KYCReviewList({ submissions }: KYCReviewListProps) {
                                 <button
                                     disabled={isLoading}
                                     onClick={() => handleAction(sub.id, 'APPROVE')}
-                                    className="flex-1 h-14 sm:h-18 rounded-2xl sm:rounded-[28px] bg-primary text-white font-black text-[10px] sm:text-xs uppercase tracking-[0.2em] shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 sm:gap-4 transition-all disabled:opacity-50"
+                                    className="w-full sm:flex-1 h-16 rounded-3xl bg-primary text-white font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-4 transition-all disabled:opacity-50 shrink-0"
                                 >
-                                    <ShieldCheck className="h-4 sm:h-5 w-4 sm:w-5" />
+                                    <ShieldCheck className="h-5 w-5" />
                                     <span>Approve Member</span>
                                 </button>
                                 <button
@@ -213,9 +213,9 @@ export function KYCReviewList({ submissions }: KYCReviewListProps) {
                                         setSelectedSubmission(sub);
                                         setIsRejectionModalOpen(true);
                                     }}
-                                    className="flex-1 h-14 sm:h-18 rounded-2xl sm:rounded-[28px] glass border border-red-500/20 text-red-500 font-black text-[10px] sm:text-xs uppercase tracking-[0.2em] hover:bg-red-500 hover:text-white transition-all disabled:opacity-50 flex items-center justify-center gap-2 sm:gap-3 active:scale-95"
+                                    className="w-full sm:flex-1 h-16 rounded-3xl bg-red-500/5 border border-red-500/20 text-red-500 font-black text-xs uppercase tracking-[0.2em] hover:bg-red-500 hover:text-white transition-all disabled:opacity-50 flex items-center justify-center gap-3 active:scale-95 shrink-0"
                                 >
-                                    <XCircle className="h-4 sm:h-5 w-4 sm:w-5" />
+                                    <XCircle className="h-5 w-5" />
                                     <span>Reject</span>
                                 </button>
                             </div>
