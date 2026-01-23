@@ -30,10 +30,10 @@ export default function Security() {
             <div className="absolute top-1/4 -right-20 w-96 h-96 bg-primary/5 blur-[120px] rounded-full -z-10 animate-pulse-slow" />
 
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-                <div className="flex flex-col lg:flex-row gap-20 items-center">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 xl:gap-24 items-center">
 
                     {/* Visual & Context Column */}
-                    <div className="lg:w-1/2 space-y-12">
+                    <div className="space-y-12">
                         <div className="space-y-6">
                             <motion.div
                                 initial={{ opacity: 0, x: -20 }}
@@ -92,7 +92,7 @@ export default function Security() {
                     </div>
 
                     {/* Security Asset & Features */}
-                    <div className="lg:w-1/2 space-y-8">
+                    <div className="space-y-8">
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             whileInView={{ opacity: 1, scale: 1 }}
