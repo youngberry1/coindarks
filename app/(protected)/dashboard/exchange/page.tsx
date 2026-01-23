@@ -36,20 +36,21 @@ export default async function ExchangePage() {
     const session = await auth();
     if (!session) redirect("/login");
 
+    const isAdmin = session.user.role === 'ADMIN';
+
+    const [inventory, allRates, globalStats, recentOrders] = await Promise.all([
+        getCryptos(true),
+        getExchangeRates(),
+        getGlobalMarketStats(),
+        getRecentOrders(4, isAdmin ? undefined : session.user.id)
+    ]);
+
     const { data: user } = await supabaseAdmin
         .from('users')
         .select('kyc_status')
         .eq('id', session.user.id)
         .single();
 
-    const [inventory, allRates, globalStats, recentOrders] = await Promise.all([
-        getCryptos(true),
-        getExchangeRates(),
-        getGlobalMarketStats(),
-        getRecentOrders(4)
-    ]);
-
-    const isAdmin = session.user.role === 'ADMIN';
     const isKycApproved = user?.kyc_status === 'APPROVED' || isAdmin;
 
     const supportedAssets = (inventory || [])

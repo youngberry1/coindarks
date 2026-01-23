@@ -44,13 +44,19 @@ export async function getActiveSessions() {
     }
 }
 
-export async function getRecentOrders(limit = 4) {
+export async function getRecentOrders(limit = 4, userId?: string) {
     try {
-        const { data } = await supabaseAdmin
+        let query = supabaseAdmin
             .from('orders')
             .select('id, order_number, asset, amount_crypto, created_at, status')
             .order('created_at', { ascending: false })
             .limit(limit);
+
+        if (userId) {
+            query = query.eq('user_id', userId);
+        }
+
+        const { data } = await query;
 
         return data || [];
     } catch (e) {
