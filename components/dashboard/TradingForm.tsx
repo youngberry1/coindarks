@@ -473,7 +473,7 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                                 readOnly={type === 'SELL'}
                                 onFocus={() => setShowWalletDropdown(true)}
                                 onBlur={() => setTimeout(() => setShowWalletDropdown(false), 200)}
-                                placeholder={type === 'BUY' ? `Enter ${asset.id} destination wallet...` : "Choose bank account..."}
+                                placeholder={type === 'BUY' ? `Enter ${asset.id} destination wallet...` : "Choose bank account or mobile money..."}
                                 className="w-full h-16 bg-white/3 border border-white/5 rounded-3xl pl-16 pr-6 text-[11px] font-black uppercase tracking-widest placeholder:text-white/10 focus:outline-none focus:border-primary/30 transition-all text-white"
                             />
 
@@ -497,7 +497,7 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                                                     </button>
                                                 ))}
                                                 <Link
-                                                    href={type === 'BUY' ? '/dashboard/wallets' : '/dashboard/settings'}
+                                                    href={type === 'BUY' ? '/dashboard/wallets' : '/dashboard/wallets?tab=fiat'}
                                                     className="w-full text-center p-5 hover:bg-primary/5 transition-colors border-t border-white/5 text-primary text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2"
                                                 >
                                                     <ArrowUpRight className="h-3 w-3" />
@@ -512,7 +512,7 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                                                         : 'No payment methods saved yet.'}
                                                 </div>
                                                 <Link
-                                                    href={type === 'BUY' ? '/dashboard/wallets' : '/dashboard/settings'}
+                                                    href={type === 'BUY' ? '/dashboard/wallets' : '/dashboard/wallets?tab=fiat'}
                                                     className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary/10 hover:bg-primary/20 border border-primary/20 rounded-xl text-primary text-[10px] font-black uppercase tracking-widest transition-all"
                                                 >
                                                     <ArrowUpRight className="h-3 w-3" />
