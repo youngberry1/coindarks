@@ -49,8 +49,8 @@ export function DashboardSidebar({ user }: SidebarProps) {
     const userLinks = [
         { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
         { name: "Buy & Sell", href: "/dashboard/exchange", icon: RefreshCcw },
-        { name: "My Trades", href: "/dashboard/orders", icon: History },
-        { name: "My Accounts", href: "/dashboard/wallets", icon: Wallet },
+        { name: "Trade History", href: "/dashboard/orders", icon: History },
+        { name: "Wallets & Accounts", href: "/dashboard/wallets", icon: Wallet },
         { name: "Settings", href: "/dashboard/settings", icon: Settings },
         { name: "Help Center", href: "/dashboard/support", icon: Mail },
     ];

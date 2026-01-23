@@ -212,7 +212,7 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
         const minCurrentFiat = (100 / ghsRate) * fiat.rate;
 
         if (fiatVal < minCurrentFiat) {
-            setError(`Min order is ${fiat.symbol}${Math.ceil(minCurrentFiat).toLocaleString()}`);
+            setError(`Minimum amount: ${fiat.symbol}${Math.ceil(minCurrentFiat).toLocaleString()}`);
             return false;
         }
         setError(null);

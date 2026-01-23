@@ -101,32 +101,32 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                     <div className="absolute inset-0 bg-primary/5 blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 rounded-[32px]" />
                     <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-foreground/20 group-focus-within:text-primary transition-all duration-500" />
                     <input
-                        placeholder="FIND TRADE BY ORDER NUMBER, EMAIL, OR NAME..."
+                        placeholder="SEARCH TRADES..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-16 pr-8 h-18 rounded-[32px] glass border border-white/5 focus:border-primary/30 focus:outline-none transition-all font-black text-xs uppercase tracking-[0.2em] relative z-10"
+                        className="w-full pl-12 sm:pl-16 pr-6 sm:pr-8 h-14 sm:h-18 rounded-[28px] sm:rounded-[32px] glass border border-white/5 focus:border-primary/30 focus:outline-none transition-all font-black text-[10px] sm:text-xs uppercase tracking-[0.2em] relative z-10"
                     />
                 </div>
 
-                <div className="h-18 px-8 rounded-[32px] glass border border-white/5 flex items-center gap-4 text-foreground/20 shrink-0">
-                    <Activity className="h-5 w-5 text-primary" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] tabular-nums whitespace-nowrap">
-                        {filteredOrders.length} Trades Found
+                <div className="h-14 sm:h-18 px-5 sm:px-8 rounded-[28px] sm:rounded-[32px] glass border border-white/5 flex items-center gap-3 sm:gap-4 text-foreground/20 shrink-0">
+                    <Activity className="h-4 sm:h-5 w-4 sm:w-5 text-primary" />
+                    <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest sm:tracking-[0.2em] tabular-nums whitespace-nowrap">
+                        {filteredOrders.length} Results
                     </span>
                 </div>
             </div>
 
             {/* Desktop Table Registry */}
-            <div className="hidden md:block overflow-hidden rounded-[48px] border border-white/5 glass shadow-2xl">
-                <table className="w-full text-left border-collapse">
+            <div className="hidden lg:block overflow-x-auto rounded-[48px] border border-white/5 glass shadow-2xl">
+                <table className="w-full text-left border-collapse min-w-[1000px]">
                     <thead>
                         <tr className="border-b border-white/5 bg-white/2">
-                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Order Number</th>
-                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Member Info</th>
-                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Trade Type</th>
-                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Net Value</th>
-                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Current Status</th>
-                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em] text-right">Destination</th>
+                            <th className="px-6 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-widest">Order Number</th>
+                            <th className="px-6 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-widest">Member Info</th>
+                            <th className="px-6 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-widest">Trade Type</th>
+                            <th className="px-6 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-widest">Net Value</th>
+                            <th className="px-6 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-widest">Current Status</th>
+                            <th className="px-6 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-widest text-right">Destination</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
@@ -138,9 +138,9 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
                                     exit={{ opacity: 0, scale: 0.98 }}
-                                    className="hover:bg-white/3 transition-all duration-300 group"
+                                    className="hover:bg-white/3 transition-all duration-300 group border-b border-white/5 last:border-0"
                                 >
-                                    <td className="px-10 py-8">
+                                    <td className="px-6 py-8">
                                         <div className="flex items-center gap-3">
                                             <div className="h-8 w-8 rounded-lg bg-white/5 flex items-center justify-center border border-white/5">
                                                 <Hash className="h-3.5 w-3.5 text-foreground/20" />
@@ -148,7 +148,7 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                                             <span className="font-mono text-xs font-black tracking-widest text-foreground group-hover:text-primary transition-colors">{order.order_number}</span>
                                         </div>
                                     </td>
-                                    <td className="px-10 py-8">
+                                    <td className="px-6 py-8">
                                         <div className="flex items-center gap-4">
                                             <div className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center text-primary/40 shrink-0 border border-white/5 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
                                                 <User className="h-4.5 w-4.5" />
@@ -159,7 +159,7 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="px-10 py-8">
+                                    <td className="px-6 py-8">
                                         <div className="flex items-center gap-3">
                                             <div className={cn(
                                                 "h-8 w-8 rounded-full flex items-center justify-center border transition-all duration-500",
@@ -174,11 +174,11 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                                             <span className="text-[10px] font-black uppercase tracking-[0.2em]">{order.type} {order.asset}</span>
                                         </div>
                                     </td>
-                                    <td className="px-10 py-8">
+                                    <td className="px-6 py-8">
                                         <p className="text-sm font-black tabular-nums tracking-tight mb-1">{order.amount_crypto} {order.asset}</p>
                                         <p className="text-[10px] text-foreground/30 font-black uppercase tracking-widest leading-none">≈ {order.amount_fiat.toLocaleString()} {order.fiat_currency}</p>
                                     </td>
-                                    <td className="px-10 py-8">
+                                    <td className="px-6 py-8">
                                         <div className="relative isolate group/select">
                                             <Select
                                                 disabled={updatingId === order.id}
@@ -193,18 +193,18 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                                                 >
                                                     <SelectValue placeholder="Status" />
                                                 </SelectTrigger>
-                                                <SelectContent className="rounded-2xl glass border-white/10 p-2">
-                                                    <SelectItem value="PENDING" className="rounded-xl h-10 text-[10px] font-bold uppercase tracking-widest focus:bg-blue-500/10 focus:text-blue-500 mb-1">Pending</SelectItem>
-                                                    <SelectItem value="PROCESSING" className="rounded-xl h-10 text-[10px] font-bold uppercase tracking-widest focus:bg-amber-500/10 focus:text-amber-500 mb-1">Processing</SelectItem>
-                                                    <SelectItem value="COMPLETED" className="rounded-xl h-10 text-[10px] font-bold uppercase tracking-widest focus:bg-emerald-500/10 focus:text-emerald-500 mb-1">Completed</SelectItem>
-                                                    <SelectItem value="CANCELLED" className="rounded-xl h-10 text-[10px] font-bold uppercase tracking-widest focus:bg-rose-500/10 focus:text-rose-500 mb-1">Cancelled</SelectItem>
-                                                    <SelectItem value="REFUNDED" className="rounded-xl h-10 text-[10px] font-bold uppercase tracking-widest focus:bg-foreground/10 mb-1">Refunded</SelectItem>
+                                                <SelectContent className="rounded-2xl glass border-white/10 p-2 z-100">
+                                                    <SelectItem value="PENDING" className="rounded-xl h-11 text-[10px] font-bold uppercase tracking-widest focus:bg-blue-500/10 focus:text-blue-500 mb-1 cursor-pointer">Pending</SelectItem>
+                                                    <SelectItem value="PROCESSING" className="rounded-xl h-11 text-[10px] font-bold uppercase tracking-widest focus:bg-amber-500/10 focus:text-amber-500 mb-1 cursor-pointer">Processing</SelectItem>
+                                                    <SelectItem value="COMPLETED" className="rounded-xl h-11 text-[10px] font-bold uppercase tracking-widest focus:bg-emerald-500/10 focus:text-emerald-500 mb-1 cursor-pointer">Completed</SelectItem>
+                                                    <SelectItem value="CANCELLED" className="rounded-xl h-11 text-[10px] font-bold uppercase tracking-widest focus:bg-rose-500/10 focus:text-rose-500 mb-1 cursor-pointer">Cancelled</SelectItem>
+                                                    <SelectItem value="REFUNDED" className="rounded-xl h-11 text-[10px] font-bold uppercase tracking-widest focus:bg-foreground/10 mb-1 cursor-pointer">Refunded</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </div>
                                     </td>
-                                    <td className="px-10 py-8 text-right">
-                                        <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-4 group-hover:translate-x-0">
+                                    <td className="px-6 py-8 text-right">
+                                        <div className="flex items-center justify-end gap-3 transition-all duration-500">
                                             <button
                                                 onClick={() => copyAddress(order.receiving_address, order.id)}
                                                 className="h-10 w-10 rounded-xl bg-white/5 border border-white/5 text-foreground/20 hover:text-primary hover:border-primary/20 transition-all active:scale-90 flex items-center justify-center"
@@ -234,17 +234,17 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                 </table>
             </div>
 
-            {/* Mobile Registry Grid */}
-            <div className="md:hidden space-y-6">
+            {/* Mobile/Tablet Registry Grid */}
+            <div className="lg:hidden grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 {filteredOrders.map((order) => (
-                    <div key={order.id} className="p-8 rounded-[40px] border border-white/5 glass space-y-8 relative overflow-hidden group">
+                    <div key={order.id} className="p-4 sm:p-8 rounded-[28px] sm:rounded-[40px] border border-white/5 glass space-y-5 sm:space-y-8 relative overflow-hidden group">
                         <div className="absolute inset-0 bg-primary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                         <div className="relative z-10 flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <span className="font-mono text-[10px] font-black text-foreground/30 bg-white/5 px-3 py-1.5 rounded-xl border border-white/5">#{order.order_number}</span>
+                            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                                <span className="font-mono text-[9px] sm:text-[10px] font-black text-foreground/30 bg-white/5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl border border-white/5">#{order.order_number}</span>
                                 <div className={cn(
-                                    "px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] border",
+                                    "px-3 sm:px-4 py-1 sm:py-1.5 rounded-lg sm:rounded-xl text-[8px] sm:text-[9px] font-black uppercase tracking-[0.2em] border",
                                     order.type === 'BUY' ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/10" : "bg-rose-500/10 text-rose-500 border-rose-500/10"
                                 )}>
                                     {order.type}
@@ -256,28 +256,28 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                                 defaultValue={order.status}
                             >
                                 <SelectTrigger className={cn(
-                                    "h-10 w-[140px] rounded-2xl border text-[9px] font-black uppercase tracking-[0.2em]",
+                                    "h-10 w-[120px] rounded-2xl border text-[9px] font-black uppercase tracking-[0.2em]",
                                     getStatusColor(order.status)
                                 )}>
                                     <SelectValue placeholder="Status" />
                                 </SelectTrigger>
-                                <SelectContent className="glass border-white/10 rounded-2xl">
-                                    <SelectItem value="PENDING">PENDING</SelectItem>
-                                    <SelectItem value="PROCESSING">PROCESSING</SelectItem>
-                                    <SelectItem value="COMPLETED">COMPLETED</SelectItem>
-                                    <SelectItem value="CANCELLED">CANCELLED</SelectItem>
-                                    <SelectItem value="REFUNDED">REFUNDED</SelectItem>
+                                <SelectContent className="glass border-white/10 rounded-2xl z-100 p-1">
+                                    <SelectItem value="PENDING" className="rounded-xl h-10 text-[9px] font-bold uppercase tracking-widest">PENDING</SelectItem>
+                                    <SelectItem value="PROCESSING" className="rounded-xl h-10 text-[9px] font-bold uppercase tracking-widest">PROCESSING</SelectItem>
+                                    <SelectItem value="COMPLETED" className="rounded-xl h-10 text-[9px] font-bold uppercase tracking-widest">COMPLETED</SelectItem>
+                                    <SelectItem value="CANCELLED" className="rounded-xl h-10 text-[9px] font-bold uppercase tracking-widest">CANCELLED</SelectItem>
+                                    <SelectItem value="REFUNDED" className="rounded-xl h-10 text-[9px] font-bold uppercase tracking-widest">REFUNDED</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
 
-                        <div className="relative z-10 flex items-center gap-5 p-6 rounded-[32px] bg-white/3 border border-white/5">
-                            <div className="h-12 w-12 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center text-primary/40 shrink-0">
-                                <User className="h-5 w-5" />
+                        <div className="relative z-10 flex items-center gap-3 sm:gap-5 p-4 sm:p-6 rounded-[20px] sm:rounded-[32px] bg-white/3 border border-white/5">
+                            <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl sm:rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center text-primary/40 shrink-0">
+                                <User className="h-4 sm:h-5 w-4 sm:w-5" />
                             </div>
-                            <div className="min-w-0 space-y-1">
-                                <p className="text-base font-black tracking-tight uppercase leading-none truncate">{order.users.first_name} {order.users.last_name}</p>
-                                <p className="text-[10px] text-foreground/30 font-black uppercase tracking-[0.2em] truncate">{order.users.email}</p>
+                            <div className="min-w-0 space-y-0.5 sm:space-y-1">
+                                <p className="text-sm sm:text-base font-black tracking-tight uppercase leading-none truncate">{order.users.first_name} {order.users.last_name}</p>
+                                <p className="text-[9px] sm:text-[10px] text-foreground/30 font-black uppercase tracking-widest sm:tracking-[0.2em] truncate break-all">{order.users.email}</p>
                             </div>
                         </div>
 
@@ -288,8 +288,8 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                                     <span className="text-[10px] font-black uppercase tracking-widest text-foreground/40">{order.asset} TRADE DETAILS</span>
                                 </div>
                                 <div>
-                                    <p className="text-3xl font-black tabular-nums tracking-tighter leading-none mb-1">{order.amount_crypto} <span className="text-lg opacity-30">{order.asset}</span></p>
-                                    <p className="text-[11px] text-foreground/30 font-black uppercase tracking-[0.2em]">≈ {order.amount_fiat.toLocaleString()} {order.fiat_currency}</p>
+                                    <p className="text-2xl sm:text-3xl font-black tabular-nums tracking-tighter leading-none mb-1">{order.amount_crypto} <span className="text-base sm:text-lg opacity-30">{order.asset}</span></p>
+                                    <p className="text-[10px] sm:text-[11px] text-foreground/30 font-black uppercase tracking-[0.2em]">≈ {order.amount_fiat.toLocaleString()} {order.fiat_currency}</p>
                                 </div>
                             </div>
                             <div className="flex gap-3">
