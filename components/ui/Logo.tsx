@@ -21,6 +21,7 @@ const LogoIcon = ({ size = 40 }: { size: number }) => (
                 fill
                 className="object-contain"
                 sizes={`${size}px`}
+                priority
             />
         </div>
     </div>

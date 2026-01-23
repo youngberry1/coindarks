@@ -82,7 +82,7 @@ export function AssetSelector({ value, onChange, options, type, className }: Ass
                     <ChevronDown className="h-3 w-3 text-white/20 group-hover/trigger:text-white transition-colors shrink-0" />
                 </button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[420px] bg-[#0D0F12] border border-white/10 p-0 gap-0 overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] rounded-[2rem]">
+            <DialogContent aria-describedby={undefined} className="sm:max-w-[420px] bg-[#0D0F12] border border-white/10 p-0 gap-0 overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] rounded-[2rem]">
                 <DialogHeader className="px-6 py-5 border-b border-white/5 bg-[#16191E]/50">
                     <DialogTitle className="text-xs font-black uppercase tracking-[0.3em] text-white/40">
                         Select Terminal Asset
