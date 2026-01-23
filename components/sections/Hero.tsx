@@ -95,7 +95,7 @@ export default function Hero() {
                         <div className="relative aspect-video lg:aspect-21/9 rounded-[24px] overflow-hidden border border-white/5 bg-black/40 shadow-2xl shadow-primary/5">
                             <div className="relative w-full h-full overflow-hidden">
                                 <Image
-                                    src="/hero-professional.png"
+                                    src="/hero-professional-branded.png"
                                     alt="CoinDarks Pro Interface"
                                     fill
                                     priority
