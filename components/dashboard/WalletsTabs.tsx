@@ -8,12 +8,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface WalletsTabsProps {
     activeTab: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     wallets: any[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     paymentMethods: any[];
     assets: string[];
 }
 
 // Memoized tab content components for performance
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CryptoWalletsTab = memo(({ wallets, assets }: { wallets: any[], assets: string[] }) => (
     <div
         className="p-5 md:p-12 rounded-[32px] md:rounded-[40px] border border-white/5 bg-card-bg/50 backdrop-blur-xl relative overflow-hidden group"
@@ -40,6 +43,7 @@ const CryptoWalletsTab = memo(({ wallets, assets }: { wallets: any[], assets: st
 ));
 CryptoWalletsTab.displayName = "CryptoWalletsTab";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const FiatAccountsTab = memo(({ paymentMethods }: { paymentMethods: any[] }) => (
     <div
         className="p-5 md:p-12 rounded-[32px] md:rounded-[40px] border border-white/5 bg-card-bg/50 backdrop-blur-xl relative overflow-hidden group"
