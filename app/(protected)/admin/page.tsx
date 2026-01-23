@@ -61,28 +61,28 @@ export default async function AdminDashboardPage() {
                 <div className="space-y-4">
                     <div className="flex items-center gap-3">
                         <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/40">Secure Session : Administrator</span>
+                        <span className="text-[10px] font-black uppercase tracking-wider sm:tracking-[0.4em] text-foreground/40">Secure Session : Administrator</span>
                     </div>
-                    <h1 className="text-5xl sm:text-7xl font-black tracking-tight leading-none uppercase">
+                    <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-none uppercase">
                         Platform <br />
                         <span className="text-gradient leading-relaxed">Controls.</span>
                     </h1>
-                    <p className="text-xl text-foreground/50 font-medium max-w-2xl leading-relaxed">
+                    <p className="text-base sm:text-xl text-foreground/50 font-medium max-w-2xl leading-relaxed">
                         Centrally manage members, identity verifications, and global platform transactions across all regions.
                     </p>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center gap-6">
+                <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
                     <Link href="/admin/users" className="w-full sm:w-auto group relative">
-                        <div className="absolute inset-0 bg-primary/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-[28px]" />
-                        <div className="relative h-18 px-10 rounded-[28px] bg-primary text-white flex items-center justify-center gap-4 shadow-2xl shadow-primary/30 active:scale-95 transition-all text-xs uppercase tracking-[0.2em] font-black">
-                            <Search className="h-5 w-5" />
+                        <div className="absolute inset-0 bg-primary/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl sm:rounded-[28px]" />
+                        <div className="relative h-14 sm:h-18 px-6 sm:px-10 rounded-2xl sm:rounded-[28px] bg-primary text-white flex items-center justify-center gap-4 shadow-2xl shadow-primary/30 active:scale-95 transition-all text-[10px] sm:text-xs uppercase tracking-[0.2em] font-black">
+                            <Search className="h-4 sm:h-5 w-4 sm:w-5" />
                             <span>Member List</span>
                         </div>
                     </Link>
                     <Link href="/admin/support" className="w-full sm:w-auto group relative">
-                        <div className="relative h-18 px-10 rounded-[28px] glass border border-white/5 flex items-center justify-center gap-4 hover:bg-white/5 hover:border-white/10 active:scale-95 transition-all text-xs uppercase tracking-[0.2em] font-black overflow-hidden group">
-                            <Activity className="h-5 w-5 text-emerald-500" />
+                        <div className="relative h-14 sm:h-18 px-6 sm:px-10 rounded-2xl sm:rounded-[28px] glass border border-white/5 flex items-center justify-center gap-4 hover:bg-white/5 hover:border-white/10 active:scale-95 transition-all text-[10px] sm:text-xs uppercase tracking-[0.2em] font-black overflow-hidden group">
+                            <Activity className="h-4 sm:h-5 w-4 sm:w-5 text-emerald-500" />
                             <span>System Status</span>
                         </div>
                     </Link>
@@ -95,7 +95,7 @@ export default async function AdminDashboardPage() {
                     <Link
                         key={stat.name}
                         href={stat.link}
-                        className="glass-card group p-10 rounded-[48px] border border-white/5 space-y-10 relative overflow-hidden transition-all duration-500 hover:border-white/10"
+                        className="glass-card group p-6 sm:p-8 md:p-10 rounded-2xl sm:rounded-3xl md:rounded-[48px] border border-white/5 space-y-6 sm:space-y-10 relative overflow-hidden transition-all duration-500 hover:border-white/10"
                     >
                         <div className={cn("absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none", stat.bg)} />
 
@@ -113,7 +113,7 @@ export default async function AdminDashboardPage() {
                         </div>
 
                         <div className="space-y-2">
-                            <p className="text-6xl font-black tracking-tighter tabular-nums leading-none">{stat.value}</p>
+                            <p className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter tabular-nums leading-none">{stat.value}</p>
                             <div className="space-y-1">
                                 <p className="text-[10px] font-black uppercase tracking-[0.3em] text-foreground/60">{stat.name}</p>
                                 <p className="text-[10px] font-black uppercase tracking-widest text-foreground/20 leading-relaxed">{stat.sub}</p>
@@ -123,9 +123,9 @@ export default async function AdminDashboardPage() {
                 ))}
             </div>
 
-            <div className="grid grid-cols-1 xl:grid-cols-12 gap-12 sm:gap-20">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 sm:gap-20">
                 {/* Recent Users List */}
-                <div className="xl:col-span-8 space-y-10">
+                <div className="lg:col-span-8 space-y-10">
                     <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
                         <div className="space-y-1">
                             <h2 className="text-2xl font-black tracking-tight flex items-center gap-3 uppercase">
@@ -138,18 +138,18 @@ export default async function AdminDashboardPage() {
                         </Link>
                     </div>
 
-                    <div className="glass-card rounded-[48px] border border-white/5 overflow-hidden">
+                    <div className="glass-card rounded-2xl sm:rounded-3xl md:rounded-[48px] border border-white/5 overflow-hidden">
                         {(recentUsers && recentUsers.length > 0) ? (
                             <div className="divide-y divide-white/5">
                                 {recentUsers.map((user) => (
                                     <Link
                                         key={user.id}
                                         href={`/admin/users/${user.id}`}
-                                        className="group p-8 flex flex-col sm:flex-row sm:items-center justify-between hover:bg-white/2 transition-all duration-500 active:scale-[0.99]"
+                                        className="group p-5 sm:p-6 md:p-8 flex flex-col sm:flex-row sm:items-center justify-between hover:bg-white/2 transition-all duration-500 active:scale-[0.99]"
                                     >
-                                        <div className="flex items-center gap-6 mb-6 sm:mb-0">
+                                        <div className="flex items-center gap-4 sm:gap-6 mb-6 sm:mb-0">
                                             <div className="relative">
-                                                <div className="h-16 w-16 rounded-[24px] overflow-hidden border-2 border-white/5 group-hover:border-primary/30 transition-all duration-500 shadow-2xl">
+                                                <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-xl sm:rounded-[24px] overflow-hidden border-2 border-white/5 group-hover:border-primary/30 transition-all duration-500 shadow-2xl">
                                                     {user.profile_image ? (
                                                         <Image
                                                             src={user.profile_image}
@@ -176,14 +176,21 @@ export default async function AdminDashboardPage() {
                                                     }
                                                 </div>
                                             </div>
-                                            <div className="space-y-1">
-                                                <p className="font-black text-lg tracking-tight group-hover:text-primary transition-colors">
-                                                    {user.first_name} {user.last_name}
-                                                </p>
-                                                <div className="flex items-center gap-3">
-                                                    <p className="text-[10px] text-foreground/30 font-black tracking-widest uppercase">{user.email}</p>
-                                                    <div className="h-1 w-1 rounded-full bg-white/10" />
-                                                    <p className="text-[10px] text-foreground/20 font-black tabular-nums tracking-widest uppercase">
+                                            <div className="space-y-1.5 min-w-0 flex-1">
+                                                <div className="flex items-center gap-2">
+                                                    <p className="font-black text-lg tracking-tight group-hover:text-primary transition-colors truncate">
+                                                        {user.first_name} {user.last_name}
+                                                    </p>
+                                                    {user.kyc_status === 'APPROVED' && (
+                                                        <ShieldCheck className="h-4 w-4 text-emerald-500 shrink-0" />
+                                                    )}
+                                                </div>
+                                                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+                                                    <p className="text-[10px] text-foreground/30 font-black tracking-widest uppercase truncate max-w-[200px] sm:max-w-none">
+                                                        {user.email}
+                                                    </p>
+                                                    <div className="hidden sm:block h-1 w-1 rounded-full bg-white/10" />
+                                                    <p className="text-[10px] text-foreground/20 font-black tabular-nums tracking-widest uppercase shrink-0">
                                                         {new Date(user.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                                                     </p>
                                                 </div>
@@ -218,14 +225,14 @@ export default async function AdminDashboardPage() {
                 </div>
 
                 {/* System Status Sidebar */}
-                <div className="xl:col-span-4 space-y-12">
+                <div className="lg:col-span-4 space-y-12">
                     <div className="space-y-8">
                         <div className="space-y-1">
                             <h2 className="text-xl font-black tracking-tight uppercase">System <span className="text-gradient">Health.</span></h2>
                             <p className="text-xs text-foreground/40 font-black uppercase tracking-[0.2em]">Asset Reserves</p>
                         </div>
 
-                        <div className="glass-card p-10 rounded-[48px] border border-white/5 space-y-10">
+                        <div className="glass-card p-6 sm:p-8 md:p-10 rounded-2xl sm:rounded-3xl md:rounded-[48px] border border-white/5 space-y-8 sm:space-y-10">
                             <div className="space-y-6">
                                 {(inventoryStats || []).map((asset) => (
                                     <div key={asset.id} className="flex items-center justify-between group/asset">
@@ -268,7 +275,7 @@ export default async function AdminDashboardPage() {
                     </div>
 
                     {(pendingKYC ?? 0) > 0 && (
-                        <div className="relative overflow-hidden p-8 rounded-[40px] bg-red-500/5 border-2 border-red-500/20 group transition-all duration-500 hover:border-red-500/40">
+                        <div className="relative overflow-hidden p-6 sm:p-8 rounded-2xl sm:rounded-3xl md:rounded-[40px] bg-red-500/5 border-2 border-red-500/20 group transition-all duration-500 hover:border-red-500/40">
                             <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:rotate-12 transition-transform duration-700">
                                 <AlertTriangle className="h-20 w-20 text-red-500" />
                             </div>

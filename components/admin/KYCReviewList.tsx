@@ -82,7 +82,7 @@ export function KYCReviewList({ submissions }: KYCReviewListProps) {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="p-10 rounded-[48px] border border-white/5 glass shadow-2xl space-y-10 group"
+                            className="p-6 sm:p-8 md:p-10 rounded-2xl sm:rounded-3xl md:rounded-[48px] border border-white/5 glass shadow-2xl space-y-8 sm:space-y-10 group"
                         >
                             {/* User Identity Block */}
                             <div className="flex flex-col sm:flex-row gap-8">
@@ -101,16 +101,23 @@ export function KYCReviewList({ submissions }: KYCReviewListProps) {
                                 </div>
                                 <div className="flex-1 min-w-0 space-y-3">
                                     <div className="flex items-center gap-4">
-                                        <h3 className="text-2xl font-black tracking-tight uppercase truncate">
+                                        <h3 className="text-xl sm:text-2xl font-black tracking-tight uppercase truncate">
                                             {sub.users.first_name} {sub.users.last_name}
                                         </h3>
-                                        <div className="px-5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-primary/10">
+                                        <div className="px-4 sm:px-5 py-1 sm:py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-primary/10 shrink-0">
                                             {sub.document_type}
                                         </div>
                                     </div>
-                                    <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-foreground/30 font-black uppercase tracking-widest">
-                                        <span className="flex items-center gap-2"><Mail className="h-4 w-4 opacity-50" /> {sub.users.email}</span>
-                                        <span className="flex items-center gap-2"><Calendar className="h-4 w-4 opacity-50" /> {new Date(sub.submitted_at).toLocaleDateString()}</span>
+                                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 text-xs text-foreground/30 font-black uppercase tracking-widest min-w-0">
+                                        <span className="flex items-center gap-2 truncate">
+                                            <Mail className="h-3.5 w-3.5 opacity-50 shrink-0" />
+                                            <span className="truncate max-w-[200px] sm:max-w-none">{sub.users.email}</span>
+                                        </span>
+                                        <div className="hidden sm:block h-1 w-1 rounded-full bg-white/10" />
+                                        <span className="flex items-center gap-2 shrink-0">
+                                            <Calendar className="h-3.5 w-3.5 opacity-50 shrink-0" />
+                                            <span className="tabular-nums">{new Date(sub.submitted_at).toLocaleDateString()}</span>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -191,13 +198,13 @@ export function KYCReviewList({ submissions }: KYCReviewListProps) {
                             </div>
 
                             {/* Command Sequence */}
-                            <div className="flex flex-col sm:flex-row gap-5">
+                            <div className="flex flex-col sm:flex-row gap-4 sm:gap-5">
                                 <button
                                     disabled={isLoading}
                                     onClick={() => handleAction(sub.id, 'APPROVE')}
-                                    className="flex-2 h-18 rounded-[28px] bg-primary text-white font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-4 transition-all disabled:opacity-50"
+                                    className="flex-1 h-14 sm:h-18 rounded-2xl sm:rounded-[28px] bg-primary text-white font-black text-[10px] sm:text-xs uppercase tracking-[0.2em] shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 sm:gap-4 transition-all disabled:opacity-50"
                                 >
-                                    <ShieldCheck className="h-5 w-5" />
+                                    <ShieldCheck className="h-4 sm:h-5 w-4 sm:w-5" />
                                     <span>Approve Member</span>
                                 </button>
                                 <button
@@ -206,9 +213,9 @@ export function KYCReviewList({ submissions }: KYCReviewListProps) {
                                         setSelectedSubmission(sub);
                                         setIsRejectionModalOpen(true);
                                     }}
-                                    className="flex-1 h-18 rounded-[28px] glass border border-red-500/20 text-red-500 font-black text-xs uppercase tracking-[0.2em] hover:bg-red-500 hover:text-white transition-all disabled:opacity-50 flex items-center justify-center gap-3 active:scale-95"
+                                    className="flex-1 h-14 sm:h-18 rounded-2xl sm:rounded-[28px] glass border border-red-500/20 text-red-500 font-black text-[10px] sm:text-xs uppercase tracking-[0.2em] hover:bg-red-500 hover:text-white transition-all disabled:opacity-50 flex items-center justify-center gap-2 sm:gap-3 active:scale-95"
                                 >
-                                    <XCircle className="h-5 w-5" />
+                                    <XCircle className="h-4 sm:h-5 w-4 sm:w-5" />
                                     <span>Reject</span>
                                 </button>
                             </div>
