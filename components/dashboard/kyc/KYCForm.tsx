@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, ChangeEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -18,7 +18,6 @@ import { submitKYC } from "@/actions/kyc";
 import { Loading } from "@/components/ui/Loading";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { ChangeEvent } from "react";
 
 // Define locally since we removed react-dropzone
 export interface FileRejection {
