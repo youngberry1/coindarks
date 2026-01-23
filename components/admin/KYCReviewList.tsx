@@ -13,6 +13,7 @@ import {
     IdCard,
     Camera
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Modal } from "@/components/ui/modal";
 import { processKYC } from "@/actions/admin";
 import { toast } from "sonner";
@@ -123,7 +124,10 @@ export function KYCReviewList({ submissions }: KYCReviewListProps) {
                             </div>
 
                             {/* Documents Laboratory */}
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                            <div className={cn(
+                                "grid grid-cols-1 gap-6",
+                                sub.backUrl ? "sm:grid-cols-3" : "sm:grid-cols-2"
+                            )}>
                                 {/* Front */}
                                 <div className="space-y-4">
                                     <div className="flex items-center gap-2 ml-1">
