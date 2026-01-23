@@ -14,7 +14,7 @@ import Link from "next/link";
 import { TradingForm } from "@/components/dashboard/TradingForm";
 import { getCryptos } from "@/actions/crypto";
 import { getExchangeRates } from "@/actions/rates";
-import { getGlobalMarketStats, getActiveSessions, getRecentOrders } from "@/actions/market";
+import { getGlobalMarketStats, getRecentOrders } from "@/actions/market";
 import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
 
@@ -42,11 +42,10 @@ export default async function ExchangePage() {
         .eq('id', session.user.id)
         .single();
 
-    const [inventory, allRates, globalStats, sessionCount, recentOrders] = await Promise.all([
+    const [inventory, allRates, globalStats, recentOrders] = await Promise.all([
         getCryptos(true),
         getExchangeRates(),
         getGlobalMarketStats(),
-        getActiveSessions(),
         getRecentOrders(4)
     ]);
 
@@ -70,8 +69,7 @@ export default async function ExchangePage() {
     const stats = [
         { label: "Market Activity (24h)", value: `$${(globalStats.volume24h / 1e9).toFixed(1)}B`, icon: <Activity className="h-4 w-4 text-primary" />, trend: `${globalStats.volumeChange24h > 0 ? '+' : ''}${globalStats.volumeChange24h.toFixed(1)}%` },
         { label: "BITCOIN SHARE", value: `${globalStats.btcDominance.toFixed(1)}%`, icon: <Zap className="h-4 w-4 text-yellow-500" />, trend: "LIVE" },
-        { label: "SYSTEM HEALTH", value: "STABLE", icon: <ShieldCheck className="h-4 w-4 text-primary" />, trend: "100%" },
-        { label: "USERS ONLINE", value: sessionCount, icon: <TrendingUp className="h-4 w-4 text-blue-500" />, trend: "ONLINE" }
+        { label: "SYSTEM HEALTH", value: "STABLE", icon: <ShieldCheck className="h-4 w-4 text-primary" />, trend: "100%" }
     ];
 
     return (
@@ -85,9 +83,12 @@ export default async function ExchangePage() {
 
             <div className="relative z-10 w-full max-w-[1800px] mx-auto p-4 lg:px-6 lg:py-8 space-y-6 sm:space-y-8">
                 {/* Top Statistics Bar (Nexus Header) */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
                     {stats.map((stat, i) => (
-                        <div key={i} className="bg-[#16191E] border border-white/5 rounded-2xl p-3.5 sm:p-6 flex flex-col justify-between group hover:bg-[#1C2127] transition-colors overflow-hidden">
+                        <div key={i} className={cn(
+                            "bg-[#16191E] border border-white/5 rounded-2xl p-3.5 sm:p-6 flex flex-col justify-between group hover:bg-[#1C2127] transition-colors overflow-hidden",
+                            i === 2 && "col-span-2 lg:col-span-1"
+                        )}>
                             <div className="flex items-center justify-between mb-2 gap-2">
                                 <span className="text-[9px] sm:text-[10px] font-bold text-white/30 uppercase tracking-widest truncate">{stat.label}</span>
                                 <div className="shrink-0">{stat.icon}</div>
