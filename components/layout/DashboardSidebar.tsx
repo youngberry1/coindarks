@@ -29,6 +29,8 @@ import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from 
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { cn } from "@/lib/utils";
 
+import { Loading } from "@/components/ui/LoadingSpinner";
+
 interface SidebarProps {
     user: {
         name?: string | null;
@@ -43,6 +45,7 @@ interface SidebarProps {
 export function DashboardSidebar({ user }: SidebarProps) {
     const pathname = usePathname();
     const [isMobileOpen, setIsMobileOpen] = useState(false);
+    const [isSigningOut, setIsSigningOut] = useState(false);
     const isAdmin = user?.role === "ADMIN";
     const kycStatus = user?.kyc_status || 'UNSUBMITTED';
 
@@ -209,13 +212,19 @@ export function DashboardSidebar({ user }: SidebarProps) {
 
 
                 <button
-                    onClick={() => signOut()}
+                    onClick={async () => {
+                        setIsSigningOut(true);
+                        await signOut();
+                    }}
                     className="flex items-center gap-4 w-full px-6 py-5 rounded-[24px] text-red-500/60 hover:text-red-500 hover:bg-red-500/5 transition-all duration-300 font-black uppercase tracking-[0.2em] text-[10px] group"
                 >
                     <LogOut className="h-5 w-5 group-hover:-translate-x-1 transition-transform duration-500" />
                     <span>Logout</span>
                 </button>
             </div>
+
+            {/* Global Loading Overlay for Logout */}
+            {isSigningOut && <Loading message="Signing Out..." />}
         </div>
     );
 
