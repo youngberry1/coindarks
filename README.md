@@ -1,48 +1,48 @@
 # 🦅 CoinDarks Exchange
 
-> A premium, high-performance Cryptocurrency-to-Fiat bridge tailored for the African market (GHS & NGN). Built with security, speed, and a world-class user experience in mind.
+> A premium, high-performance Cryptocurrency-to-Fiat bridge tailored for the African market (GHS & NGN). Engineered for institutional-grade security, pixel-perfect responsiveness, and a world-class user experience.
 
 ---
 
-## ⚡ Tech Stack
+## ⚡ Technical Architecture
 
 <div align="center">
 
 | Core | Database | Auth | UI/UX |
 | :--- | :--- | :--- | :--- |
-| **Next.js 16 (App Router)** | **Supabase (PostgreSQL)** | **Auth.js v5 (Beta)** | **Tailwind CSS 4** |
-| **TypeScript (Strict)** | **Supabase JS Client** | **BcryptJS** | **Framer Motion** |
-| **Turbopack** | **Row Level Security** | **Zod (Validation)** | **Lucide React** |
+| **Next.js 15+ (App Router)** | **Supabase (PostgreSQL)** | **Auth.js v5 (Edge-Ready)** | **Tailwind CSS 4** |
+| **TypeScript (Strict)** | **Row Level Security (RLS)** | **Zod Validation** | **Framer Motion** |
+| **Turbopack** | **Real-time Price Feeds** | **BcryptJS Encryption** | **Lucide Icons** |
 
 </div>
 
 ---
 
-## 🎨 Visual Identity & UX
+## 💎 Visual identity & Institutional UX
 
-- **Glassmorphism Design**: Using advanced `backdrop-blur` and high-refraction borders for a premium hardware-wallet aesthetic.
-- **Floating Island Navbar**: An adaptive navigation system that transforms on scroll.
-- **Motion Physics**: Orchestrated animations using Framer Motion's `AnimatePresence` and `whileInView` hooks.
-- **Dynamic Theming**: Dark-first architecture with vibrant `primary` (#3b82f6) and `secondary` (#8b5cf6) accents.
+- **Professional Branding**: Custom high-fidelity 3D renders representing security and digital wealth.
+- **Glassmorphism Design**: Advanced `backdrop-blur` and high-refraction borders for a premium hardware-wallet aesthetic.
+- **Floating Island Navbar**: An adaptive navigation system with built-in **Auth Skeleton Loaders** for a layout-shift-free experience.
+- **Tablet-First Precision**: Hand-tuned responsiveness for iPad Pro (1024px), Surface Pro, and ultra-wide displays.
+- **Dynamic Theming**: Dark-first architecture with vibrant emerald green and deep blue fintech accents.
 
 ---
 
-## 🛠️ Key Features
+## 🛠️ Ecosystem Features
 
-### 🔐 Authentication System (Production Ready)
-- **Edge Compatible**: Custom Auth.js split configuration (`auth.config.ts` vs `auth.ts`) to support Next.js Middleware in Edge runtimes.
-- **Mandatory Email Verification**: Secure UUID-based verification tokens via Supabase.
-- **Zod Schema Validation**: Error-safe registration and login flows.
-- **Role-Based Protection**: Built-in middleware for `ADMIN` and `USER` route shielding.
+### 🔐 Security & Governance
+- **Institutional Defense**: Bank-grade AES-256 data protection and physical cold storage integration.
+- **Edge-Compatible Auth**: Custom split-config architecture supporting middleware at the edge.
+- **Regulatory Rigor**: Engineered for compliance with Ghanaian and Nigerian financial standards.
 
-### 💰 Exchange Engine (In Progress)
-- **Live Rates**: Real-time GHS/NGN calculation logic.
-- **Instant Settlements**: Manual and automated payout triggers for Mobile Money and Bank Transfers.
+### 💰 High-Frequency Exchange
+- **Quantum Settlements**: Instant GHS/NGN payouts via Mobile Money and Bank Transfers.
+- **Live Rate Engine**: Real-time market pulse powered by global liquidity providers.
+- **Zero Spread Accuracy**: Transparent, real-time rates with no hidden fees.
 
-### 🛡️ Security
-- **BcryptJS Hashing**: 12-round salt hashing for password security.
-- **Supabase Policies**: Row Level Security (RLS) capable database architecture.
-- **Secure Email**: Integration with Resend for transactional emails (Verification, etc.).
+### 📱 Premium Mobile Navigation
+- **App-Like Drawer**: Completely redesigned mobile menu with a spacious, full-height UI.
+- **Usability Focus**: Large-scale touch targets and standardized UI components.
 
 ---
 
@@ -50,18 +50,19 @@
 
 ### 1. Prerequisites
 - Node.js 18+
-- Supabase Account & Project
+- Supabase Project (PostgreSQL)
 
-### 2. Installation
+### 2. Installation & setup
 ```bash
-# Clone the repository
+# Clone and install
 git clone https://github.com/your-repo/coindarks.git
-
-# Install dependencies
 npm install
+
+# Start development
+npm run dev
 ```
 
-### 3. Environment Setup
+### 3. Environment Configuration
 Create a `.env` file in the root:
 ```env
 AUTH_SECRET="your-secret"
@@ -76,33 +77,20 @@ NEXT_PUBLIC_SUPABASE_URL="your-project-url"
 NEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key"
 ```
 
-### 4. Database Setup
-1. Go to your **Supabase Dashboard** -> **SQL Editor**.
-2. Open `docs/supabase_schema.sql` from this project.
-3. Copy the contents and run it in the Supabase SQL Editor.
-4. (Optional) Run `docs/migration_001_split_names.sql` if you are updating an existing instance.
-
-### 5. Start Development
-```bash
-npm run dev
-```
-
 ---
 
-## 📂 Project Structure Documentation
+## 📂 Project Structure
 
-- `app/` - Next.js App Router (Layouts, Pages, API handlers).
-  - `(auth)/` - Public authentication pages (Login, Register, Verify).
-  - `(protected)/` - Routes requiring a valid session (Dashboard, Profile).
-- `actions/` - Server Actions for database operations (Type-safe backend logic).
+- `app/` - Next.js App Router (Layouts, Edge-Ready Pages, API handlers).
+- `actions/` - Server Actions for type-safe database operations.
 - `components/`
-  - `layout/` - Global components (Navbar, Footer).
-  - `sections/` - Landing page blocks (Hero, Features, Trust).
-- `lib/` - Shared utility functions (supabase client, mail, tokens).
-- `docs/` - Database schemas and SQL migration scripts.
+  - `layout/` - Global UI (Navbar, Premium Footer).
+  - `sections/` - Landing page blocks (Branded Hero, Security, Trust).
+  - `ui/` - Atomic Radix-based components.
+- `lib/` - Shared utilities (Supabase, Mail, Auth tokens).
 
 ---
 
 <div align="center">
-  <sub>Built with ❤️ for the future of African Finance by THE TBX TEAM - Trending Boss Next-Gen Technology.</sub>
+  <sub>Built with ❤️ by THE TBX TEAM - Trending Boss Next-Gen Technology.</sub>
 </div>
