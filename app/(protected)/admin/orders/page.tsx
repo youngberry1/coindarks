@@ -43,13 +43,13 @@ export default async function AdminOrdersPage() {
                 <div className="space-y-4">
                     <div className="flex items-center gap-3">
                         <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/40">Transaction Hub : Global Oversight</span>
+                        <span className="text-[10px] font-black uppercase tracking-wider sm:tracking-[0.4em] text-foreground/40">Transaction Hub : Global Oversight</span>
                     </div>
-                    <h1 className="text-5xl sm:text-7xl font-black tracking-tight leading-none uppercase">
+                    <h1 className="text-4xl sm:text-7xl font-black tracking-tight leading-none uppercase">
                         Global <br />
                         <span className="text-gradient leading-relaxed">Transactions.</span>
                     </h1>
-                    <p className="text-xl text-foreground/50 font-medium max-w-2xl leading-relaxed">
+                    <p className="text-base sm:text-xl text-foreground/50 font-medium max-w-2xl leading-relaxed">
                         Global oversight of platform trades and settlements. monitor live activity,
                         audit transaction correctness, and manage institutional fulfillment.
                     </p>

@@ -98,18 +98,18 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
         <div className="space-y-10">
             {/* Search Matrix */}
             <div className="flex flex-col sm:flex-row items-center gap-6">
-                <div className="relative group flex-1 w-full max-w-2xl">
-                    <div className="absolute inset-0 bg-primary/5 blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 rounded-[32px]" />
-                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-foreground/20 group-focus-within:text-primary transition-all duration-500" />
+                <div className="relative group flex-1 w-full 2xl:max-w-2xl">
+                    <div className="absolute inset-0 bg-primary/5 blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 rounded-3xl" />
+                    <Search className="absolute left-5 sm:left-6 top-1/2 -translate-y-1/2 h-4 sm:h-5 w-4 sm:w-5 text-foreground/20 group-focus-within:text-primary transition-all duration-500" />
                     <input
                         placeholder="SEARCH TRADES..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-12 sm:pl-16 pr-6 sm:pr-8 h-14 sm:h-18 rounded-[28px] sm:rounded-[32px] glass border border-white/5 focus:border-primary/30 focus:outline-none transition-all font-black text-[10px] sm:text-xs uppercase tracking-[0.2em] relative z-10"
+                        className="w-full pl-11 sm:pl-16 pr-5 sm:pr-8 h-12 sm:h-18 rounded-2xl sm:rounded-3xl glass border border-white/5 focus:border-primary/30 focus:outline-none transition-all font-black text-[9px] sm:text-xs uppercase tracking-widest sm:tracking-[0.2em] relative z-10"
                     />
                 </div>
 
-                <div className="h-14 sm:h-18 px-5 sm:px-8 rounded-[28px] sm:rounded-[32px] glass border border-white/5 flex items-center gap-3 sm:gap-4 text-foreground/20 shrink-0">
+                <div className="h-12 sm:h-18 px-5 sm:px-8 rounded-2xl sm:rounded-3xl glass border border-white/5 flex items-center gap-3 sm:gap-4 text-foreground/20 shrink-0">
                     <Activity className="h-4 sm:h-5 w-4 sm:w-5 text-primary" />
                     <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest sm:tracking-[0.2em] tabular-nums whitespace-nowrap">
                         {filteredOrders.length} Results
@@ -118,7 +118,7 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
             </div>
 
             {/* Desktop Table Registry */}
-            <div className="hidden lg:block overflow-x-auto rounded-[48px] border border-white/5 glass shadow-2xl">
+            <div className="hidden 2xl:block overflow-hidden rounded-3xl border border-white/5 glass shadow-2xl">
                 <table className="w-full text-left border-collapse min-w-[1000px]">
                     <thead>
                         <tr className="border-b border-white/5 bg-white/2">
@@ -236,13 +236,13 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
             </div>
 
             {/* Mobile/Tablet Registry Grid */}
-            <div className="lg:hidden grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            <div className="2xl:hidden grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 {filteredOrders.map((order) => (
-                    <div key={order.id} className="p-4 sm:p-8 rounded-[28px] sm:rounded-[40px] border border-white/5 glass space-y-5 sm:space-y-8 relative overflow-hidden group">
+                    <div key={order.id} className="px-5 py-6 sm:px-8 sm:py-8 rounded-2xl md:rounded-3xl border border-white/5 glass space-y-5 sm:space-y-8 relative overflow-hidden group w-full min-w-0">
                         <div className="absolute inset-0 bg-primary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                        <div className="relative z-10 flex items-center justify-between">
-                            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                        <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
+                            <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
                                 <span className="font-mono text-[9px] sm:text-[10px] font-black text-foreground/30 bg-white/5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl border border-white/5">#{order.order_number}</span>
                                 <div className={cn(
                                     "px-3 sm:px-4 py-1 sm:py-1.5 rounded-lg sm:rounded-xl text-[8px] sm:text-[9px] font-black uppercase tracking-[0.2em] border",
@@ -276,9 +276,9 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                             <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl sm:rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center text-primary/40 shrink-0">
                                 <User className="h-4 sm:h-5 w-4 sm:w-5" />
                             </div>
-                            <div className="min-w-0 space-y-0.5 sm:space-y-1">
-                                <p className="text-sm sm:text-base font-black tracking-tight uppercase leading-none truncate">{order.users.first_name} {order.users.last_name}</p>
-                                <p className="text-[9px] sm:text-[10px] text-foreground/30 font-black uppercase tracking-widest sm:tracking-[0.2em] truncate break-all">{order.users.email}</p>
+                            <div className="min-w-0 flex-1">
+                                <p className="text-sm sm:text-base font-black tracking-tight uppercase leading-none truncate mb-1">{order.users.first_name} {order.users.last_name}</p>
+                                <p className="text-[10px] text-foreground/30 font-black uppercase tracking-wider truncate overflow-hidden">{order.users.email}</p>
                             </div>
                         </div>
 
@@ -293,7 +293,6 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                                         <p className="text-2xl sm:text-3xl font-black tabular-nums tracking-tighter leading-none mb-1">{formatCryptoAmount(order.amount_crypto, order.asset)} <span className="text-base sm:text-lg opacity-30">{order.asset}</span></p>
                                         <p className="text-[10px] sm:text-[11px] text-foreground/30 font-black uppercase tracking-[0.2em]">≈ {order.amount_fiat.toLocaleString()} {order.fiat_currency}</p>
                                     </div>
-                                    <p className="text-[10px] sm:text-[11px] text-foreground/30 font-black uppercase tracking-[0.2em]">≈ {order.amount_fiat.toLocaleString()} {order.fiat_currency}</p>
                                 </div>
                             </div>
                             <div className="flex gap-3">

@@ -222,12 +222,12 @@ export function DashboardSidebar({ user }: SidebarProps) {
     return (
         <>
             {/* Desktop Sidebar */}
-            <aside className="hidden xl:block fixed left-0 top-0 bottom-0 w-80 z-50 bg-background/40 backdrop-blur-[60px] border-r border-white/5 pt-4">
+            <aside className="hidden 2xl:block fixed left-0 top-0 bottom-0 w-80 z-50 bg-background/40 backdrop-blur-[60px] border-r border-white/5 pt-4">
                 {renderContent()}
             </aside>
 
             {/* Mobile Top Bar */}
-            <div className="xl:hidden fixed top-0 left-0 right-0 z-40 p-4 flex items-center justify-between bg-background/60 backdrop-blur-3xl border-b border-white/5">
+            <div className="2xl:hidden fixed top-0 left-0 right-0 z-40 p-4 flex items-center justify-between bg-background/60 backdrop-blur-3xl border-b border-white/5">
                 <Logo className="scale-75 origin-left" />
                 <div className="flex items-center gap-3">
                     <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>

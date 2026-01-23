@@ -49,8 +49,8 @@ export default async function ProtectedLayout({
             <DashboardSidebar user={sidebarUser} />
 
             {/* Main content area */}
-            <main className="flex-1 xl:ml-80 relative pt-24 xl:pt-0 min-h-screen overflow-y-auto">
-                <div className="max-w-7xl mx-auto px-4 py-6 md:px-6 md:py-8 xl:px-10 xl:py-12 animate-in fade-in duration-700">
+            <main className="flex-1 2xl:ml-80 relative pt-24 2xl:pt-0 min-h-screen overflow-y-auto">
+                <div className="max-w-7xl mx-auto px-4 py-6 md:px-6 md:py-8 2xl:px-10 2xl:py-12 animate-in fade-in duration-700">
                     {children}
                 </div>
             </main>
