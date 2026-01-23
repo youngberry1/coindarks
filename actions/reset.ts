@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { ForgotPasswordSchema } from "@/schemas";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 import { generatePasswordResetToken } from "@/lib/tokens";
 import { sendPasswordResetEmail } from "@/lib/mail";
 
@@ -15,8 +15,8 @@ export const reset = async (values: z.infer<typeof ForgotPasswordSchema>) => {
 
     const { email } = validatedFields.data;
 
-    const { data: existingUser } = await supabase
-        .from('User')
+    const { data: existingUser } = await supabaseAdmin
+        .from('users')
         .select('*')
         .eq('email', email)
         .maybeSingle();
