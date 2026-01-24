@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useState, useEffect } from "react";
 import { WalletManager } from "@/components/dashboard/WalletManager";
 import { PaymentMethodManager } from "@/components/dashboard/PaymentMethodManager";
 import { Wallet as WalletIcon, CreditCard } from "lucide-react";
@@ -71,6 +71,14 @@ const FiatAccountsTab = memo(({ paymentMethods }: { paymentMethods: any[] }) => 
 FiatAccountsTab.displayName = "FiatAccountsTab";
 
 export const WalletsTabs = memo(({ activeTab, wallets, paymentMethods, assets }: WalletsTabsProps) => {
+    // Controlled state to respect prop updates
+    const [currentTab, setCurrentTab] = useState(activeTab);
+
+    // Sync if prop changes (e.g. navigation)
+    useEffect(() => {
+        setCurrentTab(activeTab);
+    }, [activeTab]);
+
     // Memoize tab content to prevent re-renders
     const cryptoTab = useMemo(() => (
         <CryptoWalletsTab wallets={wallets} assets={assets} />
@@ -82,7 +90,7 @@ export const WalletsTabs = memo(({ activeTab, wallets, paymentMethods, assets }:
 
     return (
         <div className="max-w-6xl">
-            <Tabs defaultValue={activeTab} className="space-y-6 md:space-y-8">
+            <Tabs value={currentTab} onValueChange={setCurrentTab} className="space-y-6 md:space-y-8">
                 <TabsList className="bg-card-bg/50 border border-white/5 p-1 rounded-2xl inline-flex w-full md:w-auto h-auto">
                     <TabsTrigger
                         value="crypto"
@@ -103,11 +111,8 @@ export const WalletsTabs = memo(({ activeTab, wallets, paymentMethods, assets }:
                 <TabsContent
                     value="crypto"
                     className="outline-none"
-                    forceMount
-                    style={{
-                        display: activeTab === 'crypto' ? 'block' : 'none',
-                        willChange: 'opacity',
-                    }}
+                    forceMount={true}
+                    hidden={currentTab !== 'crypto'}
                 >
                     {cryptoTab}
                 </TabsContent>
@@ -115,11 +120,8 @@ export const WalletsTabs = memo(({ activeTab, wallets, paymentMethods, assets }:
                 <TabsContent
                     value="fiat"
                     className="outline-none"
-                    forceMount
-                    style={{
-                        display: activeTab === 'fiat' ? 'block' : 'none',
-                        willChange: 'opacity',
-                    }}
+                    forceMount={true}
+                    hidden={currentTab !== 'fiat'}
                 >
                     {fiatTab}
                 </TabsContent>
