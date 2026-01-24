@@ -87,21 +87,31 @@ export default async function UserOrdersPage({
             </div>
 
             {(!orders || orders.length === 0) ? (
-                <div className="text-center py-20 px-8 rounded-[40px] border border-white/5 bg-card-bg/30 backdrop-blur-xl">
-                    <div className="h-20 w-20 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-6 text-foreground/10">
-                        <History className="h-10 w-10" />
+                <div className="flex flex-col items-center justify-center py-24 px-4 rounded-[32px] border border-dashed border-white/10 bg-white/2">
+                    <div className="h-16 w-16 rounded-full bg-white/5 flex items-center justify-center mb-6 text-foreground/20">
+                        <History className="h-8 w-8" />
                     </div>
-                    <h2 className="text-2xl font-black mb-3">No Trades Yet</h2>
-                    <p className="text-foreground/40 font-medium max-w-sm mx-auto mb-8">
+
+                    <h3 className="text-xl font-bold text-foreground mb-2">
+                        {params.q ? "No Matches Found" : "No Trades Yet"}
+                    </h3>
+
+                    <p className="text-foreground/40 text-center max-w-sm mb-8 font-medium">
                         {params.q ? `No results matching "${params.q}"` : "Once you start trading, your history will appear here. Begin your journey by making your first purchase."}
                     </p>
+
                     {isKycApproved && !params.q && (
-                        <Link href="/dashboard/exchange" className="inline-flex items-center gap-2 text-primary font-bold hover:gap-3 transition-all">
+                        <Link
+                            href="/dashboard/exchange"
+                            className="flex items-center gap-2 px-8 py-3 rounded-full bg-primary text-white font-bold text-sm shadow-xl shadow-primary/20 hover:scale-[1.02] transition-all"
+                        >
                             Start Trade <ArrowRight className="h-4 w-4" />
                         </Link>
                     )}
+
                     {params.q && (
-                        <Link href="/dashboard/orders" className="text-sm font-bold text-primary hover:underline">
+                        <Link href="/dashboard/orders" className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-white/5 text-foreground/60 hover:text-foreground hover:bg-white/10 transition-all font-bold text-sm">
+                            <XCircle className="h-4 w-4" />
                             Clear Search
                         </Link>
                     )}

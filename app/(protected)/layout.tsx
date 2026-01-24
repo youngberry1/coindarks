@@ -43,9 +43,10 @@ export default async function ProtectedLayout({
     return (
         <div className="flex min-h-screen bg-background text-foreground relative overflow-hidden">
             {/* Clean Atmosphere Layer */}
-            <div className="fixed inset-0 bg-mesh opacity-[0.08] -z-10" />
-            <div className="fixed top-[-10%] right-[-10%] w-[80%] h-[80%] bg-primary/3 blur-[120px] rounded-full -z-10" />
-            <div className="fixed bottom-[-10%] left-[-10%] w-[60%] h-[60%] bg-secondary/3 blur-[100px] rounded-full -z-10" />
+            {/* Clean Atmosphere Layer */}
+            <div className="hidden md:block fixed inset-0 bg-mesh opacity-[0.08] -z-10" />
+            <div className="hidden md:block fixed top-[-10%] right-[-10%] w-[80%] h-[80%] bg-primary/3 blur-[120px] rounded-full -z-10" />
+            <div className="hidden md:block fixed bottom-[-10%] left-[-10%] w-[60%] h-[60%] bg-secondary/3 blur-[100px] rounded-full -z-10" />
 
             {/* Sidebar component */}
             <DashboardSidebar user={sidebarUser} />
