@@ -46,8 +46,8 @@ export default async function AuditLogDetailPage({ params }: { params: Promise<{
                     <div>
                         <div className="flex items-center gap-3 mb-2">
                             <div className={`h-2 w-2 rounded-full ${log.action_type === 'CREATE' ? 'bg-emerald-500' :
-                                    log.action_type === 'UPDATE' ? 'bg-amber-500' :
-                                        'bg-rose-500'
+                                log.action_type === 'UPDATE' ? 'bg-amber-500' :
+                                    'bg-rose-500'
                                 } animate-pulse`} />
                             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-foreground/40">
                                 {log.action_type} {log.entity_type}
@@ -60,15 +60,15 @@ export default async function AuditLogDetailPage({ params }: { params: Promise<{
                     </div>
 
                     <Badge variant="secondary" className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest ${log.action_type === 'CREATE' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' :
-                            log.action_type === 'UPDATE' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
-                                'bg-rose-500/10 text-rose-500 border-rose-500/20'
+                        log.action_type === 'UPDATE' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
+                            'bg-rose-500/10 text-rose-500 border-rose-500/20'
                         }`}>
                         {log.action_type}
                     </Badge>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* User Information */}
                 <div className="p-8 rounded-[32px] bg-card/50 border border-white/5 space-y-6">
                     <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/30">
@@ -139,30 +139,6 @@ export default async function AuditLogDetailPage({ params }: { params: Promise<{
                                 {log.created_at}
                             </code>
                         </div>
-                    </div>
-                </div>
-
-                {/* Technical Information */}
-                <div className="p-8 rounded-[32px] bg-card/50 border border-white/5 space-y-6">
-                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/30">
-                        <Monitor className="h-4 w-4" /> Technical Details
-                    </div>
-                    <div className="space-y-4">
-                        {log.ip_address && (
-                            <div>
-                                <p className="text-[10px] font-bold text-foreground/30 uppercase tracking-widest mb-1">IP Address</p>
-                                <code className="text-sm font-mono text-foreground/80">{log.ip_address}</code>
-                            </div>
-                        )}
-                        {log.user_agent && (
-                            <div>
-                                <p className="text-[10px] font-bold text-foreground/30 uppercase tracking-widest mb-1">User Agent</p>
-                                <p className="text-xs font-mono text-foreground/60 break-all">{log.user_agent}</p>
-                            </div>
-                        )}
-                        {!log.ip_address && !log.user_agent && (
-                            <p className="text-sm text-foreground/40 italic">No technical metadata available</p>
-                        )}
                     </div>
                 </div>
             </div>

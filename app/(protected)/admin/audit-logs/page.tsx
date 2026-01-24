@@ -50,61 +50,61 @@ export default async function AuditLogsPage({
 
             {/* Filters */}
             <div className="flex flex-wrap gap-3">
-                <a
+                <Link
                     href="/admin/audit-logs"
                     className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${!params.entity && !params.action
-                        ? 'bg-primary text-white'
-                        : 'bg-white/5 text-foreground/60 hover:bg-white/10'
+                            ? 'bg-primary text-white'
+                            : 'bg-white/5 text-foreground/60 hover:bg-white/10'
                         }`}
                 >
                     All Logs
-                </a>
-                <a
+                </Link>
+                <Link
                     href="/admin/audit-logs?entity=WALLET"
                     className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${params.entity === 'WALLET'
-                        ? 'bg-primary text-white'
-                        : 'bg-white/5 text-foreground/60 hover:bg-white/10'
+                            ? 'bg-primary text-white'
+                            : 'bg-white/5 text-foreground/60 hover:bg-white/10'
                         }`}
                 >
                     Crypto Wallets
-                </a>
-                <a
+                </Link>
+                <Link
                     href="/admin/audit-logs?entity=PAYMENT_METHOD"
                     className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${params.entity === 'PAYMENT_METHOD'
-                        ? 'bg-primary text-white'
-                        : 'bg-white/5 text-foreground/60 hover:bg-white/10'
+                            ? 'bg-primary text-white'
+                            : 'bg-white/5 text-foreground/60 hover:bg-white/10'
                         }`}
                 >
                     Fiat Accounts
-                </a>
+                </Link>
                 <div className="h-8 w-px bg-white/10" />
-                <a
+                <Link
                     href="/admin/audit-logs?action=CREATE"
                     className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${params.action === 'CREATE'
-                        ? 'bg-emerald-500/20 text-emerald-500 border border-emerald-500/20'
-                        : 'bg-white/5 text-foreground/60 hover:bg-white/10'
+                            ? 'bg-emerald-500/20 text-emerald-500 border border-emerald-500/20'
+                            : 'bg-white/5 text-foreground/60 hover:bg-white/10'
                         }`}
                 >
                     Created
-                </a>
-                <a
+                </Link>
+                <Link
                     href="/admin/audit-logs?action=UPDATE"
                     className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${params.action === 'UPDATE'
-                        ? 'bg-amber-500/20 text-amber-500 border border-amber-500/20'
-                        : 'bg-white/5 text-foreground/60 hover:bg-white/10'
+                            ? 'bg-amber-500/20 text-amber-500 border border-amber-500/20'
+                            : 'bg-white/5 text-foreground/60 hover:bg-white/10'
                         }`}
                 >
                     Updated
-                </a>
-                <a
+                </Link>
+                <Link
                     href="/admin/audit-logs?action=DELETE"
                     className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${params.action === 'DELETE'
-                        ? 'bg-rose-500/20 text-rose-500 border border-rose-500/20'
-                        : 'bg-white/5 text-foreground/60 hover:bg-white/10'
+                            ? 'bg-rose-500/20 text-rose-500 border border-rose-500/20'
+                            : 'bg-white/5 text-foreground/60 hover:bg-white/10'
                         }`}
                 >
                     Deleted
-                </a>
+                </Link>
             </div>
 
             {/* Logs List */}
