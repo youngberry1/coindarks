@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { ReactNode, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import { Loading } from '@/components/ui/Loading';
+import { Loading } from '@/components/ui/LoadingSpinner';
 
 interface ModalProps {
     isOpen: boolean;

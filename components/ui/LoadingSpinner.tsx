@@ -93,14 +93,18 @@ export function Loading({
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        setMounted(true);
-        if (fullScreen) {
+        const timer = setTimeout(() => setMounted(true), 0);
+        return () => clearTimeout(timer);
+    }, []);
+
+    useEffect(() => {
+        if (fullScreen && mounted) {
             document.body.style.overflow = "hidden";
             return () => {
                 document.body.style.overflow = "unset";
             };
         }
-    }, [fullScreen]);
+    }, [fullScreen, mounted]);
 
     const content = (
         <motion.div
