@@ -1,7 +1,8 @@
 import { auth } from "@/auth";
 import { redirect, notFound } from "next/navigation";
 import { supabaseAdmin } from "@/lib/kyc-storage";
-import { ArrowLeft, User, Calendar, Clock, Database, Globe, Monitor, FileJson } from "lucide-react";
+import Image from "next/image";
+import { ArrowLeft, User, Database, FileJson, Clock } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 
@@ -75,9 +76,15 @@ export default async function AuditLogDetailPage({ params }: { params: Promise<{
                         <User className="h-4 w-4" /> User Information
                     </div>
                     <div className="flex items-center gap-4">
-                        <div className="h-16 w-16 rounded-2xl bg-white/5 flex items-center justify-center text-primary/40 border border-white/5 overflow-hidden">
+                        <div className="relative h-16 w-16 rounded-2xl bg-white/5 flex items-center justify-center text-primary/40 border border-white/5 overflow-hidden">
                             {log.users?.profile_image ? (
-                                <img src={log.users.profile_image} className="h-full w-full object-cover rounded-2xl" alt="User" />
+                                <Image
+                                    src={log.users.profile_image}
+                                    className="object-cover"
+                                    alt="User"
+                                    fill
+                                    unoptimized
+                                />
                             ) : (
                                 <User className="h-8 w-8" />
                             )}
@@ -149,7 +156,7 @@ export default async function AuditLogDetailPage({ params }: { params: Promise<{
                     <FileJson className="h-4 w-4" /> Data Changes
                 </div>
 
-                {log.action_type === 'CREATE' && log.new_value && (
+                {log.action_type === 'CREATE' && !!log.new_value && (
                     <div>
                         <div className="flex items-center gap-2 mb-4">
                             <div className="h-2 w-2 rounded-full bg-emerald-500" />
@@ -163,7 +170,7 @@ export default async function AuditLogDetailPage({ params }: { params: Promise<{
                     </div>
                 )}
 
-                {log.action_type === 'DELETE' && log.old_value && (
+                {log.action_type === 'DELETE' && !!log.old_value && (
                     <div>
                         <div className="flex items-center gap-2 mb-4">
                             <div className="h-2 w-2 rounded-full bg-rose-500" />
@@ -177,7 +184,7 @@ export default async function AuditLogDetailPage({ params }: { params: Promise<{
                     </div>
                 )}
 
-                {log.action_type === 'UPDATE' && log.old_value && log.new_value && (
+                {log.action_type === 'UPDATE' && !!log.old_value && !!log.new_value && (
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div>
                             <div className="flex items-center gap-2 mb-4">

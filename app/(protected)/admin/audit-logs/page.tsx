@@ -29,6 +29,21 @@ export default async function AuditLogsPage({
         .order('created_at', { ascending: false })
         .limit(100);
 
+    interface AuditLog {
+        id: string;
+        created_at: string;
+        action_type: 'CREATE' | 'UPDATE' | 'DELETE';
+        entity_type: 'WALLET' | 'PAYMENT_METHOD';
+        entity_id?: string;
+        old_value?: unknown;
+        new_value?: unknown;
+        users: {
+            first_name: string;
+            last_name: string;
+            email: string;
+        } | null;
+    }
+
     // Apply filters
     if (params.entity) {
         query = query.eq('entity_type', params.entity);
@@ -53,8 +68,8 @@ export default async function AuditLogsPage({
                 <Link
                     href="/admin/audit-logs"
                     className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${!params.entity && !params.action
-                            ? 'bg-primary text-white'
-                            : 'bg-white/5 text-foreground/60 hover:bg-white/10'
+                        ? 'bg-primary text-white'
+                        : 'bg-white/5 text-foreground/60 hover:bg-white/10'
                         }`}
                 >
                     All Logs
@@ -62,8 +77,8 @@ export default async function AuditLogsPage({
                 <Link
                     href="/admin/audit-logs?entity=WALLET"
                     className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${params.entity === 'WALLET'
-                            ? 'bg-primary text-white'
-                            : 'bg-white/5 text-foreground/60 hover:bg-white/10'
+                        ? 'bg-primary text-white'
+                        : 'bg-white/5 text-foreground/60 hover:bg-white/10'
                         }`}
                 >
                     Crypto Wallets
@@ -71,8 +86,8 @@ export default async function AuditLogsPage({
                 <Link
                     href="/admin/audit-logs?entity=PAYMENT_METHOD"
                     className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${params.entity === 'PAYMENT_METHOD'
-                            ? 'bg-primary text-white'
-                            : 'bg-white/5 text-foreground/60 hover:bg-white/10'
+                        ? 'bg-primary text-white'
+                        : 'bg-white/5 text-foreground/60 hover:bg-white/10'
                         }`}
                 >
                     Fiat Accounts
@@ -81,8 +96,8 @@ export default async function AuditLogsPage({
                 <Link
                     href="/admin/audit-logs?action=CREATE"
                     className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${params.action === 'CREATE'
-                            ? 'bg-emerald-500/20 text-emerald-500 border border-emerald-500/20'
-                            : 'bg-white/5 text-foreground/60 hover:bg-white/10'
+                        ? 'bg-emerald-500/20 text-emerald-500 border border-emerald-500/20'
+                        : 'bg-white/5 text-foreground/60 hover:bg-white/10'
                         }`}
                 >
                     Created
@@ -90,8 +105,8 @@ export default async function AuditLogsPage({
                 <Link
                     href="/admin/audit-logs?action=UPDATE"
                     className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${params.action === 'UPDATE'
-                            ? 'bg-amber-500/20 text-amber-500 border border-amber-500/20'
-                            : 'bg-white/5 text-foreground/60 hover:bg-white/10'
+                        ? 'bg-amber-500/20 text-amber-500 border border-amber-500/20'
+                        : 'bg-white/5 text-foreground/60 hover:bg-white/10'
                         }`}
                 >
                     Updated
@@ -99,8 +114,8 @@ export default async function AuditLogsPage({
                 <Link
                     href="/admin/audit-logs?action=DELETE"
                     className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${params.action === 'DELETE'
-                            ? 'bg-rose-500/20 text-rose-500 border border-rose-500/20'
-                            : 'bg-white/5 text-foreground/60 hover:bg-white/10'
+                        ? 'bg-rose-500/20 text-rose-500 border border-rose-500/20'
+                        : 'bg-white/5 text-foreground/60 hover:bg-white/10'
                         }`}
                 >
                     Deleted
@@ -120,7 +135,7 @@ export default async function AuditLogsPage({
                 </div>
             ) : (
                 <div className="space-y-4">
-                    {logs.map((log: any) => (
+                    {(logs as unknown as AuditLog[]).map((log) => (
                         <Link
                             key={log.id}
                             href={`/admin/audit-logs/${log.id}`}
@@ -161,7 +176,7 @@ export default async function AuditLogsPage({
                                 </div>
 
                                 {/* Show changes */}
-                                {log.action_type === 'UPDATE' && log.old_value && log.new_value && (
+                                {log.action_type === 'UPDATE' && !!log.old_value && !!log.new_value && (
                                     <div className="flex items-center gap-3 text-xs">
                                         <div className="p-3 rounded-xl bg-rose-500/5 border border-rose-500/10">
                                             <p className="text-[10px] text-rose-500/60 font-bold uppercase tracking-widest mb-1">Old</p>
@@ -178,7 +193,7 @@ export default async function AuditLogsPage({
                                         </div>
                                     </div>
                                 )}
-                                {log.action_type === 'DELETE' && log.old_value && (
+                                {log.action_type === 'DELETE' && !!log.old_value && (
                                     <div className="p-3 rounded-xl bg-rose-500/5 border border-rose-500/10 text-xs">
                                         <p className="text-[10px] text-rose-500/60 font-bold uppercase tracking-widest mb-1">Deleted</p>
                                         <code className="text-foreground/60 font-mono text-[10px]">
@@ -186,7 +201,7 @@ export default async function AuditLogsPage({
                                         </code>
                                     </div>
                                 )}
-                                {log.action_type === 'CREATE' && log.new_value && (
+                                {log.action_type === 'CREATE' && !!log.new_value && (
                                     <div className="p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/10 text-xs">
                                         <p className="text-[10px] text-emerald-500/60 font-bold uppercase tracking-widest mb-1">Created</p>
                                         <code className="text-foreground/60 font-mono text-[10px]">
