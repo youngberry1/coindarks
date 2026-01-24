@@ -11,30 +11,47 @@ import { cn } from "@/lib/utils";
 
 export default function AcademyPage() {
     const [activeCategory, setActiveCategory] = useState("All Guides");
+    const [searchQuery, setSearchQuery] = useState("");
 
     const categories = ["All Guides", "Safety", "Guides", "Market"];
 
     const filteredArticles = useMemo(() => {
-        if (activeCategory === "All Guides") return academyArticles;
-        return academyArticles.filter(article => article.category === activeCategory);
-    }, [activeCategory]);
+        let articles = academyArticles;
+
+        // Filter by category
+        if (activeCategory !== "All Guides") {
+            articles = articles.filter(article => article.category === activeCategory);
+        }
+
+        // Filter by search query
+        if (searchQuery.trim()) {
+            const query = searchQuery.toLowerCase();
+            articles = articles.filter(article =>
+                article.title.toLowerCase().includes(query) ||
+                article.excerpt.toLowerCase().includes(query) ||
+                article.category.toLowerCase().includes(query)
+            );
+        }
+
+        return articles;
+    }, [activeCategory, searchQuery]);
     return (
         <>
             <Navbar />
             <main className="min-h-screen bg-background">
-                <AcademyHero />
+                <AcademyHero searchQuery={searchQuery} onSearchChange={setSearchQuery} />
 
                 <section className="pb-32 px-4 sm:px-6 lg:px-8">
                     <div className="mx-auto max-w-7xl">
                         {/* Filter Bar Placeholder */}
                         <div className="flex items-center justify-between mb-12 pb-6 border-b border-white/5">
-                            <div className="flex items-center gap-6 overflow-x-auto no-scrollbar pb-2">
+                            <div className="flex items-center gap-4 sm:gap-8 pb-2">
                                 {categories.map((filter) => (
                                     <button
                                         key={filter}
                                         onClick={() => setActiveCategory(filter)}
                                         className={cn(
-                                            "text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap relative pb-2",
+                                            "text-xs sm:text-sm lg:text-base font-black uppercase tracking-widest transition-all whitespace-nowrap relative pb-2",
                                             activeCategory === filter ? "text-primary" : "text-foreground/40 hover:text-foreground"
                                         )}
                                     >
@@ -50,7 +67,7 @@ export default function AcademyPage() {
                                 ))}
                             </div>
                             <span className="hidden sm:block text-[10px] font-black uppercase tracking-widest text-foreground/20">
-                                {filteredArticles.length} Articles Found
+                                {filteredArticles.length} Article{filteredArticles.length !== 1 ? 's' : ''} {searchQuery ? 'Found' : ''}
                             </span>
                         </div>
 

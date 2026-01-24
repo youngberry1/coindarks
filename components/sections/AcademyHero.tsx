@@ -1,9 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { GraduationCap, Search } from "lucide-react";
+import { GraduationCap, Search, X } from "lucide-react";
 
-export function AcademyHero() {
+interface AcademyHeroProps {
+    searchQuery: string;
+    onSearchChange: (query: string) => void;
+}
+
+export function AcademyHero({ searchQuery, onSearchChange }: AcademyHeroProps) {
     return (
         <section className="relative pt-32 pb-20 overflow-hidden">
             {/* Ambient Lighting */}
@@ -54,9 +59,20 @@ export function AcademyHero() {
                         </div>
                         <input
                             type="text"
+                            value={searchQuery}
+                            onChange={(e) => onSearchChange(e.target.value)}
                             placeholder="Search for guides, safety protocols..."
-                            className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-sm font-medium focus:outline-none focus:border-primary/40 focus:bg-white/8 transition-all"
+                            className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-12 text-sm font-medium focus:outline-none focus:border-primary/40 focus:bg-white/8 transition-all"
                         />
+                        {searchQuery && (
+                            <button
+                                onClick={() => onSearchChange("")}
+                                className="absolute inset-y-0 right-4 flex items-center text-foreground/40 hover:text-foreground transition-colors"
+                                aria-label="Clear search"
+                            >
+                                <X className="h-4 w-4" />
+                            </button>
+                        )}
                     </motion.div>
                 </div>
             </div>
