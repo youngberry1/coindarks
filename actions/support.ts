@@ -253,7 +253,7 @@ export async function getTicketMessages(ticketUuid: string) {
 
     const { data: messages } = await supabaseAdmin
         .from('support_messages')
-        .select('*, users(first_name, last_name, role)') // Join sender info
+        .select('*, users(first_name, last_name, role, profile_image)') // Join sender info
         .eq('ticket_id', ticketUuid)
         .order('created_at', { ascending: true });
 
