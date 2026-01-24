@@ -43,30 +43,33 @@ export default function AcademyPage() {
 
                 <section className="pb-32 px-4 sm:px-6 lg:px-8">
                     <div className="mx-auto max-w-7xl">
-                        {/* Filter Bar Placeholder */}
-                        <div className="flex items-center justify-between mb-12 pb-6 border-b border-white/5">
-                            <div className="flex items-center gap-4 sm:gap-8 pb-2">
-                                {categories.map((filter) => (
-                                    <button
-                                        key={filter}
-                                        onClick={() => setActiveCategory(filter)}
-                                        className={cn(
-                                            "text-xs sm:text-sm lg:text-base font-black uppercase tracking-widest transition-all whitespace-nowrap relative pb-2",
-                                            activeCategory === filter ? "text-primary" : "text-foreground/40 hover:text-foreground"
-                                        )}
-                                    >
-                                        {filter}
-                                        {activeCategory === filter && (
-                                            <motion.div
-                                                layoutId="activeCategory"
-                                                className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
-                                                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                                            />
-                                        )}
-                                    </button>
-                                ))}
+                        {/* Filter Bar */}
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-12">
+                            <div className="w-full sm:w-fit grid grid-cols-2 md:flex gap-1 p-1 rounded-xl bg-white/5 border border-white/10 md:p-1.5 md:rounded-2xl">
+                                {categories.map((filter) => {
+                                    const isActive = activeCategory === filter;
+                                    return (
+                                        <button
+                                            key={filter}
+                                            onClick={() => setActiveCategory(filter)}
+                                            className={cn(
+                                                "flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all relative whitespace-nowrap md:px-6 md:py-2.5 md:text-sm",
+                                                isActive ? "text-primary" : "text-foreground/40 hover:text-foreground hover:bg-white/5"
+                                            )}
+                                        >
+                                            <span>{filter}</span>
+                                            {isActive && (
+                                                <motion.div
+                                                    layoutId="academyActiveCategory"
+                                                    className="absolute inset-0 bg-primary/10 border border-primary/20 rounded-lg md:rounded-xl -z-10"
+                                                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                                />
+                                            )}
+                                        </button>
+                                    );
+                                })}
                             </div>
-                            <span className="hidden sm:block text-[10px] font-black uppercase tracking-widest text-foreground/20">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-foreground/20">
                                 {filteredArticles.length} Article{filteredArticles.length !== 1 ? 's' : ''} {searchQuery ? 'Found' : ''}
                             </span>
                         </div>

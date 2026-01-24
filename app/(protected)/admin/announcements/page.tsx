@@ -41,9 +41,8 @@ export default function AdminAnnouncementsPage() {
     };
 
     useEffect(() => {
-        Promise.resolve().then(() => {
-            fetchAnnouncements();
-        });
+        const timer = setTimeout(() => fetchAnnouncements(), 0);
+        return () => clearTimeout(timer);
     }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -161,69 +160,100 @@ export default function AdminAnnouncementsPage() {
 
                 <div className="space-y-4">
                     <AnimatePresence mode="popLayout">
-                        {announcements.map((a) => (
-                            <motion.div
-                                key={a.id}
-                                layout
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.95 }}
-                                className={`p-6 rounded-[32px] border bg-card-bg/30 backdrop-blur-sm shadow-sm flex flex-col md:flex-row gap-6 items-start md:items-center relative group ${!a.is_active ? "opacity-60 grayscale-[0.5]" : ""
-                                    }`}
-                            >
-                                <div className={`h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 ${a.severity === 'URGENT' ? 'bg-red-500/10 text-red-500' :
-                                    a.severity === 'WARNING' ? 'bg-amber-500/10 text-amber-500' :
-                                        'bg-primary/10 text-primary'
-                                    }`}>
-                                    {a.severity === 'URGENT' ? <AlertCircle className="h-6 w-6" /> :
-                                        a.severity === 'WARNING' ? <AlertTriangle className="h-6 w-6" /> :
-                                            <Info className="h-6 w-6" />}
-                                </div>
+                        {isLoading ? (
+                            // Skeleton Loading State - Matches exact card structure
+                            Array.from({ length: 3 }).map((_, i) => (
+                                <div
+                                    key={`skeleton-${i}`}
+                                    className="p-6 rounded-[32px] border border-border bg-card-bg/30 backdrop-blur-sm shadow-sm flex flex-col md:flex-row gap-6 items-start md:items-center"
+                                >
+                                    {/* Icon skeleton */}
+                                    <div className="h-12 w-12 rounded-2xl bg-white/5 shrink-0 animate-pulse" />
 
-                                <div className="flex-1">
-                                    <div className="flex items-center gap-3 mb-1">
-                                        <span className={`text-[10px] font-black uppercase tracking-widest ${a.severity === 'URGENT' ? 'text-red-500' :
-                                            a.severity === 'WARNING' ? 'text-amber-500' :
-                                                'text-primary'
-                                            }`}>
-                                            {a.severity}
-                                        </span>
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-foreground/20">
-                                            {new Date(a.created_at).toLocaleString()}
-                                        </span>
+                                    {/* Content skeleton */}
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-3 mb-1">
+                                            <div className="h-3 w-16 bg-white/5 rounded animate-pulse" />
+                                            <div className="h-3 w-40 bg-white/5 rounded animate-pulse" />
+                                        </div>
+                                        <p className="text-sm font-medium leading-relaxed space-y-2">
+                                            <span className="block h-4 w-full bg-white/5 rounded animate-pulse"></span>
+                                            <span className="block h-4 w-[98%] bg-white/5 rounded animate-pulse"></span>
+                                            <span className="block h-4 w-[95%] bg-white/5 rounded animate-pulse"></span>
+                                            <span className="block h-4 w-[85%] bg-white/5 rounded animate-pulse"></span>
+                                        </p>
                                     </div>
-                                    <p className="text-sm font-medium leading-relaxed">{a.content}</p>
-                                </div>
 
-                                <div className="flex items-center gap-2 self-end md:self-auto">
-                                    <button
-                                        onClick={() => handleToggle(a.id, a.is_active)}
-                                        className={`p-3 rounded-2xl border transition-all ${a.is_active
-                                            ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/20"
-                                            : "bg-foreground/5 border-border text-foreground/40 hover:bg-foreground/10"
-                                            }`}
-                                        title={a.is_active ? "Deactivate" : "Activate"}
-                                    >
-                                        {a.is_active ? <Power className="h-4 w-4" /> : <PowerOff className="h-4 w-4" />}
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(a.id)}
-                                        className="p-3 rounded-2xl bg-red-500/5 border border-red-500/10 text-red-500/60 hover:text-red-500 hover:bg-red-500/10 transition-all"
-                                        title="Delete"
-                                    >
-                                        <Trash2 className="h-4 w-4" />
-                                    </button>
+                                    {/* Action buttons skeleton */}
+                                    <div className="flex items-center gap-2 self-end md:self-auto">
+                                        <div className="h-12 w-12 rounded-2xl bg-white/5 border border-border animate-pulse" />
+                                        <div className="h-12 w-12 rounded-2xl bg-white/5 border border-border animate-pulse" />
+                                    </div>
                                 </div>
-                            </motion.div>
-                        ))}
+                            ))
+                        ) : announcements.length > 0 ? (
+                            announcements.map((a) => (
+                                <motion.div
+                                    key={a.id}
+                                    layout
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
+                                    className={`p-6 rounded-[32px] border bg-card-bg/30 backdrop-blur-sm shadow-sm flex flex-col md:flex-row gap-6 items-start md:items-center relative group ${!a.is_active ? "opacity-60 grayscale-[0.5]" : ""
+                                        }`}
+                                >
+                                    <div className={`h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 ${a.severity === 'URGENT' ? 'bg-red-500/10 text-red-500' :
+                                        a.severity === 'WARNING' ? 'bg-amber-500/10 text-amber-500' :
+                                            'bg-primary/10 text-primary'
+                                        }`}>
+                                        {a.severity === 'URGENT' ? <AlertCircle className="h-6 w-6" /> :
+                                            a.severity === 'WARNING' ? <AlertTriangle className="h-6 w-6" /> :
+                                                <Info className="h-6 w-6" />}
+                                    </div>
+
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-3 mb-1">
+                                            <span className={`text-[10px] font-black uppercase tracking-widest ${a.severity === 'URGENT' ? 'text-red-500' :
+                                                a.severity === 'WARNING' ? 'text-amber-500' :
+                                                    'text-primary'
+                                                }`}>
+                                                {a.severity}
+                                            </span>
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-foreground/20">
+                                                {new Date(a.created_at).toLocaleString()}
+                                            </span>
+                                        </div>
+                                        <p className="text-sm font-medium leading-relaxed">{a.content}</p>
+                                    </div>
+
+                                    <div className="flex items-center gap-2 self-end md:self-auto">
+                                        <button
+                                            onClick={() => handleToggle(a.id, a.is_active)}
+                                            className={`p-3 rounded-2xl border transition-all ${a.is_active
+                                                ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/20"
+                                                : "bg-foreground/5 border-border text-foreground/40 hover:bg-foreground/10"
+                                                }`}
+                                            title={a.is_active ? "Deactivate" : "Activate"}
+                                        >
+                                            {a.is_active ? <Power className="h-4 w-4" /> : <PowerOff className="h-4 w-4" />}
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(a.id)}
+                                            className="p-3 rounded-2xl bg-red-500/5 border border-red-500/10 text-red-500/60 hover:text-red-500 hover:bg-red-500/10 transition-all"
+                                            title="Delete"
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </button>
+                                    </div>
+                                </motion.div>
+                            ))
+                        ) : (
+                            <div className="text-center py-20 bg-card-bg/20 rounded-[40px] border border-dashed border-border">
+                                <Megaphone className="h-12 w-12 text-foreground/10 mx-auto mb-4" />
+                                <p className="text-foreground/40 font-bold uppercase tracking-widest text-xs">No announcements yet</p>
+                            </div>
+                        )}
                     </AnimatePresence>
-
-                    {!isLoading && announcements.length === 0 && (
-                        <div className="text-center py-20 bg-card-bg/20 rounded-[40px] border border-dashed border-border">
-                            <Megaphone className="h-12 w-12 text-foreground/10 mx-auto mb-4" />
-                            <p className="text-foreground/40 font-bold uppercase tracking-widest text-xs">No announcements yet</p>
-                        </div>
-                    )}
                 </div>
             </div>
         </div>
