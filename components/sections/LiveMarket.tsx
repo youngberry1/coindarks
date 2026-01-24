@@ -15,7 +15,6 @@ interface CryptoData {
     image: string;
 }
 
-const ASSET_IDS = ["bitcoin", "stellar", "tether", "usd-coin", "solana", "litecoin"];
 
 export default function LiveMarket() {
     const [data, setData] = useState<CryptoData[]>([]);
@@ -25,9 +24,7 @@ export default function LiveMarket() {
     const fetchData = useCallback(async () => {
         try {
             setLoading(true);
-            const response = await fetch(
-                `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ASSET_IDS.join(",")}&order=market_cap_desc&per_page=10&page=1&sparkline=false&price_change_percentage=24h`
-            );
+            const response = await fetch("/api/market");
             const result = await response.json();
             if (Array.isArray(result)) {
                 setData(result);
@@ -77,7 +74,7 @@ export default function LiveMarket() {
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            className="text-4xl sm:text-6xl font-black tracking-tight"
+                            className="text-2xl sm:text-3xl font-black tracking-tight"
                         >
                             Global <span className="text-gradient">Real-Time</span> Rates
                         </motion.h2>

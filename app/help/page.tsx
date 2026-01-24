@@ -61,7 +61,7 @@ export default function HelpPage() {
                         </Link>
 
                         <div className="space-y-4">
-                            <h1 className="text-5xl sm:text-7xl font-black tracking-tight leading-none">
+                            <h1 className="text-3xl sm:text-4xl font-black tracking-tight leading-none">
                                 Support <span className="text-gradient">Center.</span>
                             </h1>
                             <p className="text-xl text-foreground/50 font-medium max-w-2xl mx-auto">
@@ -117,7 +117,7 @@ export default function HelpPage() {
                             <div className="px-4 py-1.5 rounded-full border border-white/5 glass text-[10px] font-black uppercase tracking-[0.3em] text-foreground/40">
                                 Our Physical Presence
                             </div>
-                            <h2 className="text-4xl sm:text-6xl font-black tracking-tight">
+                            <h2 className="text-2xl sm:text-3xl font-black tracking-tight">
                                 Our Physical <span className="text-gradient">Presence.</span>
                             </h2>
                         </div>
@@ -188,7 +188,7 @@ export default function HelpPage() {
                         className="mt-40 pt-32 border-t border-white/5 text-center space-y-12"
                     >
                         <div className="space-y-4">
-                            <h2 className="text-4xl sm:text-6xl font-black tracking-tight leading-none">
+                            <h2 className="text-2xl sm:text-3xl font-black tracking-tight leading-none">
                                 Have more <br />
                                 <span className="text-gradient">Questions?</span>
                             </h2>

@@ -175,7 +175,7 @@ export default function Testimonials() {
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    className="text-4xl font-black tracking-tight sm:text-7xl"
+                    className="text-2xl font-black tracking-tight sm:text-4xl"
                 >
                     Peer <span className="text-gradient">Advocacy.</span>
                 </motion.h2>

@@ -65,7 +65,7 @@ export default function TrustSection() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: 0.1 }}
-                                className="text-4xl sm:text-6xl font-black tracking-tight leading-[1.05] max-w-lg lg:max-w-none"
+                                className="text-2xl sm:text-3xl font-black tracking-tight leading-[1.05] max-w-lg lg:max-w-none"
                             >
                                 Why the <span className="text-gradient">Continent&apos;s best</span> trust CoinDarks.
                             </motion.h2>

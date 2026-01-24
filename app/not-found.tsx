@@ -172,7 +172,7 @@ function FloatingSymbol({ symbol, delay, x, y }: { symbol: string, delay: number
                 delay: delay,
                 ease: "easeInOut"
             }}
-            className="absolute font-mono text-6xl font-bold text-white pointer-events-none select-none blur-[2px]"
+            className="absolute font-mono text-4xl filter-bold text-white pointer-events-none select-none blur-[2px]"
             style={{
                 left: '50%',
                 top: '50%',

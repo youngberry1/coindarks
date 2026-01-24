@@ -67,7 +67,7 @@ export default async function AdminKYCPage() {
                         <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
                         <span className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/40">Security Hub : Identity Checks</span>
                     </div>
-                    <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-none uppercase">
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-none uppercase">
                         Identity <br />
                         <span className="text-gradient leading-relaxed">Checks.</span>
                     </h1>

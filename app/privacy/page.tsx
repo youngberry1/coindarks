@@ -34,7 +34,7 @@ export default function PrivacyPage() {
                         </Link>
 
                         <div className="space-y-4">
-                            <h1 className="text-5xl sm:text-7xl font-black tracking-tight leading-none">
+                            <h1 className="text-3xl sm:text-4xl font-black tracking-tight leading-none">
                                 Privacy <br />
                                 <span className="text-gradient">Policy.</span>
                             </h1>

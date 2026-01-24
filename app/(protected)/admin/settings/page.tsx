@@ -35,7 +35,7 @@ export default async function AdminSettingsPage() {
                         <div className="h-1 w-1 sm:h-1.5 sm:w-1.5 rounded-full bg-primary animate-pulse shrink-0" />
                         <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-[0.2em] sm:tracking-[0.4em] text-foreground/40 truncate">Settings Hub : System Configuration</span>
                     </div>
-                    <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[0.9] uppercase wrap-break-word">
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-[0.9] uppercase wrap-break-word">
                         System <br />
                         <span className="text-gradient leading-relaxed">Rules.</span>
                     </h1>

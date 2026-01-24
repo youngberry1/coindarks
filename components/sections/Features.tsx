@@ -56,7 +56,7 @@ export default function Features() {
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="text-4xl sm:text-6xl font-black tracking-tight"
+                        className="text-2xl sm:text-3xl font-black tracking-tight"
                     >
                         Built for the <br className="sm:hidden" />
                         <span className="text-gradient">African Market</span>

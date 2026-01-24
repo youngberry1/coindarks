@@ -49,7 +49,7 @@ export default function Security() {
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
-                                className="text-4xl sm:text-6xl font-black tracking-tight leading-[1.1]"
+                                className="text-2xl sm:text-3xl font-black tracking-tight leading-[1.1]"
                             >
                                 Your Security is <br />
                                 <span className="text-gradient">Our Foundation.</span>

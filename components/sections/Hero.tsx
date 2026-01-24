@@ -45,7 +45,7 @@ export default function Hero() {
                             initial={{ opacity: 0, filter: "blur(10px)", y: 20 }}
                             animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
                             transition={{ duration: 0.8, delay: 0.1 }}
-                            className="text-4xl sm:text-6xl lg:text-8xl font-black tracking-tight leading-[1.1] sm:leading-none lg:leading-[0.9] overflow-visible"
+                            className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-[1.1] overflow-visible"
                         >
                             The Cleanest Way <br />
                             To <span className="text-gradient">Bridge Value.</span>

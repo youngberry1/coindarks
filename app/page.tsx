@@ -46,7 +46,7 @@ export default function Home() {
                 className="relative z-10 space-y-10"
               >
                 <div className="space-y-6">
-                  <h2 className="text-5xl lg:text-6xl xl:text-7xl font-black tracking-tight leading-[0.95] sm:leading-[0.9]">
+                  <h2 className="text-3xl lg:text-4xl font-black tracking-tight leading-[0.95]">
                     Ready to bridge your <br />
                     <span className="text-gradient">Financial Future?</span>
                   </h2>

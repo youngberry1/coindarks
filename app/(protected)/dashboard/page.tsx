@@ -86,7 +86,7 @@ export default async function DashboardPage() {
                         <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
                         <span className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/40">Platform Status : Online</span>
                     </div>
-                    <h1 className="text-5xl sm:text-7xl font-black tracking-tight leading-none uppercase">
+                    <h1 className="text-3xl sm:text-4xl font-black tracking-tight leading-none uppercase">
                         Welcome, <br />
                         <span className="text-gradient leading-relaxed">{firstName}.</span>
                     </h1>
@@ -182,7 +182,7 @@ export default async function DashboardPage() {
                         </span>
                     </div>
                     <div className="space-y-1">
-                        <p className="text-6xl font-black tracking-tighter">{isAdmin ? totalPlatformOrders : (orders?.length || 0)}</p>
+                        <p className="text-3xl font-black tracking-tighter">{isAdmin ? totalPlatformOrders : (orders?.length || 0)}</p>
                         <p className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em]">
                             {isAdmin ? "Trades Successfully Completed" : "Recent Orders Processed"}
                         </p>

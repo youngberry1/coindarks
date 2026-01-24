@@ -63,7 +63,7 @@ export default async function AdminDashboardPage() {
                         <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
                         <span className="text-[10px] font-black uppercase tracking-wider sm:tracking-[0.4em] text-foreground/40">Secure Session : Administrator</span>
                     </div>
-                    <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-none uppercase">
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-none uppercase">
                         Platform <br />
                         <span className="text-gradient leading-relaxed">Controls.</span>
                     </h1>
@@ -113,7 +113,7 @@ export default async function AdminDashboardPage() {
                         </div>
 
                         <div className="space-y-2">
-                            <p className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter tabular-nums leading-none">{stat.value}</p>
+                            <p className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tighter tabular-nums leading-none">{stat.value}</p>
                             <div className="space-y-1">
                                 <p className="text-[10px] font-black uppercase tracking-[0.3em] text-foreground/60">{stat.name}</p>
                                 <p className="text-[10px] font-black uppercase tracking-widest text-foreground/20 leading-relaxed">{stat.sub}</p>

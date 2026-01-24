@@ -40,7 +40,7 @@ export default function ArticlePage() {
                                 <span className="px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 text-[9px] font-black uppercase tracking-widest">
                                     {article.category}
                                 </span>
-                                <h1 className="text-4xl sm:text-6xl font-black tracking-tight leading-[1.1]">
+                                <h1 className="text-2xl sm:text-3xl font-black tracking-tight leading-[1.1]">
                                     {article.title}
                                 </h1>
                             </motion.div>

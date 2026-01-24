@@ -33,7 +33,7 @@ export default async function AdminUsersPage() {
                         <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
                         <span className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/40">Member Management : User Registry</span>
                     </div>
-                    <h1 className="text-5xl sm:text-7xl font-black tracking-tight leading-none uppercase">
+                    <h1 className="text-3xl sm:text-4xl font-black tracking-tight leading-none uppercase">
                         Member <br />
                         <span className="text-gradient leading-relaxed">List.</span>
                     </h1>
