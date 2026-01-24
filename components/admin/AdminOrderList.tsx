@@ -40,6 +40,7 @@ interface AdminOrderListProps {
             last_name: string;
             email: string;
         };
+        network?: string | null;
     }[];
 }
 
@@ -100,7 +101,7 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
             <div className="flex flex-col sm:flex-row items-center gap-6">
                 <div className="relative group flex-1 w-full 2xl:max-w-2xl">
                     <div className="absolute inset-0 bg-primary/5 blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 rounded-3xl" />
-                    <Search className="absolute left-5 sm:left-6 top-1/2 -translate-y-1/2 h-4 sm:h-5 w-4 sm:w-5 text-foreground/20 group-focus-within:text-primary transition-all duration-500" />
+                    <Search className="absolute left-5 sm:left-6 top-1/2 -translate-y-1/2 h-4 sm:h-5 w-4 sm:w-5 text-foreground/50 group-focus-within:text-primary transition-all duration-500" />
                     <input
                         placeholder="SEARCH TRADES..."
                         value={searchTerm}
@@ -127,7 +128,7 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                             <th className="px-6 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-widest">Trade Type</th>
                             <th className="px-6 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-widest">Net Value</th>
                             <th className="px-6 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-widest">Current Status</th>
-                            <th className="px-6 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-widest text-right">Destination</th>
+                            <th className="px-6 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-widest text-right">Network / Dest</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
@@ -139,7 +140,8 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
                                     exit={{ opacity: 0, scale: 0.98 }}
-                                    className="hover:bg-white/3 transition-all duration-300 group border-b border-white/5 last:border-0"
+                                    onClick={() => window.location.href = `/admin/orders/${order.id}`}
+                                    className="hover:bg-white/3 transition-all duration-300 group border-b border-white/5 last:border-0 cursor-pointer"
                                 >
                                     <td className="px-6 py-8">
                                         <div className="flex items-center gap-3">
@@ -179,7 +181,7 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                                         <p className="text-sm font-black tabular-nums tracking-tight mb-1">{formatCryptoAmount(order.amount_crypto, order.asset)} {order.asset}</p>
                                         <p className="text-[10px] text-foreground/30 font-black uppercase tracking-widest leading-none">≈ {order.amount_fiat.toLocaleString()} {order.fiat_currency}</p>
                                     </td>
-                                    <td className="px-6 py-8">
+                                    <td className="px-6 py-8" onClick={(e) => e.stopPropagation()}>
                                         <div className="relative isolate group/select">
                                             <Select
                                                 disabled={updatingId === order.id}
@@ -205,27 +207,16 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                                         </div>
                                     </td>
                                     <td className="px-6 py-8 text-right">
-                                        <div className="flex items-center justify-end gap-3 transition-all duration-500">
-                                            <button
-                                                onClick={() => copyAddress(order.receiving_address, order.id)}
-                                                className="h-10 w-10 rounded-xl bg-white/5 border border-white/5 text-foreground/20 hover:text-primary hover:border-primary/20 transition-all active:scale-90 flex items-center justify-center"
-                                                title={order.type === 'BUY' ? "Copy Wallet Address" : "Copy Account Details"}
-                                            >
-                                                {copiedId === order.id ? (
-                                                    <CheckCircle2 className="h-4.5 w-4.5 text-emerald-500" />
-                                                ) : (
-                                                    <Copy className="h-4.5 w-4.5" />
-                                                )}
-                                            </button>
-                                            {order.type === 'BUY' && (
-                                                <button
-                                                    onClick={() => openExplorer(order.receiving_address)}
-                                                    className="h-10 w-10 rounded-xl bg-white/5 border border-white/5 text-foreground/20 hover:text-primary hover:border-primary/20 transition-all active:scale-90 flex items-center justify-center"
-                                                    title="View on Blockchain"
-                                                >
-                                                    <ExternalLink className="h-4.5 w-4.5" />
-                                                </button>
+                                        <div className="flex flex-col items-end gap-1">
+                                            {order.network && (
+                                                <span className="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-white/5 border border-white/5 text-foreground/50">
+                                                    {order.network}
+                                                </span>
                                             )}
+                                            {/* We removed the explicit copy button here to reduce clutter as requested, but we still show address hint */}
+                                            <span className="text-[10px] font-mono text-foreground/30 truncate max-w-[120px]">
+                                                {order.receiving_address.slice(0, 8)}...{order.receiving_address.slice(-6)}
+                                            </span>
                                         </div>
                                     </td>
                                 </motion.tr>

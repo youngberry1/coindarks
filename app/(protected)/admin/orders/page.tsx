@@ -21,7 +21,7 @@ export default async function AdminOrdersPage() {
         redirect("/dashboard");
     }
 
-    // Fetch all orders with user info using Admin client to bypass RLS
+    // Fetch all orders with user info
     const { data: orders } = await supabaseAdmin
         .from('orders')
         .select(`
@@ -33,6 +33,22 @@ export default async function AdminOrdersPage() {
             )
         `)
         .order('created_at', { ascending: false });
+
+    // Fetch all wallets to map networks
+    // Note: In a larger app, this would be an optimized join or per-row fetch,
+    // but for this scale, fetching wallets lookup is acceptable.
+    const { data: wallets } = await supabaseAdmin
+        .from('wallets')
+        .select('address, network');
+
+    // Create a map for O(1) lookup
+    const walletNetworkMap = new Map(wallets?.map(w => [w.address, w.network]));
+
+    // Enrich orders with network info
+    const enrichedOrders = orders?.map((order: any) => ({
+        ...order,
+        network: walletNetworkMap.get(order.receiving_address) || null
+    })) || [];
 
     const pendingActions = orders?.filter((o: { status: string }) => o.status === 'PENDING' || o.status === 'PROCESSING').length || 0;
 
@@ -79,7 +95,7 @@ export default async function AdminOrdersPage() {
 
             {/* List Section */}
             <div className="space-y-10">
-                {orders && <AdminOrderList initialOrders={orders} />}
+                {enrichedOrders && <AdminOrderList initialOrders={enrichedOrders} />}
             </div>
         </div>
     );
