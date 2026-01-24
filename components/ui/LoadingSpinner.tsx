@@ -144,8 +144,6 @@ export function Loading({
             {/* Premium Atmosphere Layer */}
             {fullScreen && (
                 <>
-                    <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay grayscale invert dark:invert-0"
-                        style={{ backgroundImage: `url("https://grainy-gradients.vercel.app/noise.svg")` }} />
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50vh] h-[50vh] bg-primary/10 blur-[120px] rounded-full -z-10" />
                 </>
             )}

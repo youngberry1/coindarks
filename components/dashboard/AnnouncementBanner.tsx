@@ -38,7 +38,7 @@ export function AnnouncementBanner({ announcements }: AnnouncementBannerProps) {
 
     return (
         <div className="space-y-6 mb-12">
-            <AnimatePresence mode="wait" initial={false}>
+            <AnimatePresence initial={false}>
                 {visibleAnnouncements.length > 0 && mounted && visibleAnnouncements.map((announcement) => {
                     const severityConfig = {
                         URGENT: {
