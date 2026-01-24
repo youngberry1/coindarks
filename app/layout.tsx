@@ -9,16 +9,12 @@ const outfit = Outfit({
   variable: "--font-outfit",
   subsets: ["latin"],
   display: "swap",
-  fallback: ["system-ui", "sans-serif"],
-  preload: true,
 });
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
   display: "swap",
-  fallback: ["system-ui", "sans-serif"],
-  preload: true,
 });
 
 const geistMono = Geist_Mono({
@@ -153,6 +149,7 @@ export default function RootLayout({
       <body
         className={`${outfit.variable} ${inter.variable} ${geistMono.variable} antialiased font-sans`}
         suppressHydrationWarning
+        style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}
       >
         <ThemeProvider
           attribute="class"
