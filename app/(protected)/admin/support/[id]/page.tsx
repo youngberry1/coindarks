@@ -96,11 +96,10 @@ export default async function AdminTicketPage({ params }: TicketPageProps) {
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
-                        {/* Status Actions could go here */}
-                        <div className={`px - 4 py - 2 rounded - xl font - bold uppercase text - [10px] md: text - xs tracking - widest ${ticket.status === 'OPEN' ? 'bg-primary text-white' :
-                            ticket.status === 'CLOSED' ? 'bg-emerald-500 text-white' :
-                                'bg-amber-500 text-white'
-                            } `}>
+                        <div className={`px-4 py-1.5 rounded-xl font-bold uppercase text-[10px] tracking-wider transition-all ${ticket.status === 'OPEN' ? 'bg-primary text-white shadow-lg shadow-primary/20' :
+                                ticket.status === 'CLOSED' ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' :
+                                    'bg-amber-500 text-white shadow-lg shadow-amber-500/20'
+                            }`}>
                             {ticket.status}
                         </div>
                     </div>
@@ -109,46 +108,56 @@ export default async function AdminTicketPage({ params }: TicketPageProps) {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Conversation Thread */}
-                <div className="lg:col-span-2 space-y-6">
-                    <div className="space-y-6">
+                <div className="lg:col-span-2 space-y-10">
+                    <div className="space-y-8">
                         {messages?.map((msg) => (
-                            <div key={msg.id} className={`flex gap - 3 md: gap - 4 ${msg.is_admin_reply ? 'justify-end' : 'justify-start'} `}>
-                                {!msg.is_admin_reply && (
-                                    <div className="h-8 w-8 md:h-10 md:w-10 rounded-full bg-foreground/10 flex items-center justify-center shrink-0 relative overflow-hidden">
-                                        {msg.users?.profile_image ? (
-                                            <Image
-                                                src={msg.users.profile_image}
-                                                alt={msg.users.first_name}
-                                                fill
-                                                className="object-cover"
-                                                unoptimized
-                                            />
+                            <div key={msg.id} className={`flex gap-3 md:gap-4 ${msg.is_admin_reply ? 'flex-row-reverse' : 'flex-row'}`}>
+                                <div className="shrink-0 pt-1">
+                                    <div className={`h-10 w-10 md:h-12 md:w-12 rounded-2xl overflow-hidden flex items-center justify-center border shadow-sm transition-all duration-300 ${msg.is_admin_reply
+                                        ? 'bg-primary/20 border-primary/20 shadow-primary/5'
+                                        : 'bg-white/5 border-white/10 shadow-black/20'
+                                        }`}>
+                                        {msg.is_admin_reply ? (
+                                            <Shield className="h-5 w-5 md:h-6 md:w-6 text-primary" />
+                                        ) : msg.users?.profile_image ? (
+                                            <div className="relative h-full w-full">
+                                                <Image
+                                                    src={msg.users.profile_image}
+                                                    alt={msg.users.first_name}
+                                                    fill
+                                                    className="object-cover"
+                                                    unoptimized
+                                                />
+                                            </div>
                                         ) : (
-                                            <span className="font-bold text-[10px] md:text-xs">{msg.users?.first_name[0]}{msg.users?.last_name[0]}</span>
+                                            <span className="font-bold text-xs md:text-sm text-foreground/40">
+                                                {msg.users?.first_name[0]}{msg.users?.last_name[0]}
+                                            </span>
                                         )}
                                     </div>
-                                )}
-
-                                <div className={`max-w-[90%] md:max-w-[85%] rounded-[20px] md:rounded-[24px] p-4 md:p-6 ${msg.is_admin_reply
-                                    ? 'bg-primary text-white rounded-tr-sm'
-                                    : 'bg-card-bg border border-white/5 rounded-tl-sm'
-                                    }`}>
-                                    <div className="flex items-center justify-between gap-4 mb-2">
-                                        <span className={`text-[10px] font-bold uppercase tracking-wider ${msg.is_admin_reply ? 'text-white/70' : 'text-primary'}`}>
-                                            {msg.is_admin_reply ? 'Support Desk' : 'Member'}
-                                        </span>
-                                        <span className={`text-[9px] md:text-[10px] ${msg.is_admin_reply ? 'text-white/50' : 'text-foreground/30'}`}>
-                                            {new Date(msg.created_at).toLocaleString()}
-                                        </span>
-                                    </div>
-                                    <p className="text-xs md:text-sm leading-relaxed whitespace-pre-wrap">{msg.message}</p>
                                 </div>
 
-                                {msg.is_admin_reply && (
-                                    <div className="h-8 w-8 md:h-10 md:w-10 rounded-full bg-primary flex items-center justify-center shrink-0">
-                                        <Shield className="h-4 w-4 md:h-5 md:w-5 text-white" />
+                                <div className={`flex flex-col max-w-[85%] md:max-w-[80%] space-y-2 ${msg.is_admin_reply ? 'items-end' : 'items-start'}`}>
+                                    <div className={`rounded-3xl p-5 md:p-6 shadow-2xl transition-all duration-500 ${msg.is_admin_reply
+                                        ? 'bg-primary text-white border border-primary/20 rounded-tr-none'
+                                        : 'bg-card-bg/80 backdrop-blur-md border border-white/5 rounded-tl-none'
+                                        }`}>
+                                        <div className="flex items-center justify-between gap-6 mb-3">
+                                            <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${msg.is_admin_reply ? 'text-white/60' : 'text-primary'}`}>
+                                                {msg.is_admin_reply ? 'Support Team' : 'Member Message'}
+                                            </span>
+                                            <span className={`text-[10px] font-mono font-medium ${msg.is_admin_reply ? 'text-white/40' : 'text-foreground/20'}`}>
+                                                {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            </span>
+                                        </div>
+                                        <p className="text-sm md:text-[15px] leading-relaxed whitespace-pre-wrap font-medium">
+                                            {msg.message}
+                                        </p>
                                     </div>
-                                )}
+                                    <span className="text-[9px] font-black uppercase tracking-widest text-foreground/20 px-2 italic">
+                                        {new Date(msg.created_at).toLocaleDateString()}
+                                    </span>
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -161,22 +170,37 @@ export default async function AdminTicketPage({ params }: TicketPageProps) {
 
                 {/* Sidebar Info */}
                 <div className="space-y-6">
-                    <Card className="p-6 rounded-[24px] border-white/5 bg-card-bg/50 backdrop-blur-md">
-                        <h3 className="text-[10px] md:text-sm font-black uppercase tracking-widest mb-4 text-foreground/40">Member Details</h3>
-                        <div className="space-y-4">
-                            <div>
-                                <p className="text-[10px] text-foreground/40 font-bold mb-1">Email</p>
-                                <p className="text-xs md:text-sm font-medium truncate">{ticket.users.email}</p>
+                    <Card className="p-8 rounded-[32px] border-white/5 bg-card-bg/30 backdrop-blur-xl sticky top-8">
+                        <div className="flex items-center gap-3 mb-8">
+                            <div className="h-10 w-10 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+                                <User className="h-5 w-5 text-primary" />
                             </div>
-                            <div>
-                                <p className="text-[10px] text-foreground/40 font-bold mb-1">Role / Access</p>
-                                <Badge variant="outline" className="text-[10px]">{ticket.users.role}</Badge>
+                            <h3 className="text-sm font-black uppercase tracking-widest text-foreground">Member Data</h3>
+                        </div>
+
+                        <div className="space-y-8">
+                            <div className="group transition-all">
+                                <p className="text-[10px] text-foreground/40 font-black uppercase tracking-widest mb-2 flex items-center gap-2">
+                                    <span className="h-1 w-1 rounded-full bg-primary" />
+                                    Direct Email
+                                </p>
+                                <p className="text-sm font-mono font-medium text-foreground group-hover:text-primary transition-colors truncate">{ticket.users.email}</p>
                             </div>
-                            <div>
-                                <p className="text-[10px] text-foreground/40 font-bold mb-1">Identity Status</p>
-                                <Badge className={`text - [10px] ${ticket.users.kyc_status === 'APPROVED' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500'} `}>
-                                    {ticket.users.kyc_status}
-                                </Badge>
+
+                            <div className="flex flex-wrap gap-6 pt-4 border-t border-white/5">
+                                <div className="flex-1 min-w-[100px]">
+                                    <p className="text-[10px] text-foreground/40 font-black uppercase tracking-widest mb-2">Access Role</p>
+                                    <Badge variant="outline" className="text-[10px] font-black tracking-widest uppercase py-1 px-3 border-white/10 bg-white/5">{ticket.users.role}</Badge>
+                                </div>
+                                <div className="flex-1 min-w-[100px]">
+                                    <p className="text-[10px] text-foreground/40 font-black uppercase tracking-widest mb-2">ID Integrity</p>
+                                    <Badge className={`text-[10px] font-black tracking-widest uppercase py-1 px-3 shadow-lg ${ticket.users.kyc_status === 'APPROVED'
+                                        ? 'bg-emerald-500/20 text-emerald-500 border border-emerald-500/20 shadow-emerald-500/5'
+                                        : 'bg-amber-500/20 text-amber-500 border border-amber-500/20 shadow-amber-500/5'
+                                        }`}>
+                                        {ticket.users.kyc_status}
+                                    </Badge>
+                                </div>
                             </div>
                         </div>
                     </Card>

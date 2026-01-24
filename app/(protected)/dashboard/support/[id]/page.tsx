@@ -95,24 +95,22 @@ export default async function UserTicketDetailPage({ params }: TicketDetailProps
                                     ? 'bg-primary/20 border-primary/20 shadow-primary/5'
                                     : 'bg-white/5 border-white/10 shadow-black/20'
                                     }`}>
-                                    {msg.users?.profile_image ? (
+                                    {msg.is_admin_reply ? (
+                                        <Shield className="h-5 w-5 md:h-6 md:w-6 text-primary" />
+                                    ) : msg.users?.profile_image ? (
                                         <div className="relative h-full w-full">
                                             <Image
                                                 src={msg.users.profile_image}
-                                                alt={msg.is_admin_reply ? 'Support Team' : 'User'}
+                                                alt="User"
                                                 fill
                                                 className="object-cover"
                                                 unoptimized
                                             />
                                         </div>
                                     ) : (
-                                        msg.is_admin_reply ? (
-                                            <Shield className={`h-5 w-5 md:h-6 md:w-6 ${msg.is_admin_reply ? 'text-primary' : 'text-foreground/40'}`} />
-                                        ) : (
-                                            <span className="font-bold text-xs md:text-sm text-foreground/40">
-                                                {msg.users?.first_name?.[0]}{msg.users?.last_name?.[0]}
-                                            </span>
-                                        )
+                                        <span className="font-bold text-xs md:text-sm text-foreground/40">
+                                            {msg.users?.first_name?.[0]}{msg.users?.last_name?.[0]}
+                                        </span>
                                     )}
                                 </div>
                             </div>
