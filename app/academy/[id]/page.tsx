@@ -4,14 +4,39 @@ import { useParams, useRouter } from "next/navigation";
 import { academyArticles } from "@/lib/academy-data";
 import Navbar from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { ArrowLeft, Clock, Calendar, Share2, Bookmark } from "lucide-react";
+import { ArrowLeft, Clock, Calendar, Share2 } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 
 export default function ArticlePage() {
     const params = useParams();
     const router = useRouter();
     const article = academyArticles.find(a => a.id === params.id);
+
+    const handleShare = async () => {
+        const shareData = {
+            title: article?.title || "CoinDarks Academy",
+            text: article?.excerpt || "Check out this article on CoinDarks Academy",
+            url: window.location.href,
+        };
+
+        if (navigator.share) {
+            try {
+                await navigator.share(shareData);
+            } catch (err) {
+                console.error("Error sharing:", err);
+            }
+        } else {
+            try {
+                await navigator.clipboard.writeText(window.location.href);
+                toast.success("Link copied to clipboard");
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            } catch (err) {
+                toast.error("Failed to copy link");
+            }
+        }
+    };
 
     if (!article) return null;
 
@@ -62,11 +87,11 @@ export default function ArticlePage() {
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3">
-                                    <button className="h-10 w-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-foreground/40 hover:text-primary hover:border-primary/20 transition-all">
+                                    <button
+                                        onClick={handleShare}
+                                        className="h-10 w-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-foreground/40 hover:text-primary hover:border-primary/20 transition-all"
+                                    >
                                         <Share2 className="h-4 w-4" />
-                                    </button>
-                                    <button className="h-10 w-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-foreground/40 hover:text-primary hover:border-primary/20 transition-all">
-                                        <Bookmark className="h-4 w-4" />
                                     </button>
                                 </div>
                             </motion.div>
