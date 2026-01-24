@@ -477,12 +477,16 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                             </div>
                             <input
                                 value={receivingAddress}
-                                onChange={(e) => type !== 'SELL' && setReceivingAddress(e.target.value)}
-                                readOnly={type === 'SELL'}
+                                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                                onChange={(e) => { }} // Disabled manual entry
+                                readOnly={true} // Always force selection
                                 onFocus={() => setShowWalletDropdown(true)}
                                 onBlur={() => setTimeout(() => setShowWalletDropdown(false), 200)}
-                                placeholder={type === 'BUY' ? `Enter ${asset.id} destination wallet...` : "Choose bank account or mobile money..."}
-                                className="w-full h-16 bg-white/3 border border-white/5 rounded-3xl pl-16 pr-6 text-[11px] font-black uppercase tracking-widest placeholder:text-white/10 focus:outline-none focus:border-primary/30 transition-all text-white"
+                                placeholder={type === 'BUY' ? `Select saved ${asset.id} wallet...` : "Select bank account or mobile money..."}
+                                className={cn(
+                                    "w-full h-16 bg-white/3 border border-white/5 rounded-3xl pl-16 pr-6 text-[11px] font-black uppercase tracking-widest placeholder:text-white/10 focus:outline-none focus:border-primary/30 transition-all text-white cursor-pointer",
+                                    !receivingAddress && "animate-pulse border-primary/20"
+                                )}
                             />
 
                             <AnimatePresence>
