@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { Menu, LayoutDashboard, LogOut, Shield, Zap, Globe, ArrowRight, Star, ShieldCheck } from "lucide-react";
+import { Menu, LayoutDashboard, LogOut, Shield, Zap, Globe, ArrowRight, Star, ShieldCheck, GraduationCap } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -29,6 +29,7 @@ export default function Navbar() {
         { name: "Features", href: "/#how-it-works", icon: ShieldCheck },
         { name: "Security", href: "/#security", icon: Shield },
         { name: "Testimonials", href: "/#testimonials", icon: Star },
+        { name: "Academy", href: "/academy", icon: GraduationCap },
     ], []);
 
     // Active section detection for homepage

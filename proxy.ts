@@ -9,7 +9,7 @@ export const proxy = auth((req) => {
     const isLoggedIn = !!req.auth?.user;
 
     const isApiAuthRoute = nextUrl.pathname.startsWith("/api/auth");
-    const isPublicRoute = ["/", "/verify", "/terms", "/privacy", "/help", "/faq"].includes(nextUrl.pathname);
+    const isPublicRoute = ["/", "/verify", "/terms", "/privacy", "/help", "/faq"].includes(nextUrl.pathname) || nextUrl.pathname.startsWith("/academy");
     const isAuthRoute = ["/login", "/register", "/forgot-password", "/new-password"].includes(nextUrl.pathname);
     const isAdminRoute = nextUrl.pathname.startsWith("/admin");
 

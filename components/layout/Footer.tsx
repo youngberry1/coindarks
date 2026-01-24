@@ -23,6 +23,7 @@ export function Footer() {
         { name: "Privacy", href: "/privacy" },
         { name: "Terms", href: "/terms" },
         { name: "Help", href: "/help" },
+        { name: "Academy", href: "/academy" },
     ];
 
     const socialLinks = [
