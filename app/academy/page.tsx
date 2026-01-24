@@ -5,7 +5,7 @@ import { Footer } from "@/components/layout/Footer";
 import { AcademyHero } from "@/components/sections/AcademyHero";
 import { ArticleCard } from "@/components/ui/ArticleCard";
 import { academyArticles } from "@/lib/academy-data";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 
@@ -56,14 +56,12 @@ export default function AcademyPage() {
 
                         {/* Article Grid */}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10 min-h-[400px]">
-                            <AnimatePresence mode="popLayout">
-                                {filteredArticles.map((article) => (
-                                    <ArticleCard
-                                        key={article.id}
-                                        article={article}
-                                    />
-                                ))}
-                            </AnimatePresence>
+                            {filteredArticles.map((article) => (
+                                <ArticleCard
+                                    key={article.id}
+                                    article={article}
+                                />
+                            ))}
                         </div>
 
                         {/* Pagination / Load More Simulation */}

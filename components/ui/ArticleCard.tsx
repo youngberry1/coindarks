@@ -15,10 +15,6 @@ export function ArticleCard({ article }: ArticleCardProps) {
     return (
         <motion.div
             layout
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.3 }}
             className="group relative flex flex-col h-full rounded-[32px] overflow-hidden glass-card border border-white/5 hover:border-primary/20 transition-all duration-500"
         >
             <Link href={`/academy/${article.id}`} className="flex flex-col h-full">
@@ -73,7 +69,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
             </Link>
 
             {/* Subtle Overlay Finish */}
-            <div className="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-[32px] pointer-events-none" />
+            <div className="absolute inset-0 ring-1 ring-inset ring-white/10 pointer-events-none" />
         </motion.div>
     );
 }
