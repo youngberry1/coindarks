@@ -1,6 +1,6 @@
 "use client";
 
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import {
     User as UserIcon,
     Lock,
@@ -8,6 +8,7 @@ import {
     Activity
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
 import { GeneralSettings } from "@/components/dashboard/settings/GeneralSettings";
 import { SecuritySettings } from "@/components/dashboard/settings/SecuritySettings";
 import { SystemSettings } from "@/components/admin/settings/SystemSettings";
@@ -30,8 +31,9 @@ interface AdminSettingsTabsProps {
 
 export function AdminSettingsTabs({ user, wallets, rates }: AdminSettingsTabsProps) {
     const searchParams = useSearchParams();
-    const router = useRouter();
-    const activeTab = searchParams.get("tab") || "system";
+
+    // Initialize state from URL param, default to "system"
+    const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "system");
 
     const tabs = [
         { id: "system", name: "General Rules", icon: Settings },
@@ -40,9 +42,13 @@ export function AdminSettingsTabs({ user, wallets, rates }: AdminSettingsTabsPro
     ];
 
     const setTab = (id: string) => {
-        const params = new URLSearchParams(searchParams);
+        setActiveTab(id);
+
+        // Update URL without triggering a server request/navigation
+        const params = new URLSearchParams(window.location.search);
         params.set("tab", id);
-        router.push(`/admin/settings?${params.toString()}`);
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.replaceState({ ...window.history.state, as: newUrl, url: newUrl }, "", newUrl);
     };
 
     return (
@@ -68,7 +74,7 @@ export function AdminSettingsTabs({ user, wallets, rates }: AdminSettingsTabsPro
                                     <motion.div
                                         layoutId="admin-active-tab-bg"
                                         className="absolute inset-0 bg-primary rounded-[16px] sm:rounded-[24px] -z-10 shadow-xl shadow-primary/20"
-                                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                        transition={{ type: "spring", bounce: 0.15, duration: 0.3 }}
                                     />
                                 )}
                             </button>
@@ -90,7 +96,7 @@ export function AdminSettingsTabs({ user, wallets, rates }: AdminSettingsTabsPro
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.5, ease: "circOut" }}
+                        transition={{ duration: 0.2, ease: "easeOut" }}
                         className="w-full"
                     >
                         {activeTab === "system" && <SystemSettings wallets={wallets} rates={rates} />}

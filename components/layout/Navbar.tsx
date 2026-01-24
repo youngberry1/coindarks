@@ -74,10 +74,28 @@ export default function Navbar() {
                     <div className="hidden xl:flex items-center gap-1 bg-white/5 rounded-2xl p-1 border border-white/5 relative">
                         {navLinks.map((link) => {
                             const isActive = currentActive === link.href;
+
+                            // Check if we can do a client-side scroll
+                            const isScrollLink = link.href.startsWith("/#");
+
+                            const handleClick = (e: React.MouseEvent) => {
+                                if (pathname === "/" && isScrollLink) {
+                                    const id = link.href.split("#")[1];
+                                    const element = document.getElementById(id);
+                                    if (element) {
+                                        e.preventDefault();
+                                        element.scrollIntoView({ behavior: "smooth" });
+                                        // Update URL hash without reload
+                                        window.history.pushState(null, "", `/#${id}`);
+                                    }
+                                }
+                            };
+
                             return (
                                 <Link
                                     key={link.name}
                                     href={link.href}
+                                    onClick={handleClick}
                                     onMouseEnter={() => handlePrefetch(link.href)}
                                     className={`relative px-5 py-2 rounded-xl text-sm font-medium transition-all flex items-center gap-2 group ${isActive ? "text-white" : "text-foreground/60 hover:text-foreground"
                                         }`}
@@ -174,15 +192,23 @@ export default function Navbar() {
                                                         href={link.href}
                                                         onMouseEnter={() => handlePrefetch(link.href)}
                                                         onClick={(e) => {
-                                                            const id = link.href.split("#")[1];
-                                                            if (id) {
-                                                                const element = document.getElementById(id);
-                                                                if (element) {
-                                                                    e.preventDefault();
-                                                                    element.scrollIntoView({ behavior: "smooth" });
+                                                            setIsOpen(false); // Close immediately for better perceived speed
+
+                                                            // Handle scroll if on homepage and it's a hash link
+                                                            if (pathname === "/" && link.href.startsWith("/#")) {
+                                                                const id = link.href.split("#")[1];
+                                                                if (id) {
+                                                                    const element = document.getElementById(id);
+                                                                    if (element) {
+                                                                        e.preventDefault();
+                                                                        // Small timeout to allow sheet to start closing
+                                                                        setTimeout(() => {
+                                                                            element.scrollIntoView({ behavior: "smooth" });
+                                                                            window.history.pushState(null, "", `/#${id}`);
+                                                                        }, 100);
+                                                                    }
                                                                 }
                                                             }
-                                                            setIsOpen(false);
                                                         }}
                                                         className="group flex items-center justify-between p-4 rounded-2xl hover:bg-white/5 transition-all"
                                                     >
