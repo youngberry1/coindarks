@@ -8,11 +8,17 @@ import { Toaster } from "@/components/ui/sonner";
 const outfit = Outfit({
   variable: "--font-outfit",
   subsets: ["latin"],
+  display: "swap",
+  fallback: ["system-ui", "sans-serif"],
+  preload: true,
 });
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
+  fallback: ["system-ui", "sans-serif"],
+  preload: true,
 });
 
 const geistMono = Geist_Mono({
@@ -146,6 +152,7 @@ export default function RootLayout({
       </head>
       <body
         className={`${outfit.variable} ${inter.variable} ${geistMono.variable} antialiased font-sans`}
+        suppressHydrationWarning
       >
         <ThemeProvider
           attribute="class"
