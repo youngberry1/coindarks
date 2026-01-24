@@ -186,25 +186,16 @@ export default function Navbar() {
                                                         }}
                                                         className="group flex items-center justify-between p-4 rounded-2xl hover:bg-white/5 transition-all"
                                                     >
-                                                        <span className="text-xl font-bold tracking-tight text-foreground/80 group-hover:text-primary transition-colors">{link.name}</span>
+                                                        <span className="text-lg font-bold tracking-tight text-foreground/80 group-hover:text-primary transition-colors">{link.name}</span>
                                                         <link.icon className="h-5 w-5 text-foreground/20 group-hover:text-primary transition-colors" />
                                                     </Link>
                                                 ))}
-
-                                                <Link
-                                                    href="/dashboard"
-                                                    onClick={() => setIsOpen(false)}
-                                                    className="group flex items-center justify-between p-4 rounded-2xl hover:bg-white/5 transition-all mt-4 border-t border-white/5"
-                                                >
-                                                    <span className="text-xl font-bold tracking-tight text-foreground/80 group-hover:text-secondary transition-colors">Dashboard</span>
-                                                    <LayoutDashboard className="h-5 w-5 text-foreground/20 group-hover:text-secondary transition-colors" />
-                                                </Link>
                                             </div>
                                         </div>
                                     </ScrollArea>
 
                                     {/* Footer Actions */}
-                                    <div className="p-6 border-t border-white/5 bg-white/2 shrink-0 space-y-4">
+                                    <div className="p-4 border-t border-white/5 bg-white/2 shrink-0 space-y-3">
                                         {status === "loading" ? (
                                             <>
                                                 <div className="w-full h-14 bg-white/5 rounded-2xl animate-pulse" />
@@ -220,25 +211,28 @@ export default function Navbar() {
                                                     Start Trading
                                                     <ArrowRight className="h-5 w-5" />
                                                 </Link>
-                                                <Link
-                                                    href="/login"
-                                                    onClick={() => setIsOpen(false)}
-                                                    className="w-full py-3 rounded-2xl text-center text-sm font-bold text-foreground/60 hover:text-foreground transition-all uppercase tracking-widest"
-                                                >
-                                                    Log In
-                                                </Link>
                                             </>
                                         ) : (
-                                            <button
-                                                onClick={() => {
-                                                    signOut();
-                                                    setIsOpen(false);
-                                                }}
-                                                className="w-full py-4 rounded-2xl bg-red-500/10 text-red-500 text-sm font-bold border border-red-500/20 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center gap-2 uppercase tracking-widest active:scale-95"
-                                            >
-                                                <LogOut className="h-5 w-5" />
-                                                Sign Out
-                                            </button>
+                                            <div className="grid grid-cols-2 gap-3">
+                                                <Link
+                                                    href="/dashboard"
+                                                    onClick={() => setIsOpen(false)}
+                                                    className="col-span-2 py-4 rounded-2xl bg-primary text-center font-bold text-white text-base shadow-xl shadow-primary/20 flex items-center justify-center gap-2 uppercase tracking-widest active:scale-95 transition-all"
+                                                >
+                                                    <LayoutDashboard className="h-5 w-5" />
+                                                    Dashboard
+                                                </Link>
+                                                <button
+                                                    onClick={() => {
+                                                        signOut();
+                                                        setIsOpen(false);
+                                                    }}
+                                                    className="col-span-2 py-3.5 rounded-2xl bg-red-500/10 text-red-500 text-sm font-bold border border-red-500/20 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center gap-2 uppercase tracking-widest active:scale-95"
+                                                >
+                                                    <LogOut className="h-4 w-4" />
+                                                    Sign Out
+                                                </button>
+                                            </div>
                                         )}
                                     </div>
                                 </SheetContent>
