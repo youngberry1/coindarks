@@ -42,3 +42,4 @@ next-env.d.ts
 .env*.local
 
 inspect_schema.js
+supabase_audit_migration.sql

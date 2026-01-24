@@ -66,6 +66,7 @@ export function DashboardSidebar({ user }: SidebarProps) {
         { name: "Documentation", href: "/admin/docs", icon: BookOpen },
         { name: "News & Updates", href: "/admin/announcements", icon: Megaphone },
         { name: "System Rules", href: "/admin/settings", icon: Settings },
+        { name: "Audit Logs", href: "/admin/audit-logs", icon: History },
     ];
 
     const links = isAdmin ? adminLinks : userLinks;
