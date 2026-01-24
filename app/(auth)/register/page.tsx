@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Mail, User, ArrowRight, ShieldCheck, Eye, EyeOff } from "lucide-react";
 import { register } from "@/actions/register";
 import { PasswordStrength } from "@/components/auth/PasswordStrength";
-import { Loading } from "@/components/ui/Loading";
+import { Loading } from "@/components/ui/LoadingSpinner";
 import { Input } from "@/components/ui/input";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AnimatePresence } from "framer-motion";
@@ -63,7 +63,7 @@ export default function RegisterPage() {
 
     return (
         <AuthLayout title="Create Account" subtitle="Join CoinDarks today">
-            <AnimatePresence>{isLoading && <Loading message="Creating your account..." />}</AnimatePresence>
+            <AnimatePresence>{isLoading && <Loading message="Initializing your account..." />}</AnimatePresence>
 
             <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="space-y-4">

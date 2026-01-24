@@ -5,7 +5,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, ArrowRight, CheckCircle2, AlertCircle } from "lucide-react";
 import { reset } from "@/actions/reset";
-import { Loading } from "@/components/ui/Loading";
+import { Loading } from "@/components/ui/LoadingSpinner";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 
 export default function ForgotPasswordPage() {
@@ -61,7 +61,7 @@ export default function ForgotPasswordPage() {
 
     return (
         <AuthLayout title="Forgot Password?" subtitle="Account Recovery">
-            <AnimatePresence>{isLoading && <Loading message="Sending reset link..." />}</AnimatePresence>
+            <AnimatePresence>{isLoading && <Loading message="Recovering your account..." />}</AnimatePresence>
 
             {success ? (
                 <motion.div

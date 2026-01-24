@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Lock, ArrowRight, CheckCircle2, AlertCircle, Eye, EyeOff } from "lucide-react";
 import { newPassword } from "@/actions/new-password";
 import { PasswordStrength } from "@/components/auth/PasswordStrength";
-import { Loading } from "@/components/ui/Loading";
+import { Loading } from "@/components/ui/LoadingSpinner";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 
 function NewPasswordContent() {
@@ -47,7 +47,7 @@ function NewPasswordContent() {
 
     return (
         <AuthLayout title="New Password" subtitle="Create a strong password">
-            <AnimatePresence>{isLoading && <Loading message="Resetting password..." />}</AnimatePresence>
+            <AnimatePresence>{isLoading && <Loading message="Updating secure keys..." />}</AnimatePresence>
 
             {success ? (
                 <motion.div
@@ -155,7 +155,7 @@ function NewPasswordContent() {
 
 export default function NewPasswordPage() {
     return (
-        <Suspense fallback={<Loading message="Loading..." />}>
+        <Suspense fallback={<Loading message="Synchronizing secure system..." />}>
             <NewPasswordContent />
         </Suspense>
     );

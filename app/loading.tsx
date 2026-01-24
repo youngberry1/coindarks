@@ -1,5 +1,5 @@
-import { Loading } from "@/components/ui/Loading";
+import { Loading } from "@/components/ui/LoadingSpinner";
 
 export default function GlobalLoading() {
-    return <Loading message="Synchronizing secure matrix..." />;
+    return <Loading message="Synchronizing secure system..." />;
 }

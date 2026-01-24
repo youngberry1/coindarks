@@ -17,7 +17,7 @@ import { Modal } from "@/components/ui/modal";
 import { processKYC } from "@/actions/admin";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loading } from "@/components/ui/Loading";
+import { Loading } from "@/components/ui/LoadingSpinner";
 import Image from "next/image";
 
 interface KYCSubmission {
@@ -69,7 +69,7 @@ export function KYCReviewList({ submissions }: KYCReviewListProps) {
         <div className="space-y-10">
             <AnimatePresence>
                 {isLoading && (
-                    <Loading message="UPDATING IDENTITY RECORDS..." />
+                    <Loading message="Processing system request..." />
                 )}
             </AnimatePresence>
 

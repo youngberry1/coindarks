@@ -7,7 +7,7 @@ import { Mail, Lock, ArrowRight, ShieldAlert, CheckCircle2, Eye, EyeOff, Loader2
 import { resendVerification } from "@/actions/resend-verification";
 import { checkVerification } from "@/actions/check-verification";
 import { login } from "@/actions/login";
-import { Loading } from "@/components/ui/Loading";
+import { Loading } from "@/components/ui/LoadingSpinner";
 import { Input } from "@/components/ui/input";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AnimatePresence, motion } from "framer-motion";
@@ -120,7 +120,7 @@ function LoginContent() {
 
     return (
         <AuthLayout title="Welcome Back" subtitle="Log in to your account">
-            <AnimatePresence>{isLoading && <Loading message="Logging in..." />}</AnimatePresence>
+            <AnimatePresence>{isLoading && <Loading message="Authorizing secure access..." />}</AnimatePresence>
 
             <div className="space-y-6">
                 <AnimatePresence mode="wait">

@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Send } from "lucide-react";
 import { toast } from "sonner";
 import { replyToTicketUser } from "@/actions/support";
-import { Loading } from "@/components/ui/Loading";
+import { Loading } from "@/components/ui/LoadingSpinner";
 import { AnimatePresence } from "framer-motion";
 
 interface UserReplyFormProps {
@@ -48,7 +48,7 @@ export function UserReplyForm({ ticketId }: UserReplyFormProps) {
         <div className="relative">
             <AnimatePresence>
                 {loading && (
-                    <Loading message="Relaying secure transmission..." />
+                    <Loading message="Connecting to support..." />
                 )}
             </AnimatePresence>
             <Textarea

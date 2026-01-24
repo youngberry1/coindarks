@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { CheckCircle2, XCircle, ArrowRight, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { newVerification } from "@/actions/new-verification";
-import { Loading } from "@/components/ui/Loading";
+import { Loading } from "@/components/ui/LoadingSpinner";
 import { Logo } from "@/components/ui/Logo";
 
 function VerifyContent() {
@@ -115,7 +115,7 @@ export default function VerifyPage() {
             <div className="absolute inset-0 bg-mesh opacity-30 -z-10" />
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 blur-[160px] rounded-full -z-10 animate-pulse-slow" />
 
-            <Suspense fallback={<Loading message="Accessing secure channel..." />}>
+            <Suspense fallback={<Loading message="Verifying your details..." />}>
                 <VerifyContent />
             </Suspense>
         </div>

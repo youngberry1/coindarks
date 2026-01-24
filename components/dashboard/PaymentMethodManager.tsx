@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { addPaymentMethod, deletePaymentMethod, PaymentMethod } from "@/actions/payment-methods";
 import { toast } from "sonner";
-import { Loading } from "@/components/ui/Loading";
+import { Loading } from "@/components/ui/LoadingSpinner";
 import { AnimatePresence, motion } from "framer-motion";
 
 interface PaymentMethodManagerProps {
@@ -119,8 +119,8 @@ export function PaymentMethodManager({ initialMethods }: PaymentMethodManagerPro
     return (
         <div className="space-y-6 md:space-y-8">
             <AnimatePresence>
-                {isSaving && <Loading message="Verifying account details..." />}
-                {isDeleting && <Loading message="Removing payment method..." />}
+                {isSaving && <Loading message="Synchronizing your wallets..." />}
+                {isDeleting && <Loading message="Deleting secure record..." />}
             </AnimatePresence>
 
             {/* Header + Add Button */}

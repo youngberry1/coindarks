@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { toggleInventoryStatus } from "@/actions/admin";
 import { toast } from "sonner";
-import { Loading } from "@/components/ui/Loading";
+import { Loading } from "@/components/ui/LoadingSpinner";
 import { AnimatePresence } from "framer-motion";
 
 interface InventoryToggleCardProps {
@@ -51,7 +51,7 @@ export function InventoryToggleCard({ item }: InventoryToggleCardProps) {
         <div className="p-8 rounded-[32px] border border-white/5 bg-card-bg/50 backdrop-blur-md hover:border-white/10 transition-all group">
             <AnimatePresence>
                 {(isUpdatingBuy || isUpdatingSell) && (
-                    <Loading message="Recalibrating supply routes..." />
+                    <Loading message="Processing system request..." />
                 )}
             </AnimatePresence>
             <div className="flex items-center gap-4 mb-8">

@@ -215,7 +215,7 @@ export function DashboardSidebar({ user }: SidebarProps) {
             </div>
 
             {/* Global Loading Overlay for Logout */}
-            {isSigningOut && <Loading message="Signing Out..." />}
+            {isSigningOut && <Loading message="Signing out securely..." />}
         </div>
     );
 

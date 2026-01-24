@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { updateTicketStatus } from "@/actions/support";
 import { toast } from "sonner";
-import { Loading } from "@/components/ui/Loading";
+import { Loading } from "@/components/ui/LoadingSpinner";
 import { AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -63,7 +63,7 @@ export function TicketList({ initialTickets }: TicketListProps) {
         <div className="space-y-4">
             <AnimatePresence>
                 {updatingId && (
-                    <Loading message="Synchronizing resolution status..." />
+                    <Loading message="Processing system request..." />
                 )}
             </AnimatePresence>
             {tickets.map((ticket) => (

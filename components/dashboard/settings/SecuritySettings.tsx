@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Lock, CheckCircle2, AlertCircle, ShieldCheck, Eye, EyeOff } from "lucide-react";
 import { PasswordStrength } from "@/components/auth/PasswordStrength";
 import { updatePassword } from "@/actions/settings";
-import { Loading } from "@/components/ui/Loading";
+import { Loading } from "@/components/ui/LoadingSpinner";
 import { AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 
@@ -115,7 +115,7 @@ export function SecuritySettings() {
         <div className="w-full lg:max-w-2xl space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <AnimatePresence>
                 {isLoading && (
-                    <Loading message="Updating primary security keys..." />
+                    <Loading message="Processing request..." />
                 )}
             </AnimatePresence>
             <div className="p-4 md:p-8 rounded-[24px] md:rounded-[32px] border border-border bg-card-bg/50 backdrop-blur-md shadow-sm dark:shadow-none transition-all">

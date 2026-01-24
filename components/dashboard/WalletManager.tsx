@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/select";
 import { saveWallet, deleteWallet } from "@/actions/wallets";
 import { toast } from "sonner";
-import { Loading } from "@/components/ui/Loading";
+import { Loading } from "@/components/ui/LoadingSpinner";
 import { AnimatePresence } from "framer-motion";
 
 interface Wallet {
@@ -135,10 +135,10 @@ export function WalletManager({ initialWallets, assets }: WalletManagerProps) {
         <div className="space-y-6 md:space-y-8">
             <AnimatePresence>
                 {isSaving && (
-                    <Loading message="Encrypting wallet metadata..." />
+                    <Loading message="Synchronizing your wallets..." />
                 )}
                 {isDeleting && (
-                    <Loading message="Purging secure records..." />
+                    <Loading message="Deleting secure record..." />
                 )}
             </AnimatePresence>
             {/* Header + Add Button */}

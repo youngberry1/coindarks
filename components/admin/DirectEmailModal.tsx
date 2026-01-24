@@ -5,7 +5,7 @@ import { Modal } from "@/components/ui/modal";
 import { sendDirectUserEmail } from "@/actions/admin";
 import { toast } from "sonner";
 import { Send, AlertCircle } from "lucide-react";
-import { Loading } from "@/components/ui/Loading";
+import { Loading } from "@/components/ui/LoadingSpinner";
 import { AnimatePresence, motion } from "framer-motion";
 import {
     Select,
@@ -72,7 +72,7 @@ export function DirectEmailModal({ isOpen, onClose, user }: DirectEmailModalProp
             <div className="space-y-6">
                 <AnimatePresence>
                     {isLoading && (
-                        <Loading message="Sending email..." />
+                        <Loading message="Processing system request..." />
                     )}
                 </AnimatePresence>
 

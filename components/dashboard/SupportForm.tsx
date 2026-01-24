@@ -10,7 +10,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { createTicket } from "@/actions/support";
 import { toast } from "sonner";
-import { Loading } from "@/components/ui/Loading";
+import { Loading } from "@/components/ui/LoadingSpinner";
 import {
     Select,
     SelectContent,
@@ -74,7 +74,7 @@ export function SupportForm({ orders = [], onClose }: SupportFormProps) {
         <>
             <AnimatePresence>
                 {isSubmitting && (
-                    <Loading message="Sending request..." />
+                    <Loading message="Connecting to support..." />
                 )}
             </AnimatePresence>
             {success ? (

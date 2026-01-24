@@ -15,7 +15,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { submitKYC } from "@/actions/kyc";
-import { Loading } from "@/components/ui/Loading";
+import { Loading } from "@/components/ui/LoadingSpinner";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -156,7 +156,7 @@ export function KYCForm() {
         <div className="max-w-4xl mx-auto space-y-10 animate-in fade-in duration-700">
             <AnimatePresence>
                 {isLoading && (
-                    <Loading message="Transmitting encrypted identification documents..." />
+                    <Loading message="Securely saving identity data..." />
                 )}
             </AnimatePresence>
 

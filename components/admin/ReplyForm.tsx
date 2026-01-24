@@ -4,7 +4,7 @@ import { useState } from "react";
 import { replyToTicket, TicketStatus } from "@/actions/support";
 import { toast } from "sonner";
 import { Send } from "lucide-react";
-import { Loading } from "@/components/ui/Loading";
+import { Loading } from "@/components/ui/LoadingSpinner";
 import { AnimatePresence } from "framer-motion";
 import {
     Select,
@@ -65,7 +65,7 @@ export function ReplyForm({ ticketId }: ReplyFormProps) {
         <div className="space-y-6 bg-card-bg/30 p-6 rounded-2xl border border-white/5">
             <AnimatePresence>
                 {isSubmitting && (
-                    <Loading message="Sending response..." />
+                    <Loading message="Processing system request..." />
                 )}
             </AnimatePresence>
             <h3 className="text-sm font-black uppercase tracking-widest text-foreground/40">Reply to Member</h3>

@@ -6,7 +6,7 @@ import { useState, useRef } from "react";
 import { updateProfileImage } from "@/actions/profile";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { Loading } from "@/components/ui/Loading";
+import { Loading } from "@/components/ui/LoadingSpinner";
 import { AnimatePresence } from "framer-motion";
 
 interface User {
@@ -69,7 +69,7 @@ export function GeneralSettings({ user }: GeneralSettingsProps) {
         <div className="w-full lg:max-w-2xl space-y-8">
             <AnimatePresence>
                 {isUploading && (
-                    <Loading message="Processing biometric data upload..." />
+                    <Loading message="Processing request..." />
                 )}
             </AnimatePresence>
             <div className="p-4 md:p-8 rounded-[24px] md:rounded-[32px] border border-white/5 bg-card-bg/50 backdrop-blur-md">

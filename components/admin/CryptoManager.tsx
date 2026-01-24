@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
-import { Loading } from '@/components/ui/Loading';
+import { Loading } from '@/components/ui/LoadingSpinner';
 import { AnimatePresence } from 'framer-motion';
 
 export default function CryptoManager() {
@@ -75,7 +75,7 @@ export default function CryptoManager() {
         <div className="space-y-6">
             <AnimatePresence>
                 {loading && cryptos.length > 0 && (
-                    <Loading message="Updating asset index..." />
+                    <Loading message="Processing asset update..." />
                 )}
             </AnimatePresence>
             <div className="flex justify-between items-center">
@@ -141,7 +141,7 @@ export default function CryptoManager() {
                             {loading ? (
                                 <TableRow>
                                     <TableCell colSpan={4} className="h-48 text-center">
-                                        <Loading message="Decrypting asset catalog..." fullScreen={false} />
+                                        <Loading message="Processing asset update..." fullScreen={false} />
                                     </TableCell>
                                 </TableRow>
                             ) : cryptos.length === 0 ? (
@@ -203,7 +203,7 @@ export default function CryptoManager() {
                 <div className="md:hidden divide-y divide-white/5">
                     {loading ? (
                         <div className="p-12 flex flex-col items-center justify-center gap-4">
-                            <Loading message="Decrypting catalog..." fullScreen={false} />
+                            <Loading message="Processing asset update..." fullScreen={false} />
                         </div>
                     ) : cryptos.length === 0 ? (
                         <div className="p-12 text-center text-foreground/40 font-medium">

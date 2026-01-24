@@ -349,7 +349,7 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
     return (
         <div className="w-full max-w-4xl space-y-6">
             <AnimatePresence>
-                {isSubmitting && <Loading />}
+                {isSubmitting && <Loading message="Processing your trade..." />}
             </AnimatePresence>
 
             {/* Trading Core */}

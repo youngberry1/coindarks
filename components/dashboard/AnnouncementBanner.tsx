@@ -38,7 +38,7 @@ export function AnnouncementBanner({ announcements }: AnnouncementBannerProps) {
 
     return (
         <div className="space-y-6 mb-12">
-            <AnimatePresence mode="popLayout" initial={false}>
+            <AnimatePresence mode="wait" initial={false}>
                 {visibleAnnouncements.length > 0 && mounted && visibleAnnouncements.map((announcement) => {
                     const severityConfig = {
                         URGENT: {
@@ -79,11 +79,10 @@ export function AnnouncementBanner({ announcements }: AnnouncementBannerProps) {
                     return (
                         <motion.div
                             key={announcement.id}
-                            initial={{ opacity: 0, height: 0, scale: 0.98, marginTop: 0 }}
-                            animate={{ opacity: 1, height: "auto", scale: 1, marginTop: 0 }}
-                            exit={{ opacity: 0, height: 0, scale: 0.95, marginTop: 0 }}
-                            transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }} // Smooth "easeOutExpo" like curve
-                            className="overflow-hidden" // Essential for height animation
+                            initial={{ opacity: 0, scale: 0.98, y: -10 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                            transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }} // Quicker, smoother entrance
                         >
                             <div
                                 className={cn(
