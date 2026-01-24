@@ -38,7 +38,7 @@ export default async function OrderDetailsPage({ params }: PageProps) {
     }
 
     // Fetch payment methods for pending orders
-    let paymentMethods: Array<{ type: string; address: string; label?: string }> = [];
+    let paymentMethods: Array<{ type: string; address: string; label?: string; network?: string }> = [];
 
     if (order.status === 'PENDING' && order.type === 'BUY') {
         const targetCurrency = order.fiat_currency;
@@ -71,10 +71,10 @@ export default async function OrderDetailsPage({ params }: PageProps) {
             }
         }
     } else if (order.status === 'PENDING' && order.type === 'SELL') {
-        // For SELL orders, get crypto wallet address
+        // For SELL orders, get crypto wallet address with network info
         const { data: wallet } = await supabaseAdmin
             .from('admin_wallets')
-            .select('address, label')
+            .select('address, label, chain')
             .eq('currency', order.asset)
             .eq('is_active', true)
             .single();
@@ -83,7 +83,8 @@ export default async function OrderDetailsPage({ params }: PageProps) {
             paymentMethods = [{
                 type: 'CRYPTO',
                 address: wallet.address,
-                label: wallet.label
+                label: wallet.label,
+                network: wallet.chain // Add network info
             }];
         }
     }

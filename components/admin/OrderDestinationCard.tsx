@@ -8,9 +8,10 @@ import { useState } from "react";
 interface OrderDestinationCardProps {
     address: string;
     network: string | null;
+    orderType: 'BUY' | 'SELL';
 }
 
-export function OrderDestinationCard({ address, network }: OrderDestinationCardProps) {
+export function OrderDestinationCard({ address, network, orderType }: OrderDestinationCardProps) {
     const [isCopied, setIsCopied] = useState(false);
 
     const handleCopy = () => {
@@ -24,7 +25,7 @@ export function OrderDestinationCard({ address, network }: OrderDestinationCardP
         <div className="p-8 rounded-[32px] bg-card border border-white/5 space-y-8">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/30">
-                    <Wallet className="h-4 w-4" /> Destination Details
+                    <Wallet className="h-4 w-4" /> {orderType === 'BUY' ? 'User Destination Wallet' : 'User Payout Account'}
                 </div>
                 {network && (
                     <Badge variant="secondary" className="px-3 py-1 text-[9px] font-black uppercase tracking-widest bg-primary/10 text-primary border-primary/20">
@@ -34,7 +35,9 @@ export function OrderDestinationCard({ address, network }: OrderDestinationCardP
             </div>
 
             <div className="space-y-2">
-                <p className="text-[10px] font-bold text-foreground/30 uppercase tracking-widest">Receiving Address</p>
+                <p className="text-[10px] font-bold text-foreground/30 uppercase tracking-widest">
+                    {orderType === 'BUY' ? 'Receiving Address' : 'Fiat Account Details'}
+                </p>
                 <div className="flex items-center gap-4 bg-black/20 p-4 rounded-2xl border border-white/5 group hover:border-white/10 transition-colors">
                     <code className="flex-1 font-mono text-xs sm:text-sm text-foreground/80 break-all">
                         {address}

@@ -21,7 +21,7 @@ interface OrderDetailsCardProps {
         created_at: string;
         receiving_address?: string; // User's address
     };
-    paymentMethods?: Array<{ type: string; address: string; label?: string }>; // Multiple payment options
+    paymentMethods?: Array<{ type: string; address: string; label?: string; network?: string }>; // Multiple payment options
     isAdmin?: boolean;
 }
 
@@ -150,7 +150,7 @@ export function OrderDetailsCard({ order, paymentMethods = [] }: OrderDetailsCar
                                 </div>
                             )}
 
-                            <p className="text-xs font-bold pt-2">{order.type === 'BUY' ? 'Payment Options:' : 'Recipient Wallet:'}</p>
+                            <p className="text-xs font-bold pt-2">{order.type === 'BUY' ? 'Payment Options:' : 'System Wallet Address:'}</p>
                         </div>
 
                         {/* Payment Method Tabs (for multiple options) */}
@@ -197,6 +197,14 @@ export function OrderDetailsCard({ order, paymentMethods = [] }: OrderDetailsCar
                         ) : paymentMethods.length === 1 ? (
                             /* Single Payment Method */
                             <div className="space-y-2">
+                                {/* Network Badge for Crypto */}
+                                {paymentMethods[0].type === 'CRYPTO' && paymentMethods[0].network && (
+                                    <div className="flex items-center gap-2">
+                                        <span className="px-2 py-1 rounded text-[9px] font-black uppercase tracking-widest bg-primary/10 border border-primary/20 text-primary">
+                                            Network: {paymentMethods[0].network}
+                                        </span>
+                                    </div>
+                                )}
                                 {paymentMethods[0].label && (
                                     <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest">
                                         {paymentMethods[0].label}
@@ -204,7 +212,7 @@ export function OrderDetailsCard({ order, paymentMethods = [] }: OrderDetailsCar
                                 )}
                                 <button
                                     type="button"
-                                    className="flex items-center gap-3 p-4 bg-black/40 rounded-2xl border border-white/5 group cursor-pointer w-full"
+                                    className="flex items-center gap-3 p-4 bg-black/40 rounded-2xl border border-white/5 group cursor-pointer w-full hover:border-primary/20 transition-colors"
                                     onClick={() => copyToClipboard(paymentMethods[0].address)}
                                     aria-label="Copy payment details"
                                 >

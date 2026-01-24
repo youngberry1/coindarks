@@ -121,6 +121,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
             <OrderDestinationCard
                 address={order.receiving_address}
                 network={network}
+                orderType={order.type}
             />
         </div>
     );
