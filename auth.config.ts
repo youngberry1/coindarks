@@ -22,13 +22,21 @@ export const authConfig = {
             // This ensures that deleting/banning a user from the DB reflects immediately
             if (token.id) {
                 try {
-                    const { data: dbUser, error } = await supabaseAdmin
+                    // Implement a timeout to prevent slow DB from hanging the app
+                    const dbCheck = supabaseAdmin
                         .from('users')
                         .select('id, status, role, email_verified')
                         .eq('id', token.id)
                         .maybeSingle();
 
+                    const timeout = new Promise((_, reject) =>
+                        setTimeout(() => reject(new Error("Timeout")), 5000)
+                    );
+
+                    const { data: dbUser, error } = await Promise.race([dbCheck, timeout]) as any;
+
                     if (error || !dbUser || dbUser.status === "BANNED") {
+                        // User is gone or banned, invalidating token
                         return null;
                     }
 
@@ -37,9 +45,9 @@ export const authConfig = {
                     token.status = dbUser.status;
                     token.emailVerified = dbUser.email_verified;
                 } catch (e) {
-                    console.error("[AUTH] JWT Validation Error:", e);
-                    // On error, we keep the token but log it
-                    // Alternatively, return null to be safe
+                    console.error("[AUTH] JWT Validation Error or Timeout:", e);
+                    // On error/timeout, we allow the request to proceed with existing token
+                    // to prevent total lockout if Supabase is temporarily slow
                 }
             }
 
