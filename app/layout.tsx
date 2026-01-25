@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   title: "CoinDarks | Secure Crypto-Fiat Exchange Ghana & Nigeria",
   description: "CoinDarks is Ghana and Nigeria's most secure platform to exchange Crypto to Fiat instantly. Buy and sell BTC, USDT with GHS and NGN at premium rates.",
   keywords: ["crypto exchange ghana", "crypto exchange nigeria", "buy bitcoin ghana", "sell usdt nigeria", "ghs to btc", "ngn to usdt", "secure crypto fiat bridge"],
-  authors: [{ name: "Abdul Barcky Arimiyao" }, { name: "The TBX Team" }],
+  authors: [{ name: "Abdul Barcky Arimiyao", url: "https://abdulbarcky.com" }, { name: "The TBX Team" }],
   creator: "Abdul Barcky Arimiyao",
   publisher: "The TBX Team - Trending Boss Next-Gen Technology",
   icons: {
