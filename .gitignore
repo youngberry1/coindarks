@@ -41,5 +41,11 @@ yarn-error.log*
 next-env.d.ts
 .env*.local
 
+# security audit & diagnostic scripts
 inspect_schema.js
 supabase_audit_migration.sql
+final_security_cleanup.sql
+fix_security_policies.sql
+list_policies.js
+test_rls.js
+verify_security.js
