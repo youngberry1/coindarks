@@ -44,7 +44,7 @@ export default async function AdminDashboardPage() {
         supabaseAdmin.from('users').select('*', { count: 'exact', head: true }),
         supabaseAdmin.from('kyc_submissions').select('*', { count: 'exact', head: true }).eq('status', 'PENDING'),
         supabaseAdmin.from('orders').select('*', { count: 'exact', head: true }),
-        supabaseAdmin.from('users').select('id, first_name, last_name, email, created_at, kyc_status, profile_image').order('created_at', { ascending: false }).limit(5),
+        supabaseAdmin.from('users').select('id, first_name, last_name, email, created_at, kyc_status, profile_image, role').order('created_at', { ascending: false }).limit(5),
         getCryptos(false)
     ]);
 
@@ -149,28 +149,28 @@ export default async function AdminDashboardPage() {
                                     >
                                         <div className="flex items-center gap-4 sm:gap-6 mb-6 sm:mb-0">
                                             <div className="relative">
-                                                <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-xl sm:rounded-[24px] overflow-hidden border-2 border-white/5 group-hover:border-primary/30 transition-all duration-500 shadow-2xl">
+                                                <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-full overflow-hidden border-2 border-white/5 group-hover:border-primary/30 transition-all duration-500 shadow-xl relative isolate">
                                                     {user.profile_image ? (
                                                         <Image
                                                             src={user.profile_image}
                                                             alt={`${user.first_name} ${user.last_name}`}
                                                             fill
-                                                            className="object-cover"
+                                                            className="object-cover rounded-full"
                                                             unoptimized
                                                         />
                                                     ) : (
-                                                        <div className="h-full w-full bg-primary flex items-center justify-center text-white font-black text-xl">
+                                                        <div className="h-full w-full bg-primary flex items-center justify-center text-white font-black text-xl rounded-full">
                                                             {user.first_name?.[0]}{user.last_name?.[0]}
                                                         </div>
                                                     )}
                                                 </div>
                                                 <div className={cn(
                                                     "absolute -bottom-1 -right-1 h-5 w-5 rounded-lg border-2 border-background flex items-center justify-center shadow-lg",
-                                                    user.kyc_status === 'APPROVED' ? "bg-emerald-500" :
+                                                    user.role === 'ADMIN' || user.kyc_status === 'APPROVED' ? "bg-emerald-500" :
                                                         user.kyc_status === 'PENDING' ? "bg-amber-500" :
                                                             "bg-foreground/20"
                                                 )}>
-                                                    {user.kyc_status === 'APPROVED' ? <ShieldCheck className="h-3 w-3 text-white" /> :
+                                                    {user.role === 'ADMIN' || user.kyc_status === 'APPROVED' ? <ShieldCheck className="h-3 w-3 text-white" /> :
                                                         user.kyc_status === 'PENDING' ? <Activity className="h-3 w-3 text-white" /> :
                                                             <div className="h-1 w-1 rounded-full bg-white/40" />
                                                     }
@@ -200,11 +200,12 @@ export default async function AdminDashboardPage() {
                                         <div className="flex items-center gap-6 ml-auto sm:ml-0">
                                             <div className={cn(
                                                 "px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border transition-all duration-500",
-                                                user.kyc_status === 'APPROVED' ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20 group-hover:bg-emerald-500/20" :
-                                                    user.kyc_status === 'PENDING' ? "bg-amber-500/10 text-amber-500 border-amber-500/20 group-hover:bg-amber-500/20" :
-                                                        "bg-white/5 text-foreground/20 border-white/5"
+                                                user.role === 'ADMIN' ? "bg-primary/10 text-primary border-primary/20 group-hover:bg-primary/20" :
+                                                    user.kyc_status === 'APPROVED' ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20 group-hover:bg-emerald-500/20" :
+                                                        user.kyc_status === 'PENDING' ? "bg-amber-500/10 text-amber-500 border-amber-500/20 group-hover:bg-amber-500/20" :
+                                                            "bg-white/5 text-foreground/20 border-white/5"
                                             )}>
-                                                {user.kyc_status === 'UNSUBMITTED' ? 'No Documents' : user.kyc_status}
+                                                {user.role === 'ADMIN' ? 'Exempt' : (user.kyc_status === 'UNSUBMITTED' ? 'No Documents' : user.kyc_status)}
                                             </div>
                                             <div className="h-12 w-12 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 group-hover:translate-x-2">
                                                 <ChevronRight className="h-5 w-5 text-foreground/30" />

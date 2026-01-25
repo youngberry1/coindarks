@@ -8,6 +8,8 @@ import { supabaseAdmin } from "@/lib/supabase-admin";
 import { ShieldCheck } from "lucide-react";
 import { WalletsTabs } from "@/components/dashboard/WalletsTabs";
 
+import { Cryptocurrency } from "@/actions/crypto";
+
 export const metadata: Metadata = {
     title: "My Accounts | CoinDarks",
     description: "Manage your saved deposit and payment accounts.",
@@ -30,7 +32,7 @@ export default async function WalletsPage(props: { searchParams: Promise<{ tab?:
         .eq('is_active', true)
         .order('symbol');
 
-    const assets = dbAssets || [];
+    const assets = (dbAssets || []) as Cryptocurrency[];
 
     return (
         <div className="space-y-6 md:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -55,7 +57,7 @@ export default async function WalletsPage(props: { searchParams: Promise<{ tab?:
                 activeTab={activeTab}
                 wallets={wallets}
                 paymentMethods={paymentMethods}
-                assets={assets as any}
+                assets={assets}
             />
         </div>
     );

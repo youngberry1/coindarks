@@ -6,18 +6,23 @@ import { PaymentMethodManager } from "@/components/dashboard/PaymentMethodManage
 import { Wallet as WalletIcon, CreditCard } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+interface Asset {
+    symbol: string;
+    networks: string[];
+}
+
 interface WalletsTabsProps {
     activeTab: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     wallets: any[];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     paymentMethods: any[];
-    assets: any[];
+    assets: Asset[];
 }
 
 // Memoized tab content components for performance
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const CryptoWalletsTab = memo(({ wallets, assets }: { wallets: any[], assets: any[] }) => (
+const CryptoWalletsTab = memo(({ wallets, assets }: { wallets: any[], assets: Asset[] }) => (
     <div
         className="p-5 md:p-12 rounded-[32px] md:rounded-[40px] border border-white/5 bg-card-bg/50 backdrop-blur-xl relative overflow-hidden group"
         style={{
