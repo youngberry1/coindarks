@@ -149,16 +149,23 @@ export function UserManagementList({ users }: UserManagementListProps) {
                                         </div>
                                     </td>
                                     <td className="px-10 py-8">
-                                        <div className={cn(
-                                            "inline-flex items-center gap-2.5 px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border transition-all duration-500",
-                                            user.kyc_status === 'APPROVED' ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20 group-hover:bg-emerald-500/20" :
-                                                user.kyc_status === 'PENDING' ? "bg-amber-500/10 text-amber-500 border-amber-500/20 group-hover:bg-amber-500/20" :
-                                                    "bg-white/5 text-foreground/20 border-white/5"
-                                        )}>
-                                            {user.kyc_status === 'APPROVED' && <ShieldCheck className="h-3.5 w-3.5" />}
-                                            {user.kyc_status === 'PENDING' && <Activity className="h-3.5 w-3.5 animate-pulse" />}
-                                            {user.kyc_status === 'UNSUBMITTED' ? 'Awaiting Submission' : user.kyc_status}
-                                        </div>
+                                        {user.role === 'ADMIN' ? (
+                                            <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border transition-all duration-500 bg-primary/10 text-primary border-primary/20">
+                                                <ShieldCheck className="h-3.5 w-3.5" />
+                                                System Exempt
+                                            </div>
+                                        ) : (
+                                            <div className={cn(
+                                                "inline-flex items-center gap-2.5 px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border transition-all duration-500",
+                                                user.kyc_status === 'APPROVED' ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20 group-hover:bg-emerald-500/20" :
+                                                    user.kyc_status === 'PENDING' ? "bg-amber-500/10 text-amber-500 border-amber-500/20 group-hover:bg-amber-500/20" :
+                                                        "bg-white/5 text-foreground/20 border-white/5"
+                                            )}>
+                                                {user.kyc_status === 'APPROVED' && <ShieldCheck className="h-3.5 w-3.5" />}
+                                                {user.kyc_status === 'PENDING' && <Activity className="h-3.5 w-3.5 animate-pulse" />}
+                                                {user.kyc_status === 'UNSUBMITTED' ? 'Awaiting Submission' : user.kyc_status}
+                                            </div>
+                                        )}
                                     </td>
                                     <td className="px-10 py-8">
                                         <div className={cn(
@@ -174,21 +181,23 @@ export function UserManagementList({ users }: UserManagementListProps) {
                                     </td>
                                     <td className="px-10 py-8 text-right">
                                         <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-4 group-hover:translate-x-0">
-                                            <button
-                                                onClick={() => {
-                                                    setSelectedUser(user);
-                                                    setIsBanModalOpen(true);
-                                                }}
-                                                className={cn(
-                                                    "h-12 w-12 rounded-2xl flex items-center justify-center transition-all duration-500 active:scale-95",
-                                                    user.status === 'BANNED'
-                                                        ? "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white border border-emerald-500/20"
-                                                        : "bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white border border-red-500/20"
-                                                )}
-                                                title={user.status === 'BANNED' ? "Activate Member" : "De-activate Member"}
-                                            >
-                                                <Ban className="h-5 w-5" />
-                                            </button>
+                                            {user.role !== 'ADMIN' && (
+                                                <button
+                                                    onClick={() => {
+                                                        setSelectedUser(user);
+                                                        setIsBanModalOpen(true);
+                                                    }}
+                                                    className={cn(
+                                                        "h-12 w-12 rounded-2xl flex items-center justify-center transition-all duration-500 active:scale-95",
+                                                        user.status === 'BANNED'
+                                                            ? "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white border border-emerald-500/20"
+                                                            : "bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white border border-red-500/20"
+                                                    )}
+                                                    title={user.status === 'BANNED' ? "Activate Member" : "De-activate Member"}
+                                                >
+                                                    <Ban className="h-5 w-5" />
+                                                </button>
+                                            )}
 
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
@@ -230,20 +239,24 @@ export function UserManagementList({ users }: UserManagementListProps) {
                                                         <Mail className="mr-3 h-4 w-4" />
                                                         <span className="font-black text-xs uppercase tracking-tight">Send Email</span>
                                                     </DropdownMenuItem>
-                                                    <DropdownMenuSeparator className="bg-white/5 my-2" />
-                                                    <DropdownMenuItem
-                                                        className={cn(
-                                                            "rounded-2xl h-12 px-3 transition-colors cursor-pointer font-black text-xs uppercase tracking-tight",
-                                                            user.status === 'BANNED' ? "text-emerald-500 focus:bg-emerald-500/20" : "text-red-500 focus:bg-red-500/20"
-                                                        )}
-                                                        onClick={() => {
-                                                            setSelectedUser(user);
-                                                            setIsBanModalOpen(true);
-                                                        }}
-                                                    >
-                                                        <Ban className="mr-3 h-4 w-4" />
-                                                        {user.status === 'BANNED' ? "Activate Member" : "De-activate Member"}
-                                                    </DropdownMenuItem>
+                                                    {user.role !== 'ADMIN' && (
+                                                        <>
+                                                            <DropdownMenuSeparator className="bg-white/5 my-2" />
+                                                            <DropdownMenuItem
+                                                                className={cn(
+                                                                    "rounded-2xl h-12 px-3 transition-colors cursor-pointer font-black text-xs uppercase tracking-tight",
+                                                                    user.status === 'BANNED' ? "text-emerald-500 focus:bg-emerald-500/20" : "text-red-500 focus:bg-red-500/20"
+                                                                )}
+                                                                onClick={() => {
+                                                                    setSelectedUser(user);
+                                                                    setIsBanModalOpen(true);
+                                                                }}
+                                                            >
+                                                                <Ban className="mr-3 h-4 w-4" />
+                                                                {user.status === 'BANNED' ? "Activate Member" : "De-activate Member"}
+                                                            </DropdownMenuItem>
+                                                        </>
+                                                    )}
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
                                         </div>
@@ -309,14 +322,20 @@ export function UserManagementList({ users }: UserManagementListProps) {
                         <div className="relative z-10 grid grid-cols-2 gap-3 sm:gap-4 p-4 sm:p-5 rounded-[20px] sm:rounded-[24px] bg-white/3 border border-white/5">
                             <div className="space-y-1 sm:space-y-1.5">
                                 <p className="text-[8px] sm:text-[9px] text-foreground/30 font-black uppercase tracking-[0.2em]">Verification</p>
-                                <div className={cn(
-                                    "inline-flex items-center px-3 sm:px-4 py-1 sm:py-1.5 rounded-lg sm:rounded-xl text-[8px] sm:text-[9px] font-black uppercase tracking-[0.2em] border shadow-2xl",
-                                    user.kyc_status === 'APPROVED' ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/10" :
-                                        user.kyc_status === 'PENDING' ? "bg-amber-500/10 text-amber-500 border-amber-500/10" :
-                                            "bg-white/5 text-foreground/20 border-white/5"
-                                )}>
-                                    {user.kyc_status}
-                                </div>
+                                {user.role === 'ADMIN' ? (
+                                    <div className="inline-flex items-center px-3 sm:px-4 py-1 sm:py-1.5 rounded-lg sm:rounded-xl text-[8px] sm:text-[9px] font-black uppercase tracking-[0.2em] border shadow-2xl bg-primary/10 text-primary border-primary/10">
+                                        System Exempt
+                                    </div>
+                                ) : (
+                                    <div className={cn(
+                                        "inline-flex items-center px-3 sm:px-4 py-1 sm:py-1.5 rounded-lg sm:rounded-xl text-[8px] sm:text-[9px] font-black uppercase tracking-[0.2em] border shadow-2xl",
+                                        user.kyc_status === 'APPROVED' ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/10" :
+                                            user.kyc_status === 'PENDING' ? "bg-amber-500/10 text-amber-500 border-amber-500/10" :
+                                                "bg-white/5 text-foreground/20 border-white/5"
+                                    )}>
+                                        {user.kyc_status}
+                                    </div>
+                                )}
                             </div>
                             <div className="space-y-1 sm:space-y-1.5">
                                 <p className="text-[8px] sm:text-[9px] text-foreground/30 font-black uppercase tracking-[0.2em]">Role / Access</p>
@@ -331,20 +350,22 @@ export function UserManagementList({ users }: UserManagementListProps) {
 
                         <div className="relative z-10 flex items-center justify-between">
                             <p className="text-[9px] sm:text-[10px] text-foreground/20 font-black uppercase tracking-[0.15em] sm:tracking-[0.2em]">Joined {new Date(user.created_at).toLocaleDateString()}</p>
-                            <button
-                                onClick={() => {
-                                    setSelectedUser(user);
-                                    setIsBanModalOpen(true);
-                                }}
-                                className={cn(
-                                    "h-10 sm:h-11 px-4 sm:px-5 rounded-xl sm:rounded-2xl text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] border transition-all duration-300",
-                                    user.status === 'BANNED'
-                                        ? "bg-emerald-500 text-white border-emerald-500/30"
-                                        : "bg-red-500/10 text-red-500 border-red-500/20"
-                                )}
-                            >
-                                {user.status === 'BANNED' ? "Activate" : "De-activate"}
-                            </button>
+                            {user.role !== 'ADMIN' && (
+                                <button
+                                    onClick={() => {
+                                        setSelectedUser(user);
+                                        setIsBanModalOpen(true);
+                                    }}
+                                    className={cn(
+                                        "h-10 sm:h-11 px-4 sm:px-5 rounded-xl sm:rounded-2xl text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] border transition-all duration-300",
+                                        user.status === 'BANNED'
+                                            ? "bg-emerald-500 text-white border-emerald-500/30"
+                                            : "bg-red-500/10 text-red-500 border-red-500/20"
+                                    )}
+                                >
+                                    {user.status === 'BANNED' ? "Activate" : "De-activate"}
+                                </button>
+                            )}
                         </div>
                     </div>
                 ))}

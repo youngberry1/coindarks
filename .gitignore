@@ -49,3 +49,4 @@ fix_security_policies.sql
 list_policies.js
 test_rls.js
 verify_security.js
+check_users.js
