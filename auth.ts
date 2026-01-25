@@ -54,6 +54,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                                 role: user.role,
                                 status: user.status,
                                 emailVerified: user.email_verified,
+                                passwordVersion: user.password_hash.substring(0, 10),
                             };
                         }
                     } catch {

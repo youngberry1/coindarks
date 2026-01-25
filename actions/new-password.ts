@@ -3,7 +3,7 @@
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { NewPasswordSchema } from "@/schemas";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 import { sendPasswordChangeConfirmationEmail } from "@/lib/mail";
 
 export const newPassword = async (
@@ -22,9 +22,9 @@ export const newPassword = async (
 
     const { password } = validatedFields.data;
 
-    // Check if token exists
-    const { data: existingToken } = await supabase
-        .from('PasswordResetToken')
+    // 1. Check if token exists
+    const { data: existingToken } = await supabaseAdmin
+        .from('password_reset_tokens')
         .select('*')
         .eq('token', token)
         .maybeSingle();
@@ -33,16 +33,16 @@ export const newPassword = async (
         return { error: "Invalid token!" };
     }
 
-    // Check if expired
+    // 2. Check if expired
     const hasExpired = new Date(existingToken.expires) < new Date();
 
     if (hasExpired) {
         return { error: "Token has expired!" };
     }
 
-    // Get user
-    const { data: existingUser } = await supabase
-        .from('User')
+    // 3. Get user
+    const { data: existingUser } = await supabaseAdmin
+        .from('users')
         .select('*')
         .eq('email', existingToken.email)
         .maybeSingle();
@@ -51,26 +51,35 @@ export const newPassword = async (
         return { error: "Email does not exist!" };
     }
 
+    // 4. Hash new password
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Update password
-    const { error: updateError } = await supabase
-        .from('User')
-        .update({ passwordHash: hashedPassword })
+    // 5. Update password and invalidate other sessions by updating hash
+    const { error: updateError } = await supabaseAdmin
+        .from('users')
+        .update({
+            password_hash: hashedPassword,
+            updated_at: new Date().toISOString()
+        })
         .eq('id', existingUser.id);
 
     if (updateError) {
+        console.error("[NEW_PASSWORD_ERROR]", updateError);
         return { error: "Failed to update password!" };
     }
 
-    // Delete token
-    await supabase
-        .from('PasswordResetToken')
+    // 6. Delete token
+    await supabaseAdmin
+        .from('password_reset_tokens')
         .delete()
         .eq('id', existingToken.id);
 
-    // Notify user of successful password change
-    await sendPasswordChangeConfirmationEmail(existingUser.email);
+    // 7. Notify user
+    try {
+        await sendPasswordChangeConfirmationEmail(existingUser.email);
+    } catch (e) {
+        console.warn("[EMAIL_ERROR] Confirmation email failed after password change:", e);
+    }
 
     return { success: "Password updated successfully!" };
 };

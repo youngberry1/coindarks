@@ -16,6 +16,7 @@ export const authConfig = {
                 token.role = user.role;
                 token.status = user.status;
                 token.emailVerified = user.emailVerified;
+                token.passwordVersion = (user as { passwordVersion?: string }).passwordVersion;
             }
 
             // For every request, verify the user still exists and is active
@@ -25,7 +26,7 @@ export const authConfig = {
                     // Implement a timeout to prevent slow DB from hanging the app
                     const dbCheck = supabaseAdmin
                         .from('users')
-                        .select('id, status, role, email_verified')
+                        .select('id, status, role, email_verified, password_hash')
                         .eq('id', token.id)
                         .maybeSingle();
 
@@ -33,10 +34,18 @@ export const authConfig = {
                         setTimeout(() => reject(new Error("Timeout")), 5000)
                     );
 
-                    const { data: dbUser, error } = await Promise.race([dbCheck, timeout]) as any;
+                    const result = await Promise.race([dbCheck, timeout]) as { data: any, error: any };
+                    const { data: dbUser, error } = result;
 
                     if (error || !dbUser || dbUser.status === "BANNED") {
                         // User is gone or banned, invalidating token
+                        return null;
+                    }
+
+                    // Security: Verify password version still matches
+                    // If password changed, hash snippet won't match, forcing logout
+                    const currentPasswordVersion = dbUser.password_hash.substring(0, 10);
+                    if (token.passwordVersion !== currentPasswordVersion) {
                         return null;
                     }
 
