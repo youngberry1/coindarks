@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
-import { ArrowRight, ShieldCheck, Zap, Globe, Sparkles } from "lucide-react";
+import { ArrowRight, ShieldCheck, Zap, Globe } from "lucide-react";
 import { useCallback } from "react";
 
 export default function Hero() {
@@ -33,7 +33,7 @@ export default function Hero() {
                         transition={{ duration: 0.6, ease: "easeOut" }}
                         className="inline-flex items-center gap-3 px-5 py-2 rounded-full glass border border-primary/20 shadow-[0_0_20px_rgba(var(--primary),0.1)] group cursor-default"
                     >
-                        <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
+                        <Zap className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
                         <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-foreground/60">
                             The New Standard for Web3 in Africa
                         </span>
@@ -111,8 +111,8 @@ export default function Hero() {
                         <div className="absolute -top-6 -left-6 hidden md:block">
                             <div className="glass p-5 rounded-[24px] border-primary/20 animate-bounce-subtle">
                                 <div className="flex items-center gap-4">
-                                    <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                                        <Zap className="h-5 w-5 text-primary" />
+                                    <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-xl sm:rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/20 shrink-0">
+                                        <Zap className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
                                     </div>
                                     <div>
                                         <p className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Settlement</p>

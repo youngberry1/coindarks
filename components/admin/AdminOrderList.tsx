@@ -11,7 +11,7 @@ import {
     CheckCircle2,
     Hash,
     Activity,
-    Sparkles
+    Zap
 } from "lucide-react";
 import { updateOrderStatus } from "@/actions/admin";
 import { formatCryptoAmount } from "@/lib/formatters";
@@ -280,7 +280,7 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
                         <div className="relative z-10 flex flex-col sm:flex-row justify-between items-end gap-6 sm:gap-8">
                             <div className="space-y-3 w-full sm:w-auto overflow-hidden">
                                 <div className="flex items-center gap-2">
-                                    <Sparkles className="h-3.5 w-3.5 text-primary opacity-30" />
+                                    <Zap className="h-3.5 w-3.5 text-primary opacity-30" />
                                     <span className="text-[10px] font-black uppercase tracking-widest text-foreground/40">{order.asset} TRADE DETAILS</span>
                                 </div>
                                 <div className="truncate">

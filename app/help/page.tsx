@@ -18,18 +18,18 @@ export default function HelpPage() {
         {
             country: "Ghana",
             city: "Accra",
-            address: "Suite 402, Heritage Tower, Ridge, Accra",
-            phone: "+233 24 000 0000",
+            address: "Digital Support Office",
+            phone: "+233 55 968 4347",
             email: "ghana@coindarks.com",
             mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15883.56561214!2d-0.20!3d5.55!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNcKwMzMnMDAuMCJOIDDCsDEyJzAwLjAiVw!5e0!3m2!1sen!2sgh!4v1625000000000!5m2!1sen!2sgh"
         },
         {
-            country: "Nigeria",
-            city: "Lagos",
-            address: "15 Admiralty Way, Lekki Phase 1, Lagos",
-            phone: "+234 81 000 0000",
-            email: "nigeria@coindarks.com",
-            mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3964.4!2d3.4!3d6.4!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwMjQnMDAuMCJOIDPCsDI0JzAwLjAiRQ!5e0!3m2!1sen!2sng!4v1625000000000!5m2!1sen!2sng"
+            country: "Regional Expansion",
+            city: "West Africa",
+            address: "Further Regional Presence Coming Soon",
+            phone: "Digital Support Only",
+            email: "support@coindarks.com",
+            mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15883.56561214!2d-0.20!3d5.55!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNcKwMzMnMDAuMCJOIDDCsDEyJzAwLjAiVw!5e0!3m2!1sen!2sgh!4v1625000000000!5m2!1sen!2sgh"
         }
     ];
 
@@ -65,8 +65,8 @@ export default function HelpPage() {
                                 Support <span className="text-gradient">Center.</span>
                             </h1>
                             <p className="text-xl text-foreground/50 font-medium max-w-2xl mx-auto">
-                                Reliable support for your CoinDarks account. Reach our support teams
-                                in Accra and Lagos for immediate assistance.
+                                Reliable support for your CoinDarks account. Reach our core support team
+                                in Accra for immediate assistance.
                             </p>
                         </div>
                     </motion.div>

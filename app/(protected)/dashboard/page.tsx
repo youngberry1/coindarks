@@ -6,14 +6,14 @@ import {
     ArrowDownLeft,
     ShieldAlert,
     CheckCircle2,
+    ShieldCheck,
+    Activity,
+    ChevronRight,
+    RefreshCcw,
     Globe,
     ExternalLink,
-    RefreshCcw,
-    ShieldCheck,
-    Sparkles,
-    Activity,
     MessageSquare,
-    ChevronRight
+    Zap
 } from "lucide-react";
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase-admin";
@@ -203,7 +203,7 @@ export default async function DashboardPage() {
                             {isAdmin ? <ShieldCheck className="h-8 w-8 text-emerald-500" /> : (kycStatus === 'APPROVED' ? <CheckCircle2 className="h-8 w-8 text-emerald-500" /> :
                                 kycStatus === 'PENDING' ? <Activity className="h-8 w-8 text-amber-500" /> :
                                     kycStatus === 'REJECTED' ? <AlertCircle className="h-8 w-8 text-red-500" /> :
-                                        <Sparkles className="h-8 w-8 text-primary" />
+                                        <Zap className="h-8 w-8 text-primary" />
                             )}
                         </div>
                         <span className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.3em]">

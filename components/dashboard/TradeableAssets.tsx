@@ -5,7 +5,7 @@ import { getCryptos, Cryptocurrency } from '@/actions/crypto';
 import { CryptoIcon } from '@/components/CryptoIcon';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { Zap, Sparkles, TrendingUp } from 'lucide-react';
+import { Zap, TrendingUp } from 'lucide-react';
 
 interface TradeableAssetsProps {
     initialData?: Cryptocurrency[];
@@ -98,8 +98,8 @@ export default function TradeableAssets({ initialData = [] }: TradeableAssetsPro
                                                 {crypto.stock_status}
                                             </p>
                                         </div>
-                                        <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                                            <Sparkles className="h-4 w-4 text-primary" />
+                                        <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/10 shadow-2xl shadow-primary/20">
+                                            <Zap className="h-6 w-6 text-primary" />
                                         </div>
                                     </div>
                                 </div>

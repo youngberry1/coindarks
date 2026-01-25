@@ -18,7 +18,6 @@ import {
     Menu,
     Megaphone,
     BookOpen,
-    Sparkles,
     Activity
 } from "lucide-react";
 import { signOut } from "next-auth/react";
@@ -106,7 +105,6 @@ export function DashboardSidebar({ user }: SidebarProps) {
                             <div className="flex items-center gap-2">
                                 <span className="text-[10px] text-foreground/40 font-black uppercase tracking-widest">{isAdmin ? "Administrator" : "Member Account"}</span>
                                 <div className="h-1 w-1 rounded-full bg-primary/40" />
-                                {isAdmin && <Sparkles className="h-3 w-3 text-primary" />}
                             </div>
                         </div>
                     </div>

@@ -3,7 +3,7 @@
 import Navbar from "@/components/layout/Navbar";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { ChevronLeft, Plus, Minus, HelpCircle, Shield, MessageSquare, Sparkles } from "lucide-react";
+import { ChevronLeft, Plus, Minus, HelpCircle, Shield, MessageSquare } from "lucide-react";
 import { Footer } from "@/components/layout/Footer";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -169,18 +169,13 @@ export default function FAQPage() {
                             <div className="space-y-4">
                                 <h3 className="text-3xl sm:text-4xl font-black tracking-tight">Need help?</h3>
                                 <p className="text-foreground/40 font-medium max-w-lg mx-auto text-lg leading-relaxed">
-                                    Our support teams in Accra and Lagos are available 24/7 to help you with any questions.
+                                    Our support team in Accra is available 24/7 to help you with any questions.
                                 </p>
                             </div>
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
                                 <Link href="/help" className="w-full sm:w-auto">
                                     <button className="w-full h-16 px-12 rounded-[24px] bg-primary text-white font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-primary/30 hover:shadow-primary/50 transition-all active:scale-95">
                                         Help Center
-                                    </button>
-                                </Link>
-                                <Link href="/dashboard/support" className="w-full sm:w-auto">
-                                    <button className="w-full h-16 px-12 rounded-[24px] glass border border-white/10 font-black text-xs uppercase tracking-[0.2em] hover:bg-white/5 transition-all text-foreground/60">
-                                        Contact Support <Sparkles className="ml-2 h-3 w-3 inline" />
                                     </button>
                                 </Link>
                             </div>
