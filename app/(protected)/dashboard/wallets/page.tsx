@@ -23,12 +23,14 @@ export default async function WalletsPage(props: { searchParams: Promise<{ tab?:
     const wallets = await getWallets();
     const paymentMethods = await getPaymentMethods();
 
-    // Fetch supported assets
-    const { data: inventory } = await supabaseAdmin
-        .from('inventory')
-        .select('asset');
+    // Fetch supported assets dynamically from the new cryptocurrencies table
+    const { data: dbAssets } = await supabaseAdmin
+        .from('cryptocurrencies')
+        .select('*')
+        .eq('is_active', true)
+        .order('symbol');
 
-    const assets = inventory?.map(i => i.asset) || ["BTC", "XLM", "USDT", "USDC", "SOL", "LTC"];
+    const assets = dbAssets || [];
 
     return (
         <div className="space-y-6 md:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -53,7 +55,7 @@ export default async function WalletsPage(props: { searchParams: Promise<{ tab?:
                 activeTab={activeTab}
                 wallets={wallets}
                 paymentMethods={paymentMethods}
-                assets={assets}
+                assets={assets as any}
             />
         </div>
     );

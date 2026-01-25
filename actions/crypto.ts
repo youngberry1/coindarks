@@ -11,6 +11,7 @@ export interface Cryptocurrency {
     icon_url: string;
     is_active: boolean;
     stock_status: 'IN STOCK' | 'OUT OF STOCK';
+    networks: string[];
 }
 
 export async function getCryptos(onlyActive = true) {
@@ -44,6 +45,7 @@ export async function updateCryptoStatus(id: string, inStock: boolean) {
 
     revalidatePath('/dashboard');
     revalidatePath('/admin/settings');
+    revalidatePath('/admin/inventory');
     return { success: true };
 }
 
@@ -59,19 +61,21 @@ export async function toggleCryptoActive(id: string, isActive: boolean) {
 
     revalidatePath('/dashboard');
     revalidatePath('/admin/settings');
+    revalidatePath('/admin/inventory');
     return { success: true };
 }
 
-export async function addCrypto(data: { symbol: string; name: string; icon_url: string }) {
+export async function addCrypto(data: { symbol: string; name: string; icon_url: string; networks: string[] }) {
     const { error } = await supabaseAdmin
         .from('cryptocurrencies')
         .insert([
             {
-                symbol: data.symbol,
+                symbol: data.symbol.toUpperCase(),
                 name: data.name,
                 icon_url: data.icon_url,
                 is_active: true,
-                stock_status: 'IN STOCK'
+                stock_status: 'IN STOCK',
+                networks: data.networks
             }
         ]);
 
@@ -81,5 +85,22 @@ export async function addCrypto(data: { symbol: string; name: string; icon_url: 
 
     revalidatePath('/dashboard');
     revalidatePath('/admin/settings');
+    revalidatePath('/admin/inventory');
+    return { success: true };
+}
+
+export async function updateCryptoNetworks(id: string, networks: string[]) {
+    const { error } = await supabaseAdmin
+        .from('cryptocurrencies')
+        .update({ networks: networks })
+        .eq('id', id);
+
+    if (error) {
+        throw new Error('Failed to update crypto networks: ' + error.message);
+    }
+
+    revalidatePath('/dashboard');
+    revalidatePath('/admin/settings');
+    revalidatePath('/admin/inventory');
     return { success: true };
 }

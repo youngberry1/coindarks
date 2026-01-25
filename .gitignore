@@ -50,3 +50,6 @@ list_policies.js
 test_rls.js
 verify_security.js
 check_users.js
+list_tables.js
+check_cryptos.js
+add_networks_migration.sql

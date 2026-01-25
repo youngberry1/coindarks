@@ -28,18 +28,11 @@ interface Wallet {
 
 interface WalletManagerProps {
     initialWallets: Wallet[];
-    assets: string[];
+    assets: {
+        symbol: string;
+        networks: string[];
+    }[];
 }
-
-const NETWORK_OPTIONS: Record<string, string[]> = {
-    "USDT": ["TRC20 (Tron)", "ERC20 (Ethereum)", "BEP20 (BSC)", "SOL (Solana)", "Polygon", "TON"],
-    "USDC": ["ERC20 (Ethereum)", "BEP20 (BSC)", "SOL (Solana)", "Polygon", "Base"],
-    "BTC": ["Bitcoin Network"],
-    "ETH": ["Ethereum (Mainnet)", "Arbitrum", "Optimism", "Base", "zkSync"],
-    "LTC": ["Litecoin Network"],
-    "XLM": ["Stellar Network"],
-    "SOL": ["Solana Network"],
-};
 
 export function WalletManager({ initialWallets, assets }: WalletManagerProps) {
     const router = useRouter();
@@ -51,8 +44,8 @@ export function WalletManager({ initialWallets, assets }: WalletManagerProps) {
     // Form state for new/editing wallet
     const [form, setForm] = useState<Wallet>({
         name: "",
-        asset: assets[0] || "",
-        network: NETWORK_OPTIONS[assets[0]]?.[0] || "Native",
+        asset: assets[0]?.symbol || "",
+        network: assets[0]?.networks?.[0] || "Native",
         address: ""
     });
 
@@ -88,7 +81,12 @@ export function WalletManager({ initialWallets, assets }: WalletManagerProps) {
 
                 setIsAdding(false);
                 setEditingWallet(null);
-                setForm({ name: "", asset: assets[0] || "", network: NETWORK_OPTIONS[assets[0]]?.[0] || "Native", address: "" });
+                setForm({
+                    name: "",
+                    asset: assets[0]?.symbol || "",
+                    network: assets[0]?.networks?.[0] || "Native",
+                    address: ""
+                });
 
                 // Refresh router to get updated data from server
                 router.refresh();
@@ -149,7 +147,12 @@ export function WalletManager({ initialWallets, assets }: WalletManagerProps) {
                         onClick={() => {
                             setIsAdding(true);
                             setEditingWallet(null);
-                            setForm({ name: "", asset: assets[0] || "", network: NETWORK_OPTIONS[assets[0]]?.[0] || "Native", address: "" });
+                            setForm({
+                                name: "",
+                                asset: assets[0]?.symbol || "",
+                                network: assets[0]?.networks?.[0] || "Native",
+                                address: ""
+                            });
                         }}
                         className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-primary text-white font-bold text-xs shadow-lg shadow-primary/20 hover:scale-105 transition-all flex items-center justify-center sm:justify-start gap-2"
                     >
@@ -177,10 +180,11 @@ export function WalletManager({ initialWallets, assets }: WalletManagerProps) {
                             <Select
                                 value={form.asset}
                                 onValueChange={(val) => {
+                                    const selectedAsset = assets.find(a => a.symbol === val);
                                     setForm({
                                         ...form,
                                         asset: val,
-                                        network: NETWORK_OPTIONS[val]?.[0] || "Native"
+                                        network: selectedAsset?.networks?.[0] || "Native"
                                     });
                                 }}
                             >
@@ -189,8 +193,8 @@ export function WalletManager({ initialWallets, assets }: WalletManagerProps) {
                                 </SelectTrigger>
                                 <SelectContent className="bg-card-bg border-border backdrop-blur-xl">
                                     {assets.map(a => (
-                                        <SelectItem key={a} value={a} className="font-bold cursor-pointer hover:bg-primary/10 transition-colors">
-                                            {a}
+                                        <SelectItem key={a.symbol} value={a.symbol} className="font-bold cursor-pointer hover:bg-primary/10 transition-colors">
+                                            {a.symbol}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
@@ -207,7 +211,7 @@ export function WalletManager({ initialWallets, assets }: WalletManagerProps) {
                                     <SelectValue placeholder="Select Network" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-card-bg border-border backdrop-blur-xl">
-                                    {(NETWORK_OPTIONS[form.asset] || ["Native"]).map(n => (
+                                    {(assets.find(a => a.symbol === form.asset)?.networks || ["Native"]).map(n => (
                                         <SelectItem key={n} value={n} className="font-bold cursor-pointer hover:bg-primary/10 transition-colors">
                                             {n}
                                         </SelectItem>

@@ -12,12 +12,12 @@ interface WalletsTabsProps {
     wallets: any[];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     paymentMethods: any[];
-    assets: string[];
+    assets: any[];
 }
 
 // Memoized tab content components for performance
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const CryptoWalletsTab = memo(({ wallets, assets }: { wallets: any[], assets: string[] }) => (
+const CryptoWalletsTab = memo(({ wallets, assets }: { wallets: any[], assets: any[] }) => (
     <div
         className="p-5 md:p-12 rounded-[32px] md:rounded-[40px] border border-white/5 bg-card-bg/50 backdrop-blur-xl relative overflow-hidden group"
         style={{
