@@ -11,7 +11,8 @@ import {
     Copy,
     MoreHorizontal,
     Eye,
-    Activity
+    Activity,
+    X
 } from "lucide-react";
 import Image from "next/image";
 import { toggleUserStatus } from "@/actions/admin";
@@ -85,13 +86,26 @@ export function UserManagementList({ users }: UserManagementListProps) {
             <div className="flex flex-col sm:flex-row items-center gap-6">
                 <div className="relative group flex-1 w-full max-w-2xl">
                     <div className="absolute inset-0 bg-primary/5 blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 rounded-[32px]" />
-                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-foreground/20 group-focus-within:text-primary transition-all duration-500" />
+                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-foreground/50 group-focus-within:text-primary transition-all duration-500 z-20" />
                     <input
                         placeholder="SEARCH MEMBERS BY NAME OR EMAIL..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-16 pr-8 h-18 rounded-[32px] glass border border-white/5 focus:border-primary/30 focus:outline-none transition-all font-black text-xs uppercase tracking-[0.2em] relative z-10"
+                        className="w-full pl-16 pr-16 h-18 rounded-[32px] glass border border-white/5 focus:border-primary/30 focus:outline-none transition-all font-black text-xs uppercase tracking-[0.2em] relative z-10"
                     />
+                    <AnimatePresence>
+                        {searchTerm && (
+                            <motion.button
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.8 }}
+                                onClick={() => setSearchTerm("")}
+                                className="absolute right-6 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-white/5 border border-white/5 flex items-center justify-center text-foreground/40 hover:bg-white/10 hover:text-white transition-all z-20"
+                            >
+                                <X className="h-4 w-4" />
+                            </motion.button>
+                        )}
+                    </AnimatePresence>
                 </div>
 
                 <div className="h-18 px-8 rounded-[32px] glass border border-white/5 flex items-center gap-4 text-foreground/20 shrink-0">

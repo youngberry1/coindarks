@@ -101,7 +101,7 @@ export function AdminOrderList({ initialOrders }: AdminOrderListProps) {
             <div className="flex flex-col sm:flex-row items-center gap-6">
                 <div className="relative group flex-1 w-full 2xl:max-w-2xl">
                     <div className="absolute inset-0 bg-primary/5 blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 rounded-3xl" />
-                    <Search className="absolute left-5 sm:left-6 top-1/2 -translate-y-1/2 h-4 sm:h-5 w-4 sm:w-5 text-foreground/50 group-focus-within:text-primary transition-all duration-500" />
+                    <Search className="absolute left-5 sm:left-6 top-1/2 -translate-y-1/2 h-4 sm:h-5 w-4 sm:w-5 text-foreground/50 group-focus-within:text-primary transition-all duration-500 z-20" />
                     <input
                         placeholder="SEARCH TRADES..."
                         value={searchTerm}
