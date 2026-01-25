@@ -96,7 +96,7 @@ export async function replyToTicket(data: {
     ticketId: string; // UUID of the ticket
     message: string;
     status?: TicketStatus;
-    fromEmail: 'admin@coindarks.com' | 'support@coindarks.com' | 'finance@coindarks.com' | 'noreply@coindarks.com';
+    fromEmail: 'admin@coindarks.com' | 'support@coindarks.com' | 'finance@coindarks.com' | 'noreply@coindarks.com' | 'ghana@coindarks.com';
 }) {
     const session = await auth();
     if (session?.user?.role !== "ADMIN") {

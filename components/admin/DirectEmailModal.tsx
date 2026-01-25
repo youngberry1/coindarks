@@ -28,12 +28,13 @@ interface DirectEmailModalProps {
 export function DirectEmailModal({ isOpen, onClose, user }: DirectEmailModalProps) {
     const [subject, setSubject] = useState("");
     const [message, setMessage] = useState("");
-    const [fromType, setFromType] = useState<"admin" | "support" | "finance" | "noreply">("admin");
+    const [fromType, setFromType] = useState<"admin" | "support" | "ghana" | "finance" | "noreply">("admin");
     const [isLoading, setIsLoading] = useState(false);
 
     const fromEmails = {
         admin: "admin@coindarks.com",
         support: "support@coindarks.com",
+        ghana: "ghana@coindarks.com",
         finance: "finance@coindarks.com",
         noreply: "noreply@coindarks.com", // This will fallback to env if not matched, but we use these specific ones
     };
@@ -105,6 +106,7 @@ export function DirectEmailModal({ isOpen, onClose, user }: DirectEmailModalProp
                             <SelectContent className="border-white/10">
                                 <SelectItem value="admin" className="focus:bg-primary/20 focus:text-primary cursor-pointer">Admin (admin@)</SelectItem>
                                 <SelectItem value="support" className="focus:bg-primary/20 focus:text-primary cursor-pointer">Support (support@)</SelectItem>
+                                <SelectItem value="ghana" className="focus:bg-primary/20 focus:text-primary cursor-pointer">Ghana (ghana@)</SelectItem>
                                 <SelectItem value="finance" className="focus:bg-primary/20 focus:text-primary cursor-pointer">Finance (finance@)</SelectItem>
                                 <SelectItem value="noreply" className="focus:bg-primary/20 focus:text-primary cursor-pointer">Default (noreply@)</SelectItem>
                             </SelectContent>

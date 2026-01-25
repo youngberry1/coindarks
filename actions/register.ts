@@ -10,6 +10,7 @@ import { UserRole } from "@/types/db";
 
 const STAFF_EMAILS: Record<string, UserRole> = {
     "admin@coindarks.com": "ADMIN",
+    "ghana@coindarks.com": "ADMIN",
 };
 
 export async function register(formData: z.infer<typeof RegisterSchema>) {

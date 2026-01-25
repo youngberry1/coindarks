@@ -21,6 +21,7 @@ interface ReplyFormProps {
 
 const FROM_EMAILS = [
     { value: 'support@coindarks.com', label: 'Support Desk (support@coindarks.com)' },
+    { value: 'ghana@coindarks.com', label: 'Ghana Support (ghana@coindarks.com)' },
     { value: 'admin@coindarks.com', label: 'Administrator (admin@coindarks.com)' },
     { value: 'finance@coindarks.com', label: 'Finance Dept (finance@coindarks.com)' },
     { value: 'noreply@coindarks.com', label: 'System (noreply@coindarks.com)' },
@@ -44,7 +45,7 @@ export function ReplyForm({ ticketId }: ReplyFormProps) {
                 ticketId,
                 message,
                 status,
-                fromEmail: fromEmail as 'admin@coindarks.com' | 'support@coindarks.com' | 'finance@coindarks.com' | 'noreply@coindarks.com',
+                fromEmail: fromEmail as 'admin@coindarks.com' | 'support@coindarks.com' | 'finance@coindarks.com' | 'noreply@coindarks.com' | 'ghana@coindarks.com',
             });
 
             if (result && result.success) {

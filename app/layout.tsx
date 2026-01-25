@@ -105,11 +105,18 @@ const jsonLd = {
           "addressCountry": "NG"
         }
       ],
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "email": "support@coindarks.com",
-        "contactType": "customer service"
-      }
+      "contactPoint": [
+        {
+          "@type": "ContactPoint",
+          "email": "support@coindarks.com",
+          "contactType": "customer service"
+        },
+        {
+          "@type": "ContactPoint",
+          "email": "ghana@coindarks.com",
+          "contactType": "ghana regional support"
+        }
+      ]
     },
     {
       "@type": "Person",

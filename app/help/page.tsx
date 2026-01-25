@@ -9,7 +9,8 @@ import {
     Phone,
     MessageSquare,
     Clock,
-    ExternalLink
+    ExternalLink,
+    Globe
 } from "lucide-react";
 import { Footer } from "@/components/layout/Footer";
 
@@ -25,11 +26,11 @@ export default function HelpPage() {
         },
         {
             country: "Regional Expansion",
-            city: "West Africa",
-            address: "Further Regional Presence Coming Soon",
+            city: "West Africa Hub",
+            address: "Building the future of African Web3",
             phone: "Digital Support Only",
             email: "support@coindarks.com",
-            mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15883.56561214!2d-0.20!3d5.55!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNcKwMzMnMDAuMCJOIDDCsDEyJzAwLjAiVw!5e0!3m2!1sen!2sgh!4v1625000000000!5m2!1sen!2sgh"
+            isComingSoon: true
         }
     ];
 
@@ -80,7 +81,10 @@ export default function HelpPage() {
                             <div className="space-y-4">
                                 <h3 className="text-2xl font-black tracking-tight">Email Support</h3>
                                 <p className="text-sm text-foreground/40 font-medium leading-relaxed">Send us an email for any questions or support requests.</p>
-                                <p className="text-primary font-black tracking-[0.05em] text-lg">support@coindarks.com</p>
+                                <div className="space-y-1">
+                                    <p className="text-primary font-black tracking-[0.05em] text-lg">support@coindarks.com</p>
+                                    <p className="text-foreground/40 font-black tracking-[0.05em] text-sm italic">ghana@coindarks.com</p>
+                                </div>
                             </div>
                         </div>
 
@@ -132,23 +136,39 @@ export default function HelpPage() {
                                     className="space-y-10"
                                 >
                                     <div className="relative aspect-video rounded-[48px] overflow-hidden border border-white/5 glass group">
-                                        <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 z-10">
-                                            <a
-                                                href={`https://www.google.com/maps/search/${encodeURIComponent(loc.address)}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="px-8 py-4 rounded-[20px] bg-white text-black font-black text-[10px] uppercase tracking-[0.2em] flex items-center gap-3 hover:scale-105 transition-transform"
-                                            >
-                                                Open in Google Maps
-                                                <ExternalLink className="h-3 w-3" />
-                                            </a>
-                                        </div>
-                                        <iframe
-                                            src={loc.mapUrl}
-                                            className="w-full h-full border-0 grayscale invert contrast-[1.2] brightness-50 opacity-40 transition-all duration-700 group-hover:scale-110 group-hover:opacity-60"
-                                            title={`Our Office - ${loc.country}`}
-                                            loading="lazy"
-                                        />
+                                        {loc.isComingSoon ? (
+                                            <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4 bg-linear-to-br from-primary/5 via-transparent to-secondary/5">
+                                                <div className="h-20 w-20 rounded-full bg-white/5 border border-white/10 flex items-center justify-center animate-pulse">
+                                                    <Globe className="h-10 w-10 text-foreground/20" />
+                                                </div>
+                                                <div className="space-y-1 text-center">
+                                                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Coming Soon</p>
+                                                    <p className="text-sm text-foreground/30 font-medium">Strategic Regional Expansion</p>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 z-10">
+                                                    <a
+                                                        href={`https://www.google.com/maps/search/${encodeURIComponent(loc.address || '')}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="px-8 py-4 rounded-[20px] bg-white text-black font-black text-[10px] uppercase tracking-[0.2em] flex items-center gap-3 hover:scale-105 transition-transform"
+                                                    >
+                                                        Open in Google Maps
+                                                        <ExternalLink className="h-3 w-3" />
+                                                    </a>
+                                                </div>
+                                                {loc.mapUrl && (
+                                                    <iframe
+                                                        src={loc.mapUrl}
+                                                        className="w-full h-full border-0 grayscale invert contrast-[1.2] brightness-50 opacity-40 transition-all duration-700 group-hover:scale-110 group-hover:opacity-60"
+                                                        title={`Our Office - ${loc.country}`}
+                                                        loading="lazy"
+                                                    />
+                                                )}
+                                            </>
+                                        )}
                                     </div>
                                     <div className="px-8 space-y-6">
                                         <div className="space-y-2">
