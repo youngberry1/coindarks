@@ -107,7 +107,7 @@ export function UserManagementList({ users }: UserManagementListProps) {
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="border-b border-white/5 bg-white/2">
-                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Member Profile</th>
+                            <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Profile</th>
                             <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Verification Status</th>
                             <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Role / Access</th>
                             <th className="px-10 py-8 text-[10px] font-black text-foreground/20 uppercase tracking-[0.4em]">Join Date</th>
@@ -208,7 +208,9 @@ export function UserManagementList({ users }: UserManagementListProps) {
                                                     </button>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end" className="w-[200px] p-2 rounded-3xl glass backdrop-blur-3xl border-white/10">
-                                                    <DropdownMenuLabel className="px-3 pb-2 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40">Member Controls</DropdownMenuLabel>
+                                                    <DropdownMenuLabel className="px-3 pb-2 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40">
+                                                        {user.role === 'ADMIN' ? 'Administrative Controls' : 'Member Controls'}
+                                                    </DropdownMenuLabel>
                                                     <DropdownMenuItem asChild className="rounded-2xl h-12 mb-1 px-3 current-shadow focus:bg-primary transition-colors cursor-pointer">
                                                         <Link href={`/admin/users/${user.id}`} className="flex items-center w-full">
                                                             <Eye className="mr-3 h-4 w-4" />
@@ -219,11 +221,11 @@ export function UserManagementList({ users }: UserManagementListProps) {
                                                         className="rounded-2xl h-12 mb-1 px-3 focus:bg-white/10 transition-colors cursor-pointer"
                                                         onClick={() => {
                                                             navigator.clipboard.writeText(user.id);
-                                                            toast.success("Member ID Copied");
+                                                            toast.success(user.role === 'ADMIN' ? "Admin ID Copied" : "Member ID Copied");
                                                         }}
                                                     >
                                                         <Copy className="mr-3 h-4 w-4" />
-                                                        <span className="font-black text-xs uppercase tracking-tight">Copy Member ID</span>
+                                                        <span className="font-black text-xs uppercase tracking-tight">Copy {user.role === 'ADMIN' ? 'Admin ID' : 'Member ID'}</span>
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem
                                                         className="rounded-2xl h-12 mb-1 px-3 focus:bg-primary transition-colors cursor-pointer"

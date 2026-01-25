@@ -117,8 +117,14 @@ export default async function UserProfilePage({ params }: UserProfilePageProps) 
                 </Link>
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div>
-                        <h1 className="text-3xl font-black tracking-tight mb-2">Member Profile</h1>
-                        <p className="text-foreground/50 font-medium">Detailed view of member activity, trade history, and verification status.</p>
+                        <h1 className="text-3xl font-black tracking-tight mb-2">
+                            {user.role === 'ADMIN' ? 'Administrative Profile' : 'Member Profile'}
+                        </h1>
+                        <p className="text-foreground/50 font-medium">
+                            {user.role === 'ADMIN'
+                                ? 'Detailed view of system privileges, activity logs, and internal credentials.'
+                                : 'Detailed view of member activity, trade history, and verification status.'}
+                        </p>
                     </div>
                 </div>
             </div>
@@ -127,17 +133,17 @@ export default async function UserProfilePage({ params }: UserProfilePageProps) 
                 {/* User Info Card */}
                 <Card className="p-6 md:p-8 rounded-[28px] md:rounded-[32px] border-white/5 bg-card-bg/50 backdrop-blur-md space-y-6">
                     <div className="flex items-center gap-4">
-                        <div className="h-16 w-16 md:h-20 md:w-20 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0 relative overflow-hidden">
+                        <div className="h-16 w-16 md:h-20 md:w-20 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0 relative overflow-hidden border-2 border-white/5 isolate">
                             {user.profile_image ? (
                                 <Image
                                     src={user.profile_image}
                                     alt={`${user.first_name} ${user.last_name}`}
                                     fill
-                                    className="object-cover"
+                                    className="object-cover rounded-full"
                                     unoptimized
                                 />
                             ) : (
-                                <User className="h-8 w-8 md:h-10 md:w-10" />
+                                <User className="h-8 w-8 md:h-10 md:w-10 rounded-full" />
                             )}
                         </div>
                         <div className="min-w-0">
@@ -241,6 +247,17 @@ export default async function UserProfilePage({ params }: UserProfilePageProps) 
                                         </div>
                                     </div>
                                 )}
+                            </div>
+                        </div>
+                    ) : user.role === 'ADMIN' ? (
+                        <div className="h-[200px] flex flex-col items-center justify-center text-center space-y-4 bg-primary/5 rounded-[24px] border border-primary/10 relative overflow-hidden group">
+                            <div className="absolute inset-0 bg-linear-to-br from-primary/10 to-transparent opacity-50 group-hover:opacity-100 transition-opacity" />
+                            <ShieldCheck className="h-12 w-12 text-primary relative z-10 animate-pulse" />
+                            <div className="space-y-1 relative z-10">
+                                <p className="text-[10px] font-black text-primary uppercase tracking-[0.4em]">Internal System Exemption</p>
+                                <p className="text-sm text-foreground/50 font-medium max-w-sm px-10">
+                                    Administrative accounts are exempt from external identity checks. Identity is verified via internal system protocols.
+                                </p>
                             </div>
                         </div>
                     ) : (
