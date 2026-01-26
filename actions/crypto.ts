@@ -104,3 +104,45 @@ export async function updateCryptoNetworks(id: string, networks: string[]) {
     revalidatePath('/admin/inventory');
     return { success: true };
 }
+
+export async function deleteCrypto(id: string) {
+    // First, get the symbol from cryptocurrencies table
+    const { data: crypto, error: fetchError } = await supabaseAdmin
+        .from('cryptocurrencies')
+        .select('symbol')
+        .eq('id', id)
+        .single();
+
+    if (fetchError) {
+        throw new Error('Failed to find cryptocurrency: ' + fetchError.message);
+    }
+
+    // Delete from cryptocurrencies table
+    const { error: cryptoError } = await supabaseAdmin
+        .from('cryptocurrencies')
+        .delete()
+        .eq('id', id);
+
+    if (cryptoError) {
+        throw new Error('Failed to delete cryptocurrency: ' + cryptoError.message);
+    }
+
+    // Delete from inventory table using the symbol/asset
+    if (crypto?.symbol) {
+        const { error: inventoryError } = await supabaseAdmin
+            .from('inventory')
+            .delete()
+            .eq('asset', crypto.symbol);
+
+        if (inventoryError) {
+            console.error('Failed to delete from inventory:', inventoryError.message);
+            // Don't throw here - crypto is already deleted
+        }
+    }
+
+    revalidatePath('/dashboard');
+    revalidatePath('/admin/settings');
+    revalidatePath('/admin/inventory');
+    revalidatePath('/dashboard/exchange');
+    return { success: true };
+}

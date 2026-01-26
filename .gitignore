@@ -56,3 +56,8 @@ add_networks_migration.sql
 check_rls_policies.sql
 enable_realtime.sql
 fix_realtime_recursion.sql
+diagnose_inventory_setup.sql
+cleanup_orphaned_inventory.sql
+fix_inventory_integrity.sql
+view_complete_schema.sql
+check_inventory_columns.sql
