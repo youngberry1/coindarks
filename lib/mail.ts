@@ -594,7 +594,8 @@ export const sendOrderStatusEmail = async (
     asset: string,
     amount: string,
     fiatAmount: string,
-    depositAddress?: string
+    depositAddress?: string,
+    depositNetwork?: string
 ) => {
 
 
@@ -694,6 +695,7 @@ export const sendOrderStatusEmail = async (
             <div class="instruction-box">
                 <div class="instruction-title">Payment Instructions</div>
                 <p style="font-size: 13px; margin-bottom: 12px;">Please make your payment to the following account(s). Use your order number <strong>#${orderNumber}</strong> as the reference.</p>
+                ${depositNetwork ? `<div style="margin-bottom: 8px;"><span style="font-size: 11px; font-weight: 800; color: #854d0e; text-transform: uppercase; background: #fef08a; padding: 2px 6px; border-radius: 4px;">Network: ${depositNetwork}</span></div>` : ''}
                 <div class="payment-address">${depositAddress}</div>
             </div>
             ` : ''}

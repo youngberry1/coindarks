@@ -112,7 +112,7 @@ export async function createOrder(data: {
         // We use supabaseAdmin here which is safe as we are on server side controlling the query
         const { data: adminWallets } = await supabaseAdmin
             .from('admin_wallets')
-            .select('address')
+            .select('address, chain')
             .eq('currency', targetCurrency)
             .eq('is_active', true);
 
@@ -120,8 +120,11 @@ export async function createOrder(data: {
             return { error: `System account not available for ${targetCurrency}. Please contact support.` };
         }
 
-        // Joined addresses for display in UI/Email
-        deposit_address = adminWallets.map(w => w.address).join('\n');
+        // Deduplicate addresses (e.g. if multiple wallets have the same address for different labels)
+        const uniqueAddresses = Array.from(new Set(adminWallets.map(w => w.address.trim()))).filter(Boolean);
+        deposit_address = uniqueAddresses.join('\n');
+
+        const uniqueNetworks = Array.from(new Set(adminWallets.map(w => w.chain))).join(', ');
 
         // 5. Create Order
         const orderNumber = generateOrderId();
@@ -157,7 +160,8 @@ export async function createOrder(data: {
                     data.asset,
                     amount_crypto.toString(),
                     `${amount_fiat} ${data.fiat_currency}`,
-                    deposit_address
+                    deposit_address,
+                    uniqueNetworks
                 );
             }
         } catch (emailErr) {

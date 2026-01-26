@@ -72,20 +72,19 @@ export default async function OrderDetailsPage({ params }: PageProps) {
         }
     } else if (order.status === 'PENDING' && order.type === 'SELL') {
         // For SELL orders, get crypto wallet address with network info
-        const { data: wallet } = await supabaseAdmin
+        const { data: wallets } = await supabaseAdmin
             .from('admin_wallets')
             .select('address, label, chain')
             .eq('currency', order.asset)
-            .eq('is_active', true)
-            .single();
+            .eq('is_active', true);
 
-        if (wallet) {
-            paymentMethods = [{
+        if (wallets && wallets.length > 0) {
+            paymentMethods = wallets.map(wallet => ({
                 type: 'CRYPTO',
                 address: wallet.address,
                 label: wallet.label,
                 network: wallet.chain // Add network info
-            }];
+            }));
         }
     }
 
