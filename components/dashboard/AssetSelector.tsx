@@ -44,6 +44,12 @@ export function AssetSelector({ value, onChange, options, type, className }: Ass
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
                 <button
+                    type="button"
+                    onPointerDown={(e) => e.stopPropagation()}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setIsOpen(true);
+                    }}
                     className={cn(
                         "group/trigger min-w-[140px] h-11 px-4 rounded-xl bg-[#16191E] border border-white/5 hover:border-emerald-500/30 hover:bg-[#1C2127] transition-all duration-300 outline-none focus:ring-0 flex items-center justify-between gap-3",
                         className

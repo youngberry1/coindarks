@@ -68,74 +68,73 @@ export default async function ExchangePage() {
         });
 
     const stats = [
-        { label: "Market Activity (24h)", value: `$${(globalStats.volume24h / 1e9).toFixed(1)}B`, icon: <Activity className="h-4 w-4 text-primary" />, trend: `${globalStats.volumeChange24h > 0 ? '+' : ''}${globalStats.volumeChange24h.toFixed(1)}%` },
-        { label: "BITCOIN SHARE", value: `${globalStats.btcDominance.toFixed(1)}%`, icon: <Zap className="h-4 w-4 text-yellow-500" />, trend: "LIVE" },
-        { label: "SYSTEM HEALTH", value: "STABLE", icon: <ShieldCheck className="h-4 w-4 text-primary" />, trend: "100%" }
+        { label: "Market Volume (24h)", value: `$${(globalStats.volume24h / 1e9).toFixed(1)}B`, icon: <Activity className="h-4 w-4 text-primary" />, trend: `${globalStats.volumeChange24h > 0 ? '+' : ''}${globalStats.volumeChange24h.toFixed(1)}%` },
+        { label: "Market Share (BTC)", value: `${globalStats.btcDominance.toFixed(1)}%`, icon: <Zap className="h-4 w-4 text-yellow-500" />, trend: "LIVE" },
+        { label: "Platform Status", value: "Online", icon: <ShieldCheck className="h-4 w-4 text-primary" />, trend: "100%" }
     ];
 
     return (
-        <div className="min-h-[calc(100vh-4rem)] w-full bg-background text-white overflow-x-hidden">
+        <div className="w-full text-white">
             {/* Background Texture / Atmosphere */}
-            <div className="fixed inset-0 pointer-events-none">
-                <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20%_20%,rgba(var(--primary), 0.02)_0%,transparent_50%)]" />
-                <div className="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(circle_at_80%_80%,rgba(var(--primary), 0.02)_0%,transparent_50%)]" />
-                <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay" />
+            <div className="fixed inset-0 pointer-events-none -z-10">
+                <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20%_20%,rgba(var(--primary), 0.01)_0%,transparent_50%)]" />
+                <div className="absolute inset-0 opacity-[0.02] mix-blend-overlay" />
             </div>
 
-            <div className="relative z-10 w-full max-w-[1800px] mx-auto p-4 lg:px-6 lg:py-8 space-y-6 sm:space-y-8">
+            <div className="relative z-10 w-full max-w-[1800px] mx-auto p-4 lg:px-6 lg:py-8 space-y-8">
                 {/* Top Statistics Bar (Nexus Header) */}
-                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                     {stats.map((stat, i) => (
                         <div key={i} className={cn(
-                            "bg-[#16191E] border border-white/5 rounded-2xl p-3.5 sm:p-6 flex flex-col justify-between group hover:bg-[#1C2127] transition-colors overflow-hidden",
+                            "bg-black/20 backdrop-blur-xl border border-white/5 rounded-[24px] p-4 sm:p-7 flex flex-col justify-between group hover:border-primary/20 transition-all duration-500",
                             i === 2 && "col-span-2 lg:col-span-1"
                         )}>
-                            <div className="flex items-center justify-between mb-2 gap-2">
-                                <span className="text-[9px] sm:text-[10px] font-bold text-white/30 uppercase tracking-widest truncate">{stat.label}</span>
-                                <div className="shrink-0">{stat.icon}</div>
+                            <div className="flex items-center justify-between mb-3 gap-2">
+                                <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em] font-mono truncate">{stat.label}</span>
+                                <div className="p-2 bg-white/5 rounded-lg shrink-0">{stat.icon}</div>
                             </div>
                             <div className="flex items-end justify-between gap-1 overflow-hidden">
-                                <span className="text-lg sm:text-xl font-black tabular-nums truncate">{stat.value}</span>
+                                <span className="text-xl sm:text-2xl font-black font-mono tracking-tighter tabular-nums truncate">{stat.value}</span>
                                 <span className={cn(
-                                    "text-[9px] sm:text-[10px] font-bold shrink-0",
-                                    stat.trend.startsWith('+') || stat.trend === 'LIVE' || stat.trend === 'ONLINE' || stat.trend === '100%' ? "text-primary" : "text-red-500"
+                                    "text-[10px] font-black font-mono tracking-wider shrink-0",
+                                    stat.trend.startsWith('+') || stat.trend === 'LIVE' || stat.trend === 'ONLINE' || stat.trend === '100%' ? "text-primary/60" : "text-red-500/60"
                                 )}>{stat.trend}</span>
                             </div>
                         </div>
                     ))}
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
                     {/* Left Panel: Market Tickers & Feed */}
-                    <div className="lg:col-span-4 space-y-6 order-2 lg:order-1">
-                        <div className="bg-[#16191E] border border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
-                            <div className="flex items-center justify-between border-b border-white/5 pb-4">
-                                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white/40">Price Tracker</h3>
-                                <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                    <div className="lg:col-span-3 space-y-8 order-2 lg:order-1">
+                        <div className="bg-black/20 backdrop-blur-xl border border-white/5 rounded-[32px] p-6 space-y-8 overflow-hidden">
+                            <div className="flex items-center justify-between border-b border-white/5 pb-6">
+                                <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-white/20 font-mono">Market Rates</h3>
+                                <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
                             </div>
 
-                            <div className="space-y-2">
+                            <div className="space-y-1">
                                 {supportedAssets.slice(0, 6).map((asset) => (
                                     <div key={asset.id} className="flex items-center justify-between p-4 rounded-2xl hover:bg-white/5 transition-all group cursor-pointer border border-transparent hover:border-white/5">
                                         <div className="flex items-center gap-4">
-                                            <div className="h-10 w-10 relative shrink-0 group-hover:scale-110 transition-transform">
+                                            <div className="h-10 w-10 relative shrink-0 group-hover:scale-110 transition-transform duration-500">
                                                 <CryptoIcon
                                                     symbol={asset.id}
                                                     iconUrl={asset.icon}
                                                 />
                                             </div>
                                             <div>
-                                                <div className="font-black text-sm">{asset.id}</div>
-                                                <div className="text-[10px] font-bold text-white/20 uppercase">{asset.name}</div>
+                                                <div className="font-black text-sm tracking-tight">{asset.id}</div>
+                                                <div className="text-[9px] font-black text-white/10 uppercase tracking-widest">{asset.name}</div>
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <div className="font-mono text-sm font-bold text-primary">
+                                            <div className="font-mono text-sm font-black text-primary/80 tracking-tighter">
                                                 ${asset.price > 0 ? asset.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '---'}
                                             </div>
                                             <div className={cn(
-                                                "flex items-center gap-1 text-[10px] font-bold justify-end",
-                                                asset.change >= 0 ? "text-primary/50" : "text-red-500/50"
+                                                "flex items-center gap-1 text-[10px] font-black font-mono justify-end",
+                                                asset.change >= 0 ? "text-primary/40" : "text-red-500/40"
                                             )}>
                                                 {asset.change >= 0 ? <ArrowUpRight className="h-3 w-3" /> : <TrendingUp className="h-3 w-3 rotate-180" />}
                                                 {Math.abs(asset.change).toFixed(1)}%
@@ -144,30 +143,34 @@ export default async function ExchangePage() {
                                     </div>
                                 ))}
                             </div>
-
                         </div>
 
-                        {/* Order History Preview */}
-                        <div className="bg-[#16191E]/50 border border-white/5 rounded-3xl p-6">
-                            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white/20 mb-4">Recent Activity</h3>
-                            <div className="space-y-4">
+                        {/* Recent Activity */}
+                        <div className="bg-black/10 border border-white/5 rounded-[32px] p-6 space-y-6">
+                            <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-white/10 font-mono">Recent Trades</h3>
+                            <div className="space-y-5">
                                 {recentOrders.length > 0 ? (
                                     recentOrders.map(order => (
-                                        <div key={order.id} className="flex items-center justify-between text-[10px] font-bold">
-                                            <div className="flex items-center gap-2">
-                                                <div className={cn(
-                                                    "h-1.5 w-1.5 rounded-full animate-pulse",
-                                                    order.status === 'COMPLETED' ? "bg-primary" : "bg-yellow-500"
-                                                )} />
-                                                <span className="text-white/40 uppercase">{order.order_number}</span>
+                                        <div key={order.id} className="flex items-start justify-between group">
+                                            <div className="space-y-1">
+                                                <div className="flex items-center gap-2">
+                                                    <div className={cn(
+                                                        "h-1.5 w-1.5 rounded-full",
+                                                        order.status === 'COMPLETED' ? "bg-primary/50 shadow-[0_0_8px_rgba(16,185,129,0.3)]" : "bg-yellow-500/50"
+                                                    )} />
+                                                    <span className="text-[8px] font-black text-white/20 uppercase tracking-[0.2em] font-mono group-hover:text-white transition-colors">{order.order_number}</span>
+                                                </div>
+                                                <div className="text-[10px] font-mono font-black text-white/40 tracking-tight pl-3.5">
+                                                    {order.amount_crypto} {order.asset}
+                                                </div>
                                             </div>
-                                            <span className="text-primary font-mono">{order.amount_crypto} {order.asset}</span>
-                                            <span className="text-white/20">{formatDistanceToNow(new Date(order.created_at), { addSuffix: true })}</span>
+                                            <span className="text-[8px] font-black text-white/10 uppercase tracking-widest pt-0.5">{formatDistanceToNow(new Date(order.created_at), { addSuffix: true })}</span>
                                         </div>
                                     ))
                                 ) : (
-                                    <div className="text-[10px] font-bold text-white/10 italic text-center py-4">
-                                        Listening for executions...
+                                    <div className="text-[9px] font-black text-white/5 uppercase tracking-widest text-center py-4 italic font-mono space-y-3">
+                                        <Activity className="h-4 w-4 mx-auto animate-pulse opacity-20" />
+                                        <div>Waiting for trades...</div>
                                     </div>
                                 )}
                             </div>
@@ -175,7 +178,7 @@ export default async function ExchangePage() {
                     </div>
 
                     {/* Main Content: Terminal */}
-                    <div className="lg:col-span-8 flex flex-col order-1 lg:order-2">
+                    <div className="lg:col-span-9 flex flex-col order-1 lg:order-2">
                         {!isKycApproved ? (
                             <div className="w-full max-w-2xl bg-[#16191E] border border-white/5 p-12 md:p-20 rounded-[2.5rem] text-center space-y-8 shadow-2xl relative overflow-hidden">
                                 <div className="absolute top-0 inset-x-0 h-1 bg-linear-to-r from-transparent via-primary/50 to-transparent" />
