@@ -65,7 +65,7 @@ export async function getExchangeRates(): Promise<ExchangeRate[]> {
         const options = COINGECKO_API_KEY ? { headers: { 'x-cg-demo-api-key': COINGECKO_API_KEY } } : {};
 
         // Robust Fetch Helper with Timeout & Retry
-        const fetchWithRetry = async (url: string, options: RequestInit, retries = 2): Promise<unknown> => {
+        const fetchWithRetry = async (url: string, options: RequestInit, retries = 2): Promise<Record<string, Record<string, number>>> => {
             for (let i = 0; i <= retries; i++) {
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout
@@ -73,11 +73,13 @@ export async function getExchangeRates(): Promise<ExchangeRate[]> {
                 try {
                     const response = await fetch(url, { ...options, signal: controller.signal });
                     clearTimeout(timeoutId);
-                    if (response.ok) return await response.json();
+                    if (response.ok) return await response.json() as Record<string, Record<string, number>>;
                     if (response.status === 429) { // Rate limit
                         await new Promise(resolve => setTimeout(resolve, 2000 * (i + 1)));
                         continue;
                     }
+                    // Handle other non-ok responses
+                    throw new Error(`API returned ${response.status}`);
                 } catch (err: unknown) {
                     clearTimeout(timeoutId);
                     if (err instanceof Error && err.name === 'AbortError') console.warn(`Fetch timeout on attempt ${i + 1}`);
@@ -85,12 +87,14 @@ export async function getExchangeRates(): Promise<ExchangeRate[]> {
                     await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
                 }
             }
+            return {};
         };
 
         try {
-            apiRates = await fetchWithRetry(url, { ...options, next: { revalidate: 30 } }) as Record<string, Record<string, number>>;
+            apiRates = await fetchWithRetry(url, { ...options, next: { revalidate: 30 } });
         } catch (e) {
             console.error("CoinGecko API Final Failure:", e);
+            apiRates = {}; // Ensure it's an object
         }
     }
 
@@ -105,7 +109,7 @@ export async function getExchangeRates(): Promise<ExchangeRate[]> {
 
         let baseRate = 0;
 
-        if (r.is_automated && coingeckoId && apiRates[coingeckoId] && apiRates[coingeckoId][quoteLower]) {
+        if (r.is_automated && coingeckoId && apiRates[coingeckoId]?.[quoteLower]) {
             baseRate = apiRates[coingeckoId][quoteLower];
         } else {
             baseRate = Number(r.manual_rate) || Number(r.rate) || 0;
@@ -117,7 +121,7 @@ export async function getExchangeRates(): Promise<ExchangeRate[]> {
             // If GHS rate is missing (automated fail), try to bridge via USD
             const btcUsd = dbRates.find(rt => rt.pair === `${base}-USD` || rt.pair === `${base}-USDT`);
             if (btcUsd) {
-                const usdPrice = btcUsd.is_automated && apiRates[assetMapping[base]]?.usd
+                const usdPrice = (btcUsd.is_automated && apiRates[assetMapping[base]]?.usd)
                     ? apiRates[assetMapping[base]].usd
                     : (Number(btcUsd.manual_rate) || 0);
                 displayRate = usdPrice * (Number(ghsBridge.manual_rate) || 0);
@@ -126,7 +130,7 @@ export async function getExchangeRates(): Promise<ExchangeRate[]> {
             // If NGN rate is missing, bridge via USD
             const btcUsd = dbRates.find(rt => rt.pair === `${base}-USD` || rt.pair === `${base}-USDT`);
             if (btcUsd) {
-                const usdPrice = btcUsd.is_automated && apiRates[assetMapping[base]]?.usd
+                const usdPrice = (btcUsd.is_automated && apiRates[assetMapping[base]]?.usd)
                     ? apiRates[assetMapping[base]].usd
                     : (Number(btcUsd.manual_rate) || 0);
                 displayRate = usdPrice * (Number(ngnBridge.manual_rate) || 0);
@@ -141,7 +145,7 @@ export async function getExchangeRates(): Promise<ExchangeRate[]> {
             sell_margin: Number(r.sell_margin),
             is_automated: r.is_automated,
             display_rate: displayRate,
-            percent_change_24h: coingeckoId && apiRates[coingeckoId] ? (apiRates[coingeckoId][`${quoteLower}_24h_change`] || 0) : 0
+            percent_change_24h: (coingeckoId && apiRates[coingeckoId]) ? (apiRates[coingeckoId][`${quoteLower}_24h_change`] || 0) : 0
         };
     });
 }
