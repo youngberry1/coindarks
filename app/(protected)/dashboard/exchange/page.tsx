@@ -4,12 +4,9 @@ import { Metadata } from "next";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import {
     ShieldCheck,
-    TrendingUp,
     Activity,
-    ArrowUpRight,
     Zap
 } from "lucide-react";
-import { CryptoIcon } from "@/components/CryptoIcon";
 import Link from "next/link";
 import { TradingForm } from "@/components/dashboard/TradingForm";
 import { getCryptos } from "@/actions/crypto";
@@ -104,83 +101,12 @@ export default async function ExchangePage() {
                     ))}
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-                    {/* Left Panel: Market Tickers & Feed */}
-                    <div className="lg:col-span-3 space-y-8 order-2 lg:order-1">
-                        <div className="bg-black/20 backdrop-blur-xl border border-white/5 rounded-[32px] p-6 space-y-8 overflow-hidden">
-                            <div className="flex items-center justify-between border-b border-white/5 pb-6">
-                                <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-white/20 font-mono">Market Rates</h3>
-                                <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
-                            </div>
 
-                            <div className="space-y-1">
-                                {supportedAssets.slice(0, 6).map((asset) => (
-                                    <div key={asset.id} className="flex items-center justify-between p-4 rounded-2xl hover:bg-white/5 transition-all group cursor-pointer border border-transparent hover:border-white/5">
-                                        <div className="flex items-center gap-4">
-                                            <div className="h-10 w-10 relative shrink-0 group-hover:scale-110 transition-transform duration-500">
-                                                <CryptoIcon
-                                                    symbol={asset.id}
-                                                    iconUrl={asset.icon}
-                                                />
-                                            </div>
-                                            <div>
-                                                <div className="font-black text-sm tracking-tight">{asset.id}</div>
-                                                <div className="text-[9px] font-black text-white/10 uppercase tracking-widest">{asset.name}</div>
-                                            </div>
-                                        </div>
-                                        <div className="text-right">
-                                            <div className="font-mono text-sm font-black text-primary/80 tracking-tighter">
-                                                ${asset.price > 0 ? asset.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '---'}
-                                            </div>
-                                            <div className={cn(
-                                                "flex items-center gap-1 text-[10px] font-black font-mono justify-end",
-                                                asset.change >= 0 ? "text-primary/40" : "text-red-500/40"
-                                            )}>
-                                                {asset.change >= 0 ? <ArrowUpRight className="h-3 w-3" /> : <TrendingUp className="h-3 w-3 rotate-180" />}
-                                                {Math.abs(asset.change).toFixed(1)}%
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Recent Activity */}
-                        <div className="bg-black/10 border border-white/5 rounded-[32px] p-6 space-y-6">
-                            <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-white/10 font-mono">Recent Trades</h3>
-                            <div className="space-y-5">
-                                {recentOrders.length > 0 ? (
-                                    recentOrders.map(order => (
-                                        <div key={order.id} className="flex items-start justify-between group">
-                                            <div className="space-y-1">
-                                                <div className="flex items-center gap-2">
-                                                    <div className={cn(
-                                                        "h-1.5 w-1.5 rounded-full",
-                                                        order.status === 'COMPLETED' ? "bg-primary/50 shadow-[0_0_8px_rgba(16,185,129,0.3)]" : "bg-yellow-500/50"
-                                                    )} />
-                                                    <span className="text-[8px] font-black text-white/20 uppercase tracking-[0.2em] font-mono group-hover:text-white transition-colors">{order.order_number}</span>
-                                                </div>
-                                                <div className="text-[10px] font-mono font-black text-white/40 tracking-tight pl-3.5">
-                                                    {order.amount_crypto} {order.asset}
-                                                </div>
-                                            </div>
-                                            <span className="text-[8px] font-black text-white/10 uppercase tracking-widest pt-0.5">{formatDistanceToNow(new Date(order.created_at), { addSuffix: true })}</span>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <div className="text-[9px] font-black text-white/5 uppercase tracking-widest text-center py-4 italic font-mono space-y-3">
-                                        <Activity className="h-4 w-4 mx-auto animate-pulse opacity-20" />
-                                        <div>Waiting for trades...</div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Main Content: Terminal */}
-                    <div className="lg:col-span-9 flex flex-col order-1 lg:order-2">
+                {/* Main Trading Terminal - Full Width */}
+                <div className="space-y-8">
+                    <div className="flex flex-col">
                         {!isKycApproved ? (
-                            <div className="w-full max-w-2xl bg-[#16191E] border border-white/5 p-12 md:p-20 rounded-[2.5rem] text-center space-y-8 shadow-2xl relative overflow-hidden">
+                            <div className="w-full max-w-2xl mx-auto bg-[#16191E] border border-white/5 p-12 md:p-20 rounded-[2.5rem] text-center space-y-8 shadow-2xl relative overflow-hidden">
                                 <div className="absolute top-0 inset-x-0 h-1 bg-linear-to-r from-transparent via-primary/50 to-transparent" />
                                 <div className="w-24 h-24 bg-primary/5 rounded-full flex items-center justify-center mx-auto mb-4 border border-primary/20">
                                     <ShieldCheck className="h-10 w-10 text-primary" />
@@ -201,6 +127,37 @@ export default async function ExchangePage() {
                                 />
                             </div>
                         )}
+                    </div>
+
+                    {/* Recent Activity - Below Trading Form */}
+                    <div className="max-w-md mx-auto bg-black/10 border border-white/5 rounded-[32px] p-6 space-y-6">
+                        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-white/10 font-mono">Recent Trades</h3>
+                        <div className="space-y-5">
+                            {recentOrders.length > 0 ? (
+                                recentOrders.map(order => (
+                                    <div key={order.id} className="flex items-start justify-between group">
+                                        <div className="space-y-1">
+                                            <div className="flex items-center gap-2">
+                                                <div className={cn(
+                                                    "h-1.5 w-1.5 rounded-full",
+                                                    order.status === 'COMPLETED' ? "bg-primary/50 shadow-[0_0_8px_rgba(16,185,129,0.3)]" : "bg-yellow-500/50"
+                                                )} />
+                                                <span className="text-[8px] font-black text-white/20 uppercase tracking-[0.2em] font-mono group-hover:text-white transition-colors">{order.order_number}</span>
+                                            </div>
+                                            <div className="text-[10px] font-mono font-black text-white/40 tracking-tight pl-3.5">
+                                                {order.amount_crypto} {order.asset}
+                                            </div>
+                                        </div>
+                                        <span className="text-[8px] font-black text-white/10 uppercase tracking-widest pt-0.5">{formatDistanceToNow(new Date(order.created_at), { addSuffix: true })}</span>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="text-[9px] font-black text-white/5 uppercase tracking-widest text-center py-4 italic font-mono space-y-3">
+                                    <Activity className="h-4 w-4 mx-auto animate-pulse opacity-20" />
+                                    <div>Waiting for trades...</div>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
