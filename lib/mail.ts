@@ -595,7 +595,8 @@ export const sendOrderStatusEmail = async (
     amount: string,
     fiatAmount: string,
     depositAddress?: string,
-    depositNetwork?: string
+    depositNetwork?: string,
+    orderType?: 'BUY' | 'SELL'
 ) => {
 
 
@@ -694,9 +695,17 @@ export const sendOrderStatusEmail = async (
             ${depositAddress ? `
             <div class="instruction-box">
                 <div class="instruction-title">Payment Instructions</div>
-                <p style="font-size: 13px; margin-bottom: 12px;">Please make your payment to the following account(s). Use your order number <strong>#${orderNumber}</strong> as the reference.</p>
-                ${depositNetwork ? `<div style="margin-bottom: 8px;"><span style="font-size: 11px; font-weight: 800; color: #854d0e; text-transform: uppercase; background: #fef08a; padding: 2px 6px; border-radius: 4px;">Network: ${depositNetwork}</span></div>` : ''}
-                <div class="payment-address">${depositAddress}</div>
+                ${orderType === 'BUY' ? `
+                    <p style="font-size: 13px; margin-bottom: 12px;">Please make your payment to ${depositAddress.split('\n').length > 1 ? '<strong>one of the following accounts</strong>' : 'the following account'}. Include your order number <strong>#${orderNumber}</strong> as the reference.</p>
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-top: 12px;">
+                        <div style="font-size: 11px; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">💳 System Payment ${depositAddress.split('\n').length > 1 ? 'Accounts' : 'Account'}</div>
+                        <div style="font-family: 'Courier New', Courier, monospace; font-size: 14px; color: #1e293b; font-weight: 700; white-space: pre-line; word-break: break-all;">${depositAddress.toUpperCase()}</div>
+                    </div>
+                ` : `
+                    <p style="font-size: 13px; margin-bottom: 12px;">Please send your ${asset} to ${depositAddress.split('\n').length > 1 ? '<strong>one of the following addresses</strong>' : 'the following address'}. Use your order number <strong>#${orderNumber}</strong> as the reference.</p>
+                    ${depositNetwork ? `<div style="margin-bottom: 8px;"><span style="font-size: 11px; font-weight: 800; color: #854d0e; text-transform: uppercase; background: #fef08a; padding: 2px 6px; border-radius: 4px;">Network: ${depositNetwork.toUpperCase()}</span></div>` : ''}
+                    <div class="payment-address">${depositAddress}</div>
+                `}
             </div>
             ` : ''}
 

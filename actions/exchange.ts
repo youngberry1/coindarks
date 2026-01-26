@@ -161,7 +161,8 @@ export async function createOrder(data: {
                     amount_crypto.toString(),
                     `${amount_fiat} ${data.fiat_currency}`,
                     deposit_address,
-                    uniqueNetworks
+                    uniqueNetworks,
+                    data.type // Pass the order type (BUY or SELL)
                 );
             }
         } catch (emailErr) {
