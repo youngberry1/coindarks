@@ -565,10 +565,10 @@ export function TradingForm({ initialInventory, supportedAssets }: TradingFormPr
                         {error && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-10 p-8 rounded-3xl bg-red-500/5 border border-red-500/10 text-red-500 text-[10px] font-black uppercase tracking-[0.4em] text-center italic font-mono animate-pulse">{error}</motion.div>}
 
                         {!isAvailable || isRateMissing ? (
-                            <button disabled className="w-full h-32 rounded-[48px] bg-white/5 border border-white/5 text-white/5 font-black text-sm uppercase tracking-[0.6em] cursor-not-allowed italic font-mono">OFFLINE</button>
+                            <button disabled className="w-full h-14 sm:h-16 rounded-3xl sm:rounded-[32px] bg-white/5 border border-white/5 text-white/5 font-black text-xs sm:text-sm uppercase tracking-[0.4em] sm:tracking-[0.6em] cursor-not-allowed italic font-mono">OFFLINE</button>
                         ) : (
-                            <button onClick={handleSubmit} disabled={isSubmitting || !!error || (!amountFiat && !amountCrypto) || !receivingAddress || !displayRate} className="w-full h-32 rounded-[56px] bg-primary text-black font-black text-lg uppercase tracking-[0.4em] transition-all duration-700 shadow-[0_30px_90px_rgba(var(--primary), 0.3)] hover:bg-primary/90 hover:scale-[1.03] active:scale-[0.97] disabled:opacity-30 disabled:grayscale flex items-center justify-center gap-8 group/btn font-mono">
-                                {isSubmitting ? "SYNCING..." : <>CONFIRM EXCHANGE <ArrowUpRight className="h-8 w-8 group-hover/btn:translate-x-2 group-hover/btn:-translate-y-2 transition-transform duration-500" /></>}
+                            <button onClick={handleSubmit} disabled={isSubmitting || !!error || (!amountFiat && !amountCrypto) || !receivingAddress || !displayRate} className="w-full h-14 sm:h-16 rounded-3xl sm:rounded-[32px] bg-primary text-black font-black text-xs sm:text-sm uppercase tracking-[0.3em] sm:tracking-[0.4em] transition-all duration-700 shadow-[0_30px_90px_rgba(var(--primary), 0.3)] hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-30 disabled:grayscale flex items-center justify-center gap-3 sm:gap-4 group/btn font-mono">
+                                {isSubmitting ? "SYNCING..." : <><span className="flex items-center">CONFIRM EXCHANGE</span> <ArrowUpRight className="h-4 w-4 sm:h-5 sm:w-5 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform duration-500" /></>}
                             </button>
                         )}
                     </div>
