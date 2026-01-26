@@ -2,6 +2,7 @@
 
 import { auth } from "@/auth";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { unstable_noStore as noStore } from 'next/cache';
 
 export type NotificationEvent = {
     type: 'ORDER' | 'KYC';
@@ -12,6 +13,9 @@ export type NotificationEvent = {
 };
 
 export async function checkNewNotifications(lastCheckTime: string) {
+    // Prevent Next.js from revalidating routes when this action is called
+    noStore();
+
     const session = await auth();
 
     // 1. Strict Auth Check
