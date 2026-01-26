@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { supabase } from "@/lib/supabase";
 import { Loader2 } from "lucide-react";
+import { checkNewNotifications } from "@/actions/admin-notifications";
 
 export function AdminNotificationListener() {
     // Determine if we can use AudioContext (client-side only)
     const audioContextRef = useRef<AudioContext | null>(null);
+    const [lastCheckTime, setLastCheckTime] = useState<string>(new Date().toISOString());
 
     const playNotificationSound = () => {
         try {
@@ -47,56 +48,50 @@ export function AdminNotificationListener() {
     };
 
     useEffect(() => {
-        // Create a single channel for admin notifications
-        const channel = supabase
-            .channel('admin-realtime-notifications')
+        // Polling interval (every 3 seconds for better responsiveness)
+        const INTERVAL_MS = 3000;
 
-            // Listen for new orders
-            .on(
-                'postgres_changes',
-                {
-                    event: 'INSERT',
-                    schema: 'public',
-                    table: 'orders',
-                },
-                (payload) => {
-                    if (payload.new) {
-                        playNotificationSound();
-                        toast.info("New Order Received", {
-                            description: `Order #${payload.new.order_number} (${payload.new.asset}) is pending review.`,
+
+
+
+
+        // Using a Ref to track lastCheckTime to avoid dependency loop in useEffect
+        let currentTimeReference = lastCheckTime;
+
+        const intervalId = setInterval(async () => {
+            try {
+                const { events, serverTime } = await checkNewNotifications(currentTimeReference);
+
+                if (events && events.length > 0) {
+
+                    // Play sound once for the batch
+                    playNotificationSound();
+
+                    events.forEach(event => {
+                        toast.info(event.title, {
+                            description: event.description,
                             duration: 8000,
                             icon: <Loader2 className="h-4 w-4 animate-spin text-blue-500" />
                         });
-                    }
+                    });
                 }
-            )
 
-            // Listen for new KYC
-            .on(
-                'postgres_changes',
-                {
-                    event: 'INSERT',
-                    schema: 'public',
-                    table: 'kyc_submissions',
-                },
-                (payload) => {
-                    if (payload.new) {
-                        playNotificationSound();
-                        toast.info("New KYC Submission", {
-                            description: "A user has submitted documents for verification.",
-                            duration: 8000,
-                            icon: <Loader2 className="h-4 w-4 animate-spin text-blue-500" />
-                        });
-                    }
-                }
-            )
-            .subscribe((status, err) => {
-                if (err) console.error("Realtime Error:", err);
-            });
+                // Update time for next check
+                currentTimeReference = serverTime;
+                // We don't strictly need to update state if we only use the ref/local var,
+                // but updating state is good for debugging if we displayed it.
+                setLastCheckTime(serverTime);
+
+            } catch (err) {
+                console.error("🔔 [AdminNotifications] Polling Error:", err);
+            }
+        }, INTERVAL_MS);
 
         return () => {
-            supabase.removeChannel(channel);
+            clearInterval(intervalId);
         };
+        // We act like a mount-only effect, managing time internally
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return null; // This component is invisible

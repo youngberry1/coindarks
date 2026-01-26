@@ -53,3 +53,6 @@ check_users.js
 list_tables.js
 check_cryptos.js
 add_networks_migration.sql
+check_rls_policies.sql
+enable_realtime.sql
+fix_realtime_recursion.sql
