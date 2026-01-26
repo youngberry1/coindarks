@@ -27,7 +27,19 @@ interface OrderDetailsCardProps {
 
 export function OrderDetailsCard({ order, paymentMethods = [] }: OrderDetailsCardProps) {
     const [showContactSupport, setShowContactSupport] = useState(false);
-    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(0);
+
+    // Track selected payment TYPE (e.g., 'BANK', 'MOMO', 'CRYPTO')
+    const [selectedTypeState, setSelectedTypeState] = useState<string | null>(null);
+
+    // Derive available types and the effective selected type
+    const availableTypes = Array.from(new Set(paymentMethods.map(m => m.type)));
+    const selectedType = (selectedTypeState && availableTypes.includes(selectedTypeState))
+        ? selectedTypeState
+        : (availableTypes[0] || 'BANK');
+
+    const handleTypeSelect = (type: string) => {
+        setSelectedTypeState(type);
+    };
 
     const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text);
@@ -38,8 +50,6 @@ export function OrderDetailsCard({ order, paymentMethods = [] }: OrderDetailsCar
     const isCompleted = order.status === 'COMPLETED';
     const isCancelled = order.status === 'CANCELLED';
 
-    // Calculate time elapsed for "Contact Support" button (e.g., > 30 mins)
-    // We use useEffect to avoid hydration mismatch with Date.now()
     useEffect(() => {
         if (!isPending) return;
 
@@ -81,7 +91,6 @@ export function OrderDetailsCard({ order, paymentMethods = [] }: OrderDetailsCar
                 <p className="text-foreground/50 font-medium tracking-wide">
                     Trade <span className="text-primary font-mono font-bold">#{order.order_number}</span>
                 </p>
-                {/* Status Badge */}
                 <span className={cn(
                     "inline-block px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest border mt-2",
                     isCompleted ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" :
@@ -121,133 +130,154 @@ export function OrderDetailsCard({ order, paymentMethods = [] }: OrderDetailsCar
                     </div>
                 </div>
 
-                {/* Payment Instructions (Only if Pending) */}
-                {isPending && paymentMethods.length > 0 ? (
-                    <>
-                        <div className="space-y-2">
-                            <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-500">Next Steps</p>
-
-                            <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl space-y-1">
-                                <p className="text-xs text-amber-500 font-bold">1. Send EXACTLY <span className="text-foreground">
-                                    {order.type === 'BUY'
-                                        ? `${order.fiat_currency === 'GHS' ? 'GH₵' : '₦'}${order.amount_fiat.toLocaleString()} `
-                                        : `${formatCryptoAmount(order.amount_crypto, order.asset)} ${order.asset} `}
-                                </span></p>
-                                <p className="text-[10px] text-amber-500/80 font-medium">Sending a different amount may delay your exchange.</p>
-                            </div>
-
-                            {order.type === 'BUY' && (
-                                <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl text-blue-500 space-y-1">
-                                    <p className="text-xs font-bold">2. Add Reference Code: <span className="text-white font-mono">{order.order_number}</span></p>
-                                    <p className="text-[10px] text-blue-500/80 font-medium">Enter this in the &quot;Reference&quot; or &quot;Note&quot; field of your bank app.</p>
-                                </div>
-                            )}
-
-                            {order.type === 'SELL' && (
-                                <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl text-blue-500 space-y-1">
-                                    <p className="text-xs font-bold">2. Use High/Priority Gas Fee</p>
-                                    <p className="text-[10px] text-blue-500/80 font-medium">Ensure transaction confirms quickly.</p>
-                                </div>
-                            )}
-
-                            <p className="text-xs font-bold pt-2">{order.type === 'BUY' ? 'Payment Options:' : 'System Wallet Address:'}</p>
-                        </div>
-
-                        {/* Payment Method Tabs (for multiple options) */}
-                        {paymentMethods.length > 1 && order.type === 'BUY' ? (
-                            <div className="space-y-3">
-                                {/* Tabs */}
-                                <div className="flex gap-2 p-1 bg-black/20 rounded-xl border border-white/5">
-                                    {paymentMethods.map((method, index) => (
-                                        <button
-                                            key={index}
-                                            onClick={() => setSelectedPaymentMethod(index)}
-                                            className={cn(
-                                                "flex-1 py-2.5 px-4 rounded-lg text-xs font-bold uppercase tracking-wider transition-all",
-                                                selectedPaymentMethod === index
-                                                    ? "bg-primary text-white shadow-lg"
-                                                    : "text-foreground/40 hover:text-foreground hover:bg-white/5"
-                                            )}
-                                        >
-                                            {method.type === 'BANK' ? '🏦 Bank Transfer' : '📱 Mobile Money'}
-                                        </button>
-                                    ))}
-                                </div>
-
-                                {/* Selected Payment Method Details */}
-                                <div className="space-y-2">
-                                    {paymentMethods[selectedPaymentMethod].label && (
-                                        <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest">
-                                            {paymentMethods[selectedPaymentMethod].label}
-                                        </p>
-                                    )}
-                                    <button
-                                        type="button"
-                                        className="flex items-center gap-3 p-4 bg-black/40 rounded-2xl border border-white/5 group cursor-pointer w-full"
-                                        onClick={() => copyToClipboard(paymentMethods[selectedPaymentMethod].address)}
-                                        aria-label="Copy payment details"
-                                    >
-                                        <p className="font-mono text-xs break-all text-foreground/80 flex-1 text-left">
-                                            {paymentMethods[selectedPaymentMethod].address}
-                                        </p>
-                                        <Copy className="h-4 w-4 text-foreground/20 group-hover:text-primary transition-colors" />
-                                    </button>
-                                </div>
-                            </div>
-                        ) : paymentMethods.length === 1 ? (
-                            /* Single Payment Method */
-                            <div className="space-y-2">
-                                {/* Network Badge for Crypto */}
-                                {paymentMethods[0].type === 'CRYPTO' && paymentMethods[0].network && (
-                                    <div className="flex items-center gap-2">
-                                        <span className="px-2 py-1 rounded text-[9px] font-black uppercase tracking-widest bg-primary/10 border border-primary/20 text-primary">
-                                            Network: {paymentMethods[0].network}
-                                        </span>
-                                    </div>
-                                )}
-                                {paymentMethods[0].label && (
-                                    <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest">
-                                        {paymentMethods[0].label}
-                                    </p>
-                                )}
-                                <button
-                                    type="button"
-                                    className="flex items-center gap-3 p-4 bg-black/40 rounded-2xl border border-white/5 group cursor-pointer w-full hover:border-primary/20 transition-colors"
-                                    onClick={() => copyToClipboard(paymentMethods[0].address)}
-                                    aria-label="Copy payment details"
-                                >
-                                    <p className="font-mono text-xs break-all text-foreground/80 flex-1 text-left">
-                                        {paymentMethods[0].address}
-                                    </p>
-                                    <Copy className="h-4 w-4 text-foreground/20 group-hover:text-primary transition-colors" />
-                                </button>
-                            </div>
-                        ) : null}
-                    </>
-                ) : isPending && paymentMethods.length === 0 ? (
-                    <div className="space-y-2">
-                        <p className="text-sm text-foreground/80 leading-relaxed font-medium">
-                            Payment Instructions Sent to <span className="text-primary">your email</span>
-                        </p>
-                        <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl flex gap-3 text-amber-500 text-xs font-bold leading-relaxed">
-                            <Info className="h-4 w-4 shrink-0 mt-0.5" />
-                            <p>Please wait up to 30 minutes for completion. If you need help, contact our team immediately.</p>
-                        </div>
-                    </div>
-                ) : null}
-
-                {/* Processing Info */}
+                {/* Payment Logic */}
                 {isPending && (
-                    <div className="pt-4 border-t border-white/5">
-                        <div className="p-3 rounded-xl bg-white/5 flex items-center gap-3 text-xs font-medium text-foreground/60">
-                            <Clock className="h-4 w-4 animate-spin-slow" />
-                            <p>Estimated completion: 5-30 Minutes</p>
+                    <>
+                        {paymentMethods.length > 0 ? (
+                            <>
+                                <div className="space-y-4">
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-500">Next Steps</p>
+
+                                    <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl space-y-1">
+                                        <p className="text-xs text-amber-500 font-bold">1. Send EXACTLY <span className="text-foreground">
+                                            {order.type === 'BUY'
+                                                ? `${order.fiat_currency === 'GHS' ? 'GH₵' : '₦'}${order.amount_fiat.toLocaleString()} `
+                                                : `${formatCryptoAmount(order.amount_crypto, order.asset)} ${order.asset} `}
+                                        </span></p>
+                                        <p className="text-[10px] text-amber-500/80 font-medium">Sending a different amount may delay your exchange.</p>
+                                    </div>
+
+                                    {order.type === 'BUY' && (
+                                        <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl text-blue-500 space-y-1">
+                                            <p className="text-xs font-bold">2. Add Reference Code: <span className="text-white font-mono">{order.order_number}</span></p>
+                                            <p className="text-[10px] text-blue-500/80 font-medium">Enter this in the &quot;Reference&quot; or &quot;Note&quot; field of your bank app.</p>
+                                        </div>
+                                    )}
+
+                                    {order.type === 'SELL' && (
+                                        <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl text-blue-500 space-y-1">
+                                            <p className="text-xs font-bold">2. Use High/Priority Gas Fee</p>
+                                            <p className="text-[10px] text-blue-500/80 font-medium">Ensure transaction confirms quickly.</p>
+                                        </div>
+                                    )}
+
+                                    <p className="text-xs font-bold pt-2">{order.type === 'BUY' ? 'Payment Options:' : 'System Wallet Address:'}</p>
+                                </div>
+
+                                {/* Grouped Tabs for BUY, List for SELL */}
+                                {(() => {
+                                    if (order.type === 'BUY') {
+                                        const uniqueTypes = Array.from(new Set(paymentMethods.map(m => m.type)));
+                                        const displaysMethods = paymentMethods.filter(m => m.type === selectedType);
+
+                                        return (
+                                            <div className="space-y-4 mt-4">
+                                                {uniqueTypes.length > 1 && (
+                                                    <div className="flex gap-2 p-1 bg-black/20 rounded-xl border border-white/5">
+                                                        {uniqueTypes.map((type) => (
+                                                            <button
+                                                                key={type}
+                                                                onClick={() => handleTypeSelect(type)}
+                                                                className={cn(
+                                                                    "flex-1 py-2.5 px-4 rounded-lg text-xs font-bold uppercase tracking-wider transition-all",
+                                                                    selectedType === type
+                                                                        ? "bg-primary text-white shadow-lg"
+                                                                        : "text-foreground/40 hover:text-foreground hover:bg-white/5"
+                                                                )}
+                                                            >
+                                                                {type === 'BANK' ? '🏦 Bank Transfer' : type === 'MOMO' ? '📱 Mobile Money' : '💳 Crypto'}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                )}
+
+                                                <div className="space-y-3">
+                                                    {displaysMethods.map((method, idx) => (
+                                                        <div key={idx} className="space-y-2 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                                                            {method.label && (
+                                                                <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest pl-1">
+                                                                    {method.label}
+                                                                </p>
+                                                            )}
+                                                            <button
+                                                                type="button"
+                                                                className="flex items-center gap-3 p-4 bg-black/40 rounded-2xl border border-white/5 group cursor-pointer w-full hover:border-primary/20 transition-all active:scale-[0.98]"
+                                                                onClick={() => copyToClipboard(method.address)}
+                                                                aria-label="Copy payment details"
+                                                            >
+                                                                <p className={cn(
+                                                                    "font-mono text-xs break-all text-foreground/80 flex-1 text-left",
+                                                                    (method.type === 'BANK' || method.type === 'MOMO') && "uppercase"
+                                                                )}>
+                                                                    {(method.type === 'BANK' || method.type === 'MOMO')
+                                                                        ? method.address.toUpperCase()
+                                                                        : method.address}
+                                                                </p>
+                                                                <Copy className="h-4 w-4 text-foreground/20 group-hover:text-primary transition-colors" />
+                                                            </button>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        );
+                                    } else {
+                                        /* SELL (Crypto) Display */
+                                        return (
+                                            <div className="space-y-3 mt-4">
+                                                {paymentMethods.map((method, idx) => (
+                                                    <div key={idx} className="space-y-2 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                                                        {method.type === 'CRYPTO' && method.network && (
+                                                            <div className="flex items-center gap-2 mb-2">
+                                                                <span className="px-2 py-1 rounded text-[9px] font-black uppercase tracking-widest bg-primary/10 border border-primary/20 text-primary">
+                                                                    Network: {method.network}
+                                                                </span>
+                                                            </div>
+                                                        )}
+                                                        {method.label && (
+                                                            <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest pl-1">
+                                                                {method.label}
+                                                            </p>
+                                                        )}
+                                                        <button
+                                                            type="button"
+                                                            className="flex items-center gap-3 p-4 bg-black/40 rounded-2xl border border-white/5 group cursor-pointer w-full hover:border-primary/20 transition-all active:scale-[0.98]"
+                                                            onClick={() => copyToClipboard(method.address)}
+                                                            aria-label="Copy payment details"
+                                                        >
+                                                            <p className="font-mono text-xs break-all text-foreground/80 flex-1 text-left">
+                                                                {method.address}
+                                                            </p>
+                                                            <Copy className="h-4 w-4 text-foreground/20 group-hover:text-primary transition-colors" />
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        );
+                                    }
+                                })()}
+                            </>
+                        ) : (
+                            <div className="space-y-2">
+                                <p className="text-sm text-foreground/80 leading-relaxed font-medium">
+                                    Payment Instructions Sent to <span className="text-primary">your email</span>
+                                </p>
+                                <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl flex gap-3 text-amber-500 text-xs font-bold leading-relaxed">
+                                    <Info className="h-4 w-4 shrink-0 mt-0.5" />
+                                    <p>Please wait up to 30 minutes for completion. If you need help, contact our team immediately.</p>
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="pt-4 border-t border-white/5 mt-4">
+                            <div className="p-3 rounded-xl bg-white/5 flex items-center gap-3 text-xs font-medium text-foreground/60">
+                                <Clock className="h-4 w-4 animate-spin-slow" />
+                                <p>Estimated completion: 5-30 Minutes</p>
+                            </div>
                         </div>
-                    </div>
+                    </>
                 )}
             </div>
 
-            {/* Actions */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
                 <Link href="/dashboard/orders" className="px-10 py-4 rounded-2xl bg-white/5 border border-white/10 font-bold hover:bg-white/10 transition-all text-sm">
                     Back to History
@@ -262,4 +292,3 @@ export function OrderDetailsCard({ order, paymentMethods = [] }: OrderDetailsCar
         </motion.div>
     );
 }
-

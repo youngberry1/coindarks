@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { AdminWallet, createAdminWallet, updateAdminWallet, deleteAdminWallet } from "@/actions/admin-wallets";
 import { toast } from "sonner";
-import { Plus, Trash2, Edit2, Wallet, Copy, Loader2, CheckCircle2, Shield, Globe, Banknote, Landmark, Activity, Users } from "lucide-react";
+import { Plus, X, Trash2, Edit2, Wallet, Copy, Loader2, CheckCircle2, Shield, Globe, Banknote, Landmark, Activity, Users, Smartphone } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -35,6 +35,7 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
     });
 
     const [walletType, setWalletType] = useState<'CRYPTO' | 'FIAT'>('CRYPTO');
+    const [fiatType, setFiatType] = useState<'BANK' | 'MOMO'>('BANK');
 
     const [fiatData, setFiatData] = useState({
         provider: '',
@@ -69,10 +70,10 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
             const finalData = { ...formData };
 
             if (walletType === 'FIAT') {
-                finalData.chain = 'BANK';
+                finalData.chain = fiatType; // Use 'BANK' or 'MOMO'
                 finalData.currency = fiatData.currency;
                 finalData.address = `${fiatData.provider} - ${fiatData.accountNumber} (${fiatData.accountName})`;
-                finalData.label = 'Institutional Fiat Account';
+                finalData.label = fiatType === 'BANK' ? 'Institutional Fiat Account' : 'Network Mobile Money Wallet';
             }
 
             if (isEditing) {
@@ -135,8 +136,13 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
         });
         setIsEditing(wallet.id);
         setIsAdding(true);
-        if (wallet.chain === 'BANK') setWalletType('FIAT');
-        else setWalletType('CRYPTO');
+        setIsAdding(true);
+        if (wallet.chain === 'BANK' || wallet.chain === 'MOMO') {
+            setWalletType('FIAT');
+            setFiatType(wallet.chain as 'BANK' | 'MOMO');
+        } else {
+            setWalletType('CRYPTO');
+        }
     };
 
     return (
@@ -155,7 +161,7 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
                     className="group relative h-12 sm:h-16 px-6 sm:px-10 rounded-[16px] sm:rounded-[28px] bg-primary text-white flex items-center justify-center gap-3 sm:gap-4 shadow-2xl shadow-primary/30 active:scale-95 transition-all overflow-hidden shrink-0"
                 >
                     <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-                    <Plus className="w-3.5 h-3.5 sm:w-5 sm:h-5 relative z-10" />
+                    {isAdding ? <X className="w-3.5 h-3.5 sm:w-5 sm:h-5 relative z-10" /> : <Plus className="w-3.5 h-3.5 sm:w-5 sm:h-5 relative z-10" />}
                     <span className="text-[9px] sm:text-xs font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] relative z-10 whitespace-nowrap">
                         {isAdding ? "Close" : "Add New Address"}
                     </span>
@@ -171,13 +177,14 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
                         exit={{ opacity: 0, scale: 0.95, y: -20 }}
                         className="p-5 sm:p-10 rounded-[24px] sm:rounded-[48px] glass border border-white/5 space-y-8 sm:space-y-10 shadow-3xl"
                     >
-                        <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-                            <div className="flex gap-1 p-1 sm:p-2 bg-white/5 rounded-[18px] sm:rounded-[32px] border border-white/5 w-full sm:w-fit">
+                        <div className="flex flex-col items-center gap-6">
+                            {/* Main Type Selection */}
+                            <div className="flex gap-1 p-1 bg-white/5 rounded-2xl border border-white/5 w-full sm:w-fit justify-center">
                                 <button
                                     type="button"
                                     onClick={() => setWalletType('CRYPTO')}
                                     className={cn(
-                                        "flex-1 sm:flex-none px-4 sm:px-8 h-10 sm:h-12 rounded-[14px] sm:rounded-[24px] text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] transition-all relative z-10",
+                                        "flex-1 sm:flex-none px-6 h-10 rounded-xl text-[9px] font-black uppercase tracking-[0.15em] transition-all",
                                         walletType === 'CRYPTO' ? "bg-primary text-white shadow-lg" : "text-foreground/30 hover:text-foreground"
                                     )}
                                 >
@@ -187,7 +194,7 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
                                     type="button"
                                     onClick={() => setWalletType('FIAT')}
                                     className={cn(
-                                        "flex-1 sm:flex-none px-4 sm:px-8 h-10 sm:h-12 rounded-[14px] sm:rounded-[24px] text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] transition-all relative z-10",
+                                        "flex-1 sm:flex-none px-6 h-10 rounded-xl text-[9px] font-black uppercase tracking-[0.15em] transition-all",
                                         walletType === 'FIAT' ? "bg-primary text-white shadow-lg" : "text-foreground/30 hover:text-foreground"
                                     )}
                                 >
@@ -195,9 +202,35 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
                                 </button>
                             </div>
 
-                            <div className="flex items-center gap-2.5 sm:gap-3 text-foreground/20">
-                                <Shield className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em]">Adding New Address</span>
+                            {/* Sub-Selection for Fiat */}
+                            {walletType === 'FIAT' && (
+                                <div className="flex gap-1 p-1 bg-black/20 rounded-xl border border-white/5">
+                                    <button
+                                        type="button"
+                                        onClick={() => setFiatType('BANK')}
+                                        className={cn(
+                                            "px-6 py-2 rounded-lg text-[9px] font-black uppercase tracking-[0.2em] transition-all",
+                                            fiatType === 'BANK' ? "bg-white/10 text-white" : "text-foreground/30 hover:text-foreground"
+                                        )}
+                                    >
+                                        Bank Transfer
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setFiatType('MOMO')}
+                                        className={cn(
+                                            "px-6 py-2 rounded-lg text-[9px] font-black uppercase tracking-[0.2em] transition-all",
+                                            fiatType === 'MOMO' ? "bg-white/10 text-white" : "text-foreground/30 hover:text-foreground"
+                                        )}
+                                    >
+                                        Mobile Money
+                                    </button>
+                                </div>
+                            )}
+
+                            <div className="flex items-center gap-2.5 text-foreground/20">
+                                <Shield className="h-3.5 w-3.5" />
+                                <span className="text-[9px] font-black uppercase tracking-[0.15em]">{isEditing ? 'Editing Address' : 'Adding New Address'}</span>
                             </div>
                         </div>
 
@@ -248,14 +281,16 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                     <div className="space-y-4">
                                         <div className="flex items-center gap-2 ml-4">
-                                            <Landmark className="h-3.5 w-3.5 text-foreground/20" />
-                                            <label className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em]">Bank / Provider Name</label>
+                                            {fiatType === 'BANK' ? <Landmark className="h-3.5 w-3.5 text-foreground/20" /> : <Smartphone className="h-3.5 w-3.5 text-foreground/20" />}
+                                            <label className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em]">
+                                                {fiatType === 'BANK' ? 'Bank Name' : 'Network / Provider'}
+                                            </label>
                                         </div>
                                         <input
                                             required
                                             value={fiatData.provider}
                                             onChange={e => setFiatData({ ...fiatData, provider: e.target.value })}
-                                            placeholder="GT BANK / ACCESS / Kuda"
+                                            placeholder={fiatType === 'BANK' ? "GT BANK / ACCESS / Kuda" : "MTN / Vodafone / AirtelTigo"}
                                             className="w-full h-14 sm:h-18 bg-white/3 border border-white/5 rounded-[20px] sm:rounded-[28px] px-6 sm:px-8 text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] focus:outline-none focus:border-primary/50 focus:bg-white/5 transition-all placeholder:text-foreground/10"
                                         />
                                     </div>
@@ -276,20 +311,24 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
                                         <div className="space-y-4">
                                             <div className="flex items-center gap-2 ml-4">
                                                 <Activity className="h-3.5 w-3.5 text-foreground/20" />
-                                                <label className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em]">Account Number</label>
+                                                <label className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em]">
+                                                    {fiatType === 'BANK' ? 'Account Number' : 'Mobile Number (with Country Code)'}
+                                                </label>
                                             </div>
                                             <input
                                                 required
                                                 value={fiatData.accountNumber}
                                                 onChange={e => setFiatData({ ...fiatData, accountNumber: e.target.value })}
-                                                placeholder="10-DIGIT IDENTIFIER..."
+                                                placeholder={fiatType === 'BANK' ? "ENTER ACCOUNT NUMBER..." : "233... / 234..."}
                                                 className="w-full h-14 sm:h-18 bg-white/3 border border-white/5 rounded-[20px] sm:rounded-[28px] px-6 sm:px-8 text-[10px] sm:text-xs font-black tracking-[0.2em] sm:tracking-[0.4em] focus:outline-none focus:border-primary/50 focus:bg-white/5 transition-all font-mono placeholder:text-foreground/10"
                                             />
                                         </div>
                                         <div className="space-y-4">
                                             <div className="flex items-center gap-2 ml-4">
                                                 <Users className="h-3.5 w-3.5 text-foreground/20" />
-                                                <label className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em]">Account Name</label>
+                                                <label className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em]">
+                                                    {fiatType === 'BANK' ? 'Account Holder Name' : 'Registered Mobile Name'}
+                                                </label>
                                             </div>
                                             <input
                                                 required
@@ -341,11 +380,11 @@ export function AdminWalletManager({ initialWallets }: AdminWalletManagerProps) 
                                 <div className="flex justify-between items-start">
                                     <div className="flex items-center gap-4 sm:gap-5">
                                         <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-[16px] sm:rounded-[20px] bg-white/5 border border-white/5 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform duration-500 shrink-0">
-                                            {wallet.chain === 'BANK' ? <Landmark className="h-5 w-5 sm:h-6 sm:w-6 text-primary" /> : <Wallet className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />}
+                                            {wallet.chain === 'BANK' ? <Landmark className="h-5 w-5 sm:h-6 sm:w-6 text-primary" /> : wallet.chain === 'MOMO' ? <Smartphone className="h-5 w-5 sm:h-6 sm:w-6 text-primary" /> : <Wallet className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />}
                                         </div>
                                         <div>
                                             <h3 className="font-black text-base sm:text-lg uppercase tracking-tight leading-none mb-1 sm:mb-1.5">{wallet.currency}</h3>
-                                            <p className="text-[8px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] text-foreground/30">{wallet.chain === 'BANK' ? 'Bank & Mobile Money' : wallet.chain}</p>
+                                            <p className="text-[8px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] text-foreground/30">{wallet.chain === 'BANK' ? 'Bank Transfer' : wallet.chain === 'MOMO' ? 'Mobile Money' : wallet.chain}</p>
                                         </div>
                                     </div>
                                     <button
