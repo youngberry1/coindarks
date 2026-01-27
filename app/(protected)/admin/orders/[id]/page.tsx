@@ -1,9 +1,9 @@
+/* eslint-disable @next/next/no-img-element */
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { supabaseAdmin } from "@/lib/kyc-storage";
 import {
     ArrowLeft,
-    Clock,
     User,
     Hash,
     ArrowUpRight,
@@ -85,7 +85,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
                     <div className="flex items-center gap-4">
                         <div className="h-16 w-16 rounded-2xl bg-white/5 flex items-center justify-center text-primary/40 border border-white/5">
                             {order.users?.profile_image ? (
-                                <img src={order.users.profile_image} className="h-full w-full object-cover rounded-2xl" />
+                                <img src={order.users.profile_image} alt="profile" className="h-full w-full object-cover rounded-2xl" />
                             ) : (
                                 <User className="h-8 w-8" />
                             )}
