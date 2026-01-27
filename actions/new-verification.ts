@@ -11,13 +11,13 @@ export const newVerification = async (token: string) => {
             .maybeSingle();
 
         if (!existingToken) {
-            return { error: "Token does not exist!" };
+            return { error: "This verification link is invalid or has already been used. Please request a new verification email." };
         }
 
         const hasExpired = new Date(existingToken.expires) < new Date();
 
         if (hasExpired) {
-            return { error: "Token has expired!" };
+            return { error: "This verification link has expired. Please request a new verification email to continue." };
         }
 
         const { data: existingUser } = await supabaseAdmin
@@ -27,7 +27,7 @@ export const newVerification = async (token: string) => {
             .maybeSingle();
 
         if (!existingUser) {
-            return { error: "Email does not exist!" };
+            return { error: "We couldn't find an account with this email address. Please contact support if you need assistance." };
         }
 
         const { error: updateError } = await supabaseAdmin
@@ -40,7 +40,7 @@ export const newVerification = async (token: string) => {
 
         if (updateError) {
             console.error("Verification update error:", updateError);
-            return { error: "Failed to verify email!" };
+            return { error: "We couldn't complete your email verification. Please try again or contact support." };
         }
 
         await supabaseAdmin
@@ -51,6 +51,6 @@ export const newVerification = async (token: string) => {
         return { success: "Email verified!" };
     } catch (error) {
         console.error("New verification error:", error);
-        return { error: "Something went wrong!" };
+        return { error: "We encountered an unexpected error. Please try again or contact support if the problem persists." };
     }
 };

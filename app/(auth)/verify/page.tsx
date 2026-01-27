@@ -23,7 +23,7 @@ function VerifyContent() {
                 if (data.success) setSuccess(data.success);
                 else setError(data.error);
             } catch {
-                setError("Registry synchronization failed.");
+                setError("We couldn't verify your email at this time. Please try again or contact support.");
             }
         };
         verify();
@@ -39,14 +39,14 @@ function VerifyContent() {
                 <Logo className="mx-auto" />
                 <div className="space-y-2">
                     <h2 className="text-3xl sm:text-4xl font-black tracking-tight leading-none">
-                        {!success && !error && "Registry Link."}
-                        {success && "Access Verified."}
-                        {error && "Registry Error."}
+                        {!success && !error && "Verifying Email"}
+                        {success && "Email Verified!"}
+                        {error && "Verification Failed"}
                     </h2>
                     <p className="text-sm text-foreground/40 font-medium uppercase tracking-widest">
-                        {!success && !error && "Synchronizing Profile"}
-                        {success && "Security Check Complete"}
-                        {error && "Synchronization Failed"}
+                        {!success && !error && "Please Wait"}
+                        {success && "All Set"}
+                        {error && "Unable to Verify"}
                     </p>
                 </div>
             </div>
@@ -83,8 +83,8 @@ function VerifyContent() {
 
             <div className="space-y-4">
                 <p className="text-base text-foreground/60 font-medium leading-relaxed">
-                    {!success && !error && "Verifying your security credentials against the institutional registry..."}
-                    {success && "Your master profile has been successfully integrated. Access to all exchange pipelines is now granted."}
+                    {!success && !error && "We're verifying your email address. This will only take a moment..."}
+                    {success && "Your email has been successfully verified! You can now access all features of your account."}
                     {error && error}
                 </p>
             </div>
