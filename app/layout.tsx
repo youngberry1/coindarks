@@ -79,6 +79,9 @@ export const metadata: Metadata = {
     description: "Instant Crypto-Fiat exchange in Ghana & Nigeria. Secure, fast, and reliable.",
     images: ["/og-image.png"],
   },
+  other: {
+    "websitelaunches-verification": "accb9e2d9a66ddf850b1d8a5e56f3d4f",
+  },
 };
 
 const jsonLd = {
